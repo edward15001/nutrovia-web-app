@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NutroVia — Mi panel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <div class="dashboard-layout">
+
+        <!-- ─── Sidebar ──────────────────────────────── -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="nav-logo">
+                    <span class="logo-text">NUTROVIA</span><span class="logo-dot">.</span>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#overview" class="sidebar-link active" onclick="showTab('overview', this)">
+                    <span class="sidebar-icon">🏠</span> Resumen
+                </a>
+                <a href="#nutrition" class="sidebar-link" onclick="showTab('nutrition', this)">
+                    <span class="sidebar-icon">🥗</span> Mi Nutrición
+                </a>
+                <a href="#training" class="sidebar-link" onclick="showTab('training', this)">
+                    <span class="sidebar-icon">💪</span> Mi Entrenamiento
+                </a>
+                <a href="#supplements" class="sidebar-link" onclick="showTab('supplements', this)">
+                    <span class="sidebar-icon">💊</span> Suplementación
+                </a>
+                <a href="#subscription" class="sidebar-link" onclick="showTab('subscription', this)">
+                    <span class="sidebar-icon">⭐</span> Mi Suscripción
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar" id="sidebarAvatar">--</div>
+                    <div>
+                        <div class="user-name" id="sidebarName">...</div>
+                        <div class="user-email" id="sidebarEmail">...</div>
+                    </div>
+                </div>
+                <button onclick="logout()"
+                    style="margin-top:16px;width:100%;background:transparent;border:1px solid var(--border);color:var(--text-muted);padding:9px;border-radius:8px;font-size:13px;font-family:var(--font);cursor:pointer;transition:var(--transition);"
+                    onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--text-muted)'">
+                    Cerrar sesión
+                </button>
+            </div>
+        </aside>
+
+        <!-- ─── Main Content ──────────────────────────── -->
+        <main class="dashboard-main">
+
+            <!-- Topbar -->
+            <div class="dashboard-topbar">
+                <div>
+                    <h1 id="dashGreeting">Mi panel</h1>
+                    <p id="dashDate"></p>
+                </div>
+                <button onclick="document.getElementById('sidebar').classList.toggle('open')"
+                    style="display:none;background:transparent;border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:8px;font-size:18px;"
+                    id="mobileMenuBtn">☰</button>
+            </div>
+
+            <!-- Status Banner -->
+            <div class="status-banner trial" id="statusBanner" style="display:none">
+                <div class="banner-info">
+                    <span class="banner-badge" id="bannerBadge">Prueba gratuita</span>
+                    <div class="banner-title" id="bannerTitle">Cargando...</div>
+                    <div class="banner-subtitle" id="bannerSubtitle"></div>
+                </div>
+                <div class="banner-action" id="bannerAction"></div>
+            </div>
+
+            <!-- ═══ TAB: RESUMEN ═══ -->
+            <div id="tab-overview">
+                <div class="dashboard-grid" id="macroCards"></div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;" id="overviewGridBottom">
+                    <div class="dash-card">
+                        <div class="dash-card-label">Distribución de macros</div>
+                        <div class="macro-bars" id="macroBars"></div>
+                    </div>
+                    <div class="dash-card">
+                        <div class="dash-card-label">Tu perfil</div>
+                        <div id="profileInfo" style="margin-top:12px;"></div>
+                    </div>
+                </div>
+                <div class="dash-card" style="margin-top:20px;" id="tipsCard"></div>
+            </div>
+
+            <!-- ═══ TAB: NUTRICIÓN ═══ -->
+            <div id="tab-nutrition" style="display:none">
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="switchDayTab(this, 'Lunes')">Lun</button>
+                    <button class="tab-btn" onclick="switchDayTab(this, 'Martes')">Mar</button>
+                    <button class="tab-btn" onclick="switchDayTab(this, 'Miércoles')">Mié</button>
+                    <button class="tab-btn" onclick="switchDayTab(this, 'Jueves')">Jue</button>
+                    <button class="tab-btn" onclick="switchDayTab(this, 'Viernes')">Vie</button>
+                    <button class="tab-btn" onclick="switchDayTab(this, 'Sábado')">Sáb</button>
+                    <button class="tab-btn" onclick="switchDayTab(this, 'Domingo')">Dom</button>
+                </div>
+                <div id="dayMenuContent" class="dash-card"></div>
+            </div>
+
+            <!-- ═══ TAB: ENTRENAMIENTO ═══ -->
+            <div id="tab-training" style="display:none">
+                <div class="dash-card" style="margin-bottom:20px;" id="trainingHeader"></div>
+                <div class="training-grid" id="trainingGrid"></div>
+                <div class="dash-card" style="margin-top:20px;" id="trainingNotes"></div>
+            </div>
+
+            <!-- ═══ TAB: SUPLEMENTACIÓN ═══ -->
+            <div id="tab-supplements" style="display:none">
+                <div style="margin-bottom:20px;">
+                    <div
+                        style="background:rgba(201,168,76,0.06);border:1px solid var(--border-gold);border-radius:12px;padding:16px 20px;font-size:13px;color:var(--text-muted);">
+                        ⚠️ Las recomendaciones de suplementación son orientativas. Consulta siempre con un profesional
+                        de la salud antes de tomar suplementos.
+                    </div>
+                </div>
+                <div class="supp-grid" id="suppsGrid"></div>
+            </div>
+
+            <!-- ═══ TAB: SUSCRIPCIÓN ═══ -->
+            <div id="tab-subscription" style="display:none">
+                <div class="dash-card" id="subDetail"></div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Loading overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p class="loading-text">Cargando tu plan...</p>
+    </div>
+
+    <script src="js/dashboard.js"></script>
+</body>
+
+</html>

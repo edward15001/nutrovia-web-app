@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NutroVia — Crea tu plan personalizado</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+
+<body>
+    <div class="page-wrapper">
+        <div class="quiz-container">
+
+            <!-- Header -->
+            <div class="quiz-header">
+                <div class="quiz-logo">NUTRO<span class="logo-dot">V</span>IA</div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progressBar" style="width:12%"></div>
+                </div>
+                <p class="progress-text" id="progressText">Paso 1 de 8</p>
+            </div>
+
+            <!-- ═══════ STEP 1: Datos personales ═══════ -->
+            <div class="quiz-card" id="step-1">
+                <h2>¡Empecemos!</h2>
+                <p class="subtitle">Crea tu cuenta para guardar tu plan</p>
+                <div class="form-group">
+                    <label class="form-label">Tu nombre</label>
+                    <input type="text" id="q-name" class="form-input" placeholder="Ej. Carlos" autocomplete="name">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" id="q-email" class="form-input" placeholder="tu@email.com" autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Contraseña (mínimo 8 caracteres)</label>
+                    <input type="password" id="q-password" class="form-input" placeholder="••••••••"
+                        autocomplete="new-password">
+                </div>
+                <div id="alert-1" class="alert alert-error" style="display:none"></div>
+                <div class="quiz-nav">
+                    <span></span>
+                    <button class="btn-next" onclick="goToStep(2)">Continuar →</button>
+                </div>
+            </div>
+
+            <!-- ═══════ STEP 2: Métricas físicas ═══════ -->
+            <div class="quiz-card" id="step-2" style="display:none">
+                <h2>Tus métricas</h2>
+                <p class="subtitle">Para calcular tu metabolismo con precisión científica</p>
+                <div class="form-group">
+                    <label class="form-label">Sexo biológico</label>
+                    <div class="option-grid cols-2">
+                        <button class="option-btn" onclick="selectOption(this, 'sex', 'hombre')" id="opt-hombre">
+                            <span class="option-icon">👨</span>
+                            <span class="option-text"><span class="option-title">Hombre</span></span>
+                        </button>
+                        <button class="option-btn" onclick="selectOption(this, 'sex', 'mujer')" id="opt-mujer">
+                            <span class="option-icon">👩</span>
+                            <span class="option-text"><span class="option-title">Mujer</span></span>
+                        </button>
+                    </div>
+                </div>
+                <div class="form-input-group">
+                    <div class="form-group">
+                        <label class="form-label">Edad</label>
+                        <input type="number" id="q-age" class="form-input" placeholder="Ej. 28" min="15" max="100">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Altura (cm)</label>
+                        <input type="number" id="q-height" class="form-input" placeholder="Ej. 175" min="100" max="230">
+                    </div>
+                </div>
+                <div class="form-input-group">
+                    <div class="form-group">
+                        <label class="form-label">Peso actual (kg)</label>
+                        <input type="number" id="q-weight" class="form-input" placeholder="Ej. 75" min="30" max="300"
+                            step="0.1">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Peso objetivo (kg) <span
+                                style="color:var(--text-dim);font-weight:400">(opcional)</span></label>
+                        <input type="number" id="q-target-weight" class="form-input" placeholder="Ej. 68" min="30"
+                            max="300" step="0.1">
+                    </div>
+                </div>
+                <div id="alert-2" class="alert alert-error" style="display:none"></div>
+                <div class="quiz-nav">
+                    <button class="btn-prev" onclick="goToStep(1)">← Atrás</button>
+                    <button class="btn-next" onclick="goToStep(3)">Continuar →</button>
+                </div>
+            </div>
+
+            <!-- ═══════ STEP 3: Objetivo ═══════ -->
+            <div class="quiz-card" id="step-3" style="display:none">
+                <h2>¿Cuál es tu objetivo?</h2>
+                <p class="subtitle">Tu plan se construirá específicamente para este fin</p>
+                <div class="option-grid cols-1">
+                    <button class="option-btn" onclick="selectOption(this, 'goal', 'perder_peso')">
+                        <span class="option-icon">🔥</span>
+                        <span class="option-text">
+                            <span class="option-title">Perder peso</span>
+                            <span class="option-desc">Déficit calórico inteligente + quema de grasa</span>
+                        </span>
+                    </button>
+                    <button class="option-btn" onclick="selectOption(this, 'goal', 'ganar_masa')">
+                        <span class="option-icon">💪</span>
+                        <span class="option-text">
+                            <span class="option-title">Ganar masa muscular</span>
+                            <span class="option-desc">Superávit calórico + alta proteína + hipertrofia</span>
+                        </span>
+                    </button>
+                    <button class="option-btn" onclick="selectOption(this, 'goal', 'mantener')">
+                        <span class="option-icon">⚖️</span>
+                        <span class="option-text">
+                            <span class="option-title">Mantener peso</span>
+                            <span class="option-desc">Equilibrio calórico + composición corporal óptima</span>
+                        </span>
+                    </button>
+                    <button class="option-btn" onclick="selectOption(this, 'goal', 'mejorar_salud')">
+                        <span class="option-icon">❤️</span>
+                        <span class="option-text">
+                            <span class="option-title">Mejorar salud general</span>
+                            <span class="option-desc">Energía, bienestar, hábitos saludables duraderos</span>
+                        </span>
+                    </button>
+                </div>
+                <div id="alert-3" class="alert alert-error" style="display:none"></div>
+                <div class="quiz-nav">
+                    <button class="btn-prev" onclick="goToStep(2)">← Atrás</button>
+                    <button class="btn-next" onclick="goToStep(4)">Continuar →</button>
+                </div>
+            </div>
+
+            <!-- ═══════ STEP 4: Nivel de Actividad ═══════ -->
+            <div class="quiz-card" id="step-4" style="display:none">
+                <h2>¿Cómo es tu día a día?</h2>
+                <p class="subtitle">Esto determina tu gasto calórico total</p>
+                <div class="option-grid cols-1">
+                    <button class="option-btn" onclick="selectOption(this, 'activity_level', 'sedentario')">
+                        <span class="option-icon">🪑</span>
+                        <span class="option-text">
+                            <span class="option-title">Sedentario</span>
+                            <span class="option-desc">Trabajo de oficina, muy poca actividad física</span>
+                        </span>
+                    </button>
+                    <button class="option-btn" onclick="selectOption(this, 'activity_level', 'ligero')">
+                        <span class="option-icon">🚶</span>
+                        <span class="option-text">
+                            <span class="option-title">Ligeramente activo</span>
+                            <span class="option-desc">Ejercicio 1-2 días por semana o trabajo de pie</span>
+                        </span>
+                    </button>
+                    <button class="option-btn" onclick="selectOption(this, 'activity_level', 'moderado')">
+                        <span class="option-icon">🏃</span>
+                        <span class="option-text">
+                            <span class="option-title">Moderadamente activo</span>
+                            <span class="option-desc">Ejercicio 3-4 días por semana</span>
+                        </span>
+                    </button>
+                    <button class="option-btn" onclick="selectOption(this, 'activity_level', 'activo')">
+                        <span class="option-icon">🏋️</span>
+                        <span class="option-text">
+                            <span class="option-title">Activo</span>
+                            <span class="option-desc">Ejercicio intenso 5-6 días por semana</span>
+                        </span>
+                    </button>
+                    <button class="option-btn" onclick="selectOption(this, 'activity_level', 'muy_activo')">
+                        <span class="option-icon">🔥</span>
+                        <span class="option-text">
+                            <span class="option-title">Muy activo / Atleta</span>
+                            <span class="option-desc">Entrenamiento diario o trabajo físico intenso</span>
+                        </span>
+                    </button>
+                </div>
+                <div id="alert-4" class="alert alert-error" style="display:none"></div>
+                <div class="quiz-nav">
+                    <button class="btn-prev" onclick="goToStep(3)">← Atrás</button>
+                    <button class="btn-next" onclick="goToStep(5)">Continuar →</button>
+                </div>
+            </div>
+
+            <!-- ═══════ STEP 5: Dieta + Entrenamiento ═══════ -->
+            <div class="quiz-card" id="step-5" style="display:none">
+                <h2>Preferencias alimenticias</h2>
+                <p class="subtitle">Tu menú se adaptará completamente a tu dieta</p>
+                <div class="option-grid cols-1">
+                    <button class="option-btn" onclick="selectOption(this, 'dietary_preference', 'omnivoro')">
+                        <span class="option-icon">🥩</span>
+                        <span class="option-text"><span class="option-title">Omnívoro</span><span
+                                class="option-desc">Como de todo sin restricciones</span></span>
+                    </button>
+                    <button class="option-btn" onclick="selectOption(this, 'dietary_preference', 'vegetariano')">
+                        <span class="option-icon">🥚</span>
+                        <span class="option-text"><span class="option-title">Vegetariano</span><span
+                                class="option-desc">Sin carne ni pescado, sí huevos y lácteos</span></span>
+                    </button>
+                    <button class="option-btn" onclick="selectOption(this, 'dietary_preference', 'vegano')">
+                        <span class="option-icon">🌱</span>
+                        <span class="option-text"><span class="option-title">Vegano</span><span class="option-desc">Sin
+                                ningún producto de origen animal</span></span>
+                    </button>
+                    <button class="option-btn" onclick="selectOption(this, 'dietary_preference', 'sin_gluten')">
+                        <span class="option-icon">🌾</span>
+                        <span class="option-text"><span class="option-title">Sin gluten</span><span
+                                class="option-desc">Intolerancia o celiaquía al gluten</span></span>
+                    </button>
+                    <button class="option-btn" onclick="selectOption(this, 'dietary_preference', 'sin_lactosa')">
+                        <span class="option-icon">🥛</span>
+                        <span class="option-text"><span class="option-title">Sin lactosa</span><span
+                                class="option-desc">Intolerancia a la lactosa</span></span>
+                    </button>
+                </div>
+
+                <div style="margin-top: 28px;">
+                    <label class="form-label">¿Cuántos días entrenas por semana?</label>
+                    <div class="range-value" id="trainingDaysVal">3 días</div>
+                    <input type="range" class="range-slider" id="trainingDays" min="1" max="6" value="3"
+                        oninput="updateSlider(this)">
+                </div>
+
+                <div style="margin-top: 24px;">
+                    <label class="form-label">Nivel de experiencia en el gimnasio</label>
+                    <div class="option-grid cols-1">
+                        <button class="option-btn" onclick="selectOption(this, 'training_experience', 'principiante')"
+                            style="padding:12px 16px">
+                            <span class="option-icon">🌱</span>
+                            <span class="option-text"><span class="option-title">Principiante</span><span
+                                    class="option-desc">Menos de 1 año entrenando</span></span>
+                        </button>
+                        <button class="option-btn" onclick="selectOption(this, 'training_experience', 'intermedio')"
+                            style="padding:12px 16px">
+                            <span class="option-icon">⚡</span>
+                            <span class="option-text"><span class="option-title">Intermedio</span><span
+                                    class="option-desc">1-3 años de entrenamiento constante</span></span>
+                        </button>
+                        <button class="option-btn" onclick="selectOption(this, 'training_experience', 'avanzado')"
+                            style="padding:12px 16px">
+                            <span class="option-icon">🏆</span>
+                            <span class="option-text"><span class="option-title">Avanzado</span><span
+                                    class="option-desc">Más de 3 años de entrenamiento</span></span>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="alert-5" class="alert alert-error" style="display:none"></div>
+                <div class="quiz-nav">
+                    <button class="btn-prev" onclick="goToStep(4)">← Atrás</button>
+                    <button class="btn-next" onclick="goToStep(6)">Continuar →</button>
+                </div>
+            </div>
+
+            <!-- ═══════ STEP 6: Condiciones de Salud ═══════ -->
+            <div class="quiz-card" id="step-6" style="display:none">
+                <h2>Condiciones de salud</h2>
+                <p class="subtitle">Tu plan excluirá alimentos contraindicados. Selecciona todo lo que aplique.</p>
+                <div class="checkbox-group" id="health-conditions">
+                    <label class="checkbox-item" data-value="ninguna" onclick="toggleCondition(this)">
+                        <div class="checkbox-custom"></div>
+                        <span class="checkbox-label">✓ Ninguna condición especial</span>
+                    </label>
+                    <label class="checkbox-item" data-value="diabetes" onclick="toggleCondition(this)">
+                        <div class="checkbox-custom"></div>
+                        <span class="checkbox-label">🩸 Diabetes</span>
+                    </label>
+                    <label class="checkbox-item" data-value="hipertension" onclick="toggleCondition(this)">
+                        <div class="checkbox-custom"></div>
+                        <span class="checkbox-label">💉 Hipertensión</span>
+                    </label>
+                    <label class="checkbox-item" data-value="celiaquia" onclick="toggleCondition(this)">
+                        <div class="checkbox-custom"></div>
+                        <span class="checkbox-label">🌾 Celiaquía</span>
+                    </label>
+                    <label class="checkbox-item" data-value="colesterol" onclick="toggleCondition(this)">
+                        <div class="checkbox-custom"></div>
+                        <span class="checkbox-label">🫀 Colesterol alto</span>
+                    </label>
+                    <label class="checkbox-item" data-value="hipotiroidismo" onclick="toggleCondition(this)">
+                        <div class="checkbox-custom"></div>
+                        <span class="checkbox-label">🦋 Hipotiroidismo</span>
+                    </label>
+                </div>
+                <div class="quiz-nav">
+                    <button class="btn-prev" onclick="goToStep(5)">← Atrás</button>
+                    <button class="btn-next" onclick="goToStep(7)">Continuar →</button>
+                </div>
+            </div>
+
+            <!-- ═══════ STEP 7: Pago ═══════ -->
+            <div class="quiz-card" id="step-7" style="display:none">
+                <h2>Método de pago</h2>
+                <p class="subtitle">Guardamos tu tarjeta de forma segura. <strong style="color:var(--gold)">No se te
+                        cobra nada hoy.</strong></p>
+
+                <div
+                    style="background:rgba(201,168,76,0.06);border:1px solid var(--border-gold);border-radius:10px;padding:18px 20px;margin-bottom:24px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                        <span style="font-size:14px;font-weight:600;">Plan NutroVia Personalizado</span>
+                        <span style="color:var(--gold);font-weight:800;">60 €/mes</span>
+                    </div>
+                    <div style="font-size:12px;color:var(--text-muted);line-height:1.7;">
+                        ✓ 30 días de prueba gratis<br>
+                        ✓ 15 días adicionales para cancelar<br>
+                        ✓ Primer cobro solo si no cancelas en 45 días
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Datos de la tarjeta</label>
+                    <div id="stripe-card-element"></div>
+                    <p id="card-error" style="color:#e88;font-size:13px;margin-top:8px;"></p>
+                </div>
+
+                <div class="stripe-info">
+                    <span class="lock">🔒</span>
+                    Pago seguro con Stripe. Tus datos están cifrados y protegidos.
+                </div>
+
+                <div id="alert-7" class="alert alert-error" style="display:none"></div>
+                <div class="quiz-nav">
+                    <button class="btn-prev" onclick="goToStep(6)">← Atrás</button>
+                    <button class="btn-next" id="payBtn" onclick="handlePaymentAndSubmit()">
+                        Activar prueba gratuita →
+                    </button>
+                </div>
+            </div>
+
+            <!-- ═══════ STEP 8: Éxito ═══════ -->
+            <div class="quiz-card" id="step-8" style="display:none">
+                <div class="success-screen">
+                    <div class="success-icon">🎉</div>
+                    <h2>¡Tu plan está listo!</h2>
+                    <p>Hemos generado tu plan personalizado de nutrición y entrenamiento. Revisa tu email para más
+                        información.</p>
+                    <div class="success-dates" id="successDates"></div>
+                    <a href="dashboard.html" class="btn-gold-large">
+                        Ver mi plan personalizado →
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Loading overlay -->
+    <div class="loading-overlay" id="loadingOverlay" style="display:none">
+        <div class="spinner"></div>
+        <p class="loading-text" id="loadingText">Generando tu plan personalizado...</p>
+    </div>
+
+    <script src="js/questionnaire.js"></script>
+</body>
+
+</html>
