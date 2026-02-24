@@ -16,8 +16,16 @@ Aplicación web profesional de nutrición y entrenamiento personalizado con plan
 ### 2. Clonar y configurar
 
 ```bash
-cd c:\Users\edwar\Documents\GitHub\Aplicacion_web\Aplicacion_web_nutricion_y_entrenamiento_nutrovia
+git clone <url-del-repo>
+```
 
+> ⚠️ **Windows — Ruta larga:** `npm install` puede quedarse colgado en el paso `idealTree` si la ruta del proyecto es muy larga. Si te ocurre, copia el proyecto a una ruta corta:
+> ```powershell
+> Copy-Item -Recurse ".\Aplicacion_web_nutricion_y_entrenamiento_nutrovia" "C:\nutrovia"
+> cd C:\nutrovia
+> ```
+
+```bash
 # Instalar dependencias
 npm install
 
@@ -25,17 +33,26 @@ npm install
 copy .env.example .env
 ```
 
-Edita `.env` y añade al menos:
+Edita `.env` y configura al menos:
 - `JWT_SECRET` — cualquier cadena aleatoria larga
 - `STRIPE_SECRET_KEY` y `STRIPE_PUBLISHABLE_KEY` — de tu [dashboard de Stripe](https://dashboard.stripe.com/apikeys) (modo test)
 
+> **Nota:** Si no tienes claves de Stripe aún, la app arrancará pero mostrará un error `StripeAuthenticationError` al intentar registrar usuarios. Las demás funcionalidades (landing, login, etc.) seguirán funcionando.
+
 ### 3. Levantar la base de datos (Docker)
+
+Abre **Docker Desktop** y luego:
 
 ```bash
 docker-compose up -d
 ```
 
 Esto levanta PostgreSQL y ejecuta automáticamente `schema.sql` y `seed.sql`.
+
+Para parar la base de datos:
+```bash
+docker-compose down
+```
 
 ### 4. Arrancar el servidor
 
@@ -139,6 +156,16 @@ CVC:     Cualquier 3 dígitos
    SMTP_USER=tu@gmail.com
    SMTP_PASS=xxxx xxxx xxxx xxxx  # La contraseña de app generada
    ```
+
+---
+
+## 🐛 Problemas conocidos
+
+| Problema | Causa | Solución |
+|----------|-------|----------|
+| `npm install` se queda colgado en `idealTree` | Ruta del proyecto demasiado larga en Windows (límite 260 caracteres) | Copiar el proyecto a una ruta corta como `C:\nutrovia` |
+| `StripeAuthenticationError: Invalid API Key` | Claves de Stripe en `.env` son las de ejemplo | Sustituir por claves reales de [Stripe Dashboard](https://dashboard.stripe.com/apikeys) (modo test) |
+| `docker-compose` da warning de `version` | El atributo `version` en `docker-compose.yml` está obsoleto | Se puede ignorar o eliminar la línea `version: '3.9'` del archivo |
 
 ---
 
