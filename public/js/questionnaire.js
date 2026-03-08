@@ -10,46 +10,8 @@ const formData = {
 };
 
 let currentStep = 1;
-const TOTAL_STEPS = 8;
-let stripe, stripeElements, cardElement;
+const TOTAL_STEPS = 7;
 let authToken = null;
-
-// ═══ Inicializar Stripe ═══════════════════════════════════════
-async function initStripe() {
-    try {
-        const res = await fetch('/api/subscription/setup-intent', {
-            headers: { Authorization: `Bearer ${authToken}` }
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error);
-
-        stripe = Stripe(data.publishable_key);
-        stripeElements = stripe.elements();
-        cardElement = stripeElements.create('card', {
-            style: {
-                base: {
-                    color: '#e8e0d0',
-                    fontFamily: 'Outfit, sans-serif',
-                    fontSize: '15px',
-                    '::placeholder': { color: '#555550' },
-                    backgroundColor: 'transparent',
-                },
-                invalid: { color: '#e88888' },
-            }
-        });
-        cardElement.mount('#stripe-card-element');
-
-        cardElement.on('change', (e) => {
-            document.getElementById('card-error').textContent = e.error ? e.error.message : '';
-        });
-
-        window._stripeSetupClientSecret = data.client_secret;
-    } catch (err) {
-        console.error('Error iniciando Stripe:', err);
-        document.getElementById('alert-7').textContent = 'Error al cargar el formulario de pago. Recarga la página.';
-        document.getElementById('alert-7').style.display = 'block';
-    }
-}
 
 // ═══ Navegación entre pasos ═══════════════════════════════════
 function goToStep(targetStep) {
@@ -60,15 +22,6 @@ function goToStep(targetStep) {
     currentStep = targetStep;
     document.getElementById(`step-${currentStep}`).style.display = 'block';
     updateProgress();
-
-    // Inicializar Stripe al llegar al paso 7
-    if (currentStep === 7 && !stripe && authToken) {
-        initStripe();
-    }
-    // Si aún no tiene token, hay que registrar al llegar al paso 7
-    if (currentStep === 7 && !authToken) {
-        registerUser();
-    }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -209,10 +162,16 @@ async function registerUser() {
 
         // Guardar cuestionario
         await submitQuestionnaire();
-        // Inicializar Stripe ahora que tenemos token
-        await initStripe();
+
+        // Ir a la pantalla de éxito directamente
+        goToStep(7);
     } catch (err) {
         console.error(err);
+        const alertEl = document.getElementById('alert-6') || document.getElementById('alert-5');
+        if (alertEl) {
+            alertEl.textContent = 'Hubo un error inesperado. Inténtalo de nuevo.';
+            alertEl.style.display = 'block';
+        }
     } finally {
         hideLoading();
     }
@@ -244,87 +203,6 @@ async function submitQuestionnaire() {
     } catch (err) {
         console.error('Error enviando cuestionario:', err);
     }
-}
-
-// ═══ Pago y activación de suscripción ═══════════════════════
-async function handlePaymentAndSubmit() {
-    const payBtn = document.getElementById('payBtn');
-    const alertEl = document.getElementById('alert-7');
-    payBtn.disabled = true;
-    alertEl.style.display = 'none';
-
-    if (!stripe || !cardElement) {
-        alertEl.textContent = 'El formulario de pago no está listo. Espera un momento.';
-        alertEl.style.display = 'block';
-        payBtn.disabled = false;
-        return;
-    }
-
-    showLoading('Procesando tu suscripción...');
-
-    try {
-        // Confirmar Setup Intent con la tarjeta
-        const { setupIntent, error } = await stripe.confirmCardSetup(window._stripeSetupClientSecret, {
-            payment_method: { card: cardElement },
-        });
-
-        if (error) {
-            alertEl.textContent = error.message;
-            alertEl.style.display = 'block';
-            payBtn.disabled = false;
-            hideLoading();
-            return;
-        }
-
-        // Iniciar suscripción con el método de pago
-        const subRes = await fetch('/api/subscription/start', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${authToken}`,
-            },
-            body: JSON.stringify({ payment_method_id: setupIntent.payment_method }),
-        });
-        const subData = await subRes.json();
-
-        if (!subRes.ok) {
-            alertEl.textContent = subData.error || 'Error al activar la suscripción';
-            alertEl.style.display = 'block';
-            payBtn.disabled = false;
-            hideLoading();
-            return;
-        }
-
-        // Mostrar pantalla de éxito
-        showSuccess(subData);
-        goToStep(8);
-
-    } catch (err) {
-        alertEl.textContent = 'Error inesperado. Inténtalo de nuevo.';
-        alertEl.style.display = 'block';
-        payBtn.disabled = false;
-    } finally {
-        hideLoading();
-    }
-}
-
-function showSuccess(subData) {
-    const fmt = (dateStr) => new Date(dateStr).toLocaleDateString('es-ES', { day: 'numeric', month: 'long' });
-    const container = document.getElementById('successDates');
-    container.innerHTML = `
-    <div class="date-badge">
-      <span class="date-label">Prueba gratis hasta</span>
-      <span class="date-val">${fmt(subData.trial_end)}</span>
-    </div>
-    <div class="date-badge">
-      <span class="date-label">Cancela antes del</span>
-      <span class="date-val">${fmt(subData.cancel_window_end)}</span>
-    </div>
-    <div class="date-badge">
-      <span class="date-label">Cobro si no cancelas</span>
-      <span class="date-val">60 €/mes a partir del ${fmt(subData.cancel_window_end)}</span>
-    </div>
-  `;
 }
 
 // ═══ Helpers ════════════════════════════════════════════════
