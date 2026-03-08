@@ -114,6 +114,12 @@ router.post('/', authMiddleware, [
         ) THEN
           ALTER TABLE questionnaire_answers ADD CONSTRAINT questionnaire_answers_user_id_key UNIQUE (user_id);
         END IF;
+        
+        IF NOT EXISTS (
+          SELECT 1 FROM pg_constraint WHERE conname = 'nutrition_plans_user_id_key'
+        ) THEN
+          ALTER TABLE nutrition_plans ADD CONSTRAINT nutrition_plans_user_id_key UNIQUE (user_id);
+        END IF;
       END $$;
     `);
   } catch (e) {/* silenciar en desarrollo */ }

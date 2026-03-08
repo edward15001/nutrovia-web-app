@@ -200,8 +200,14 @@ async function submitQuestionnaire() {
                 training_days_per_week: formData.training_days,
             }),
         });
+
+        if (!res.ok) {
+            const data = await res.json();
+            throw new Error(JSON.stringify(data));
+        }
     } catch (err) {
         console.error('Error enviando cuestionario:', err);
+        throw err;
     }
 }
 
