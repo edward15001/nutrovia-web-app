@@ -180,7 +180,7 @@ async function registerUser() {
 // ═══ Envío del cuestionario ══════════════════════════════════
 async function submitQuestionnaire() {
     try {
-        await fetch('/api/questionnaire', {
+        const res = await fetch('/api/questionnaire', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

@@ -56,7 +56,7 @@ router.post('/register', [
 
     } catch (err) {
         console.error('Error en registro:', err);
-        res.status(500).json({ error: 'Error interno del servidor' });
+        res.status(500).json({ error: 'Error interno del servidor', details: err.message, stack: err.stack });
     }
 });
 
@@ -97,7 +97,7 @@ router.post('/login', [
 
     } catch (err) {
         console.error('Error en login:', err);
-        res.status(500).json({ error: 'Error interno del servidor' });
+        res.status(500).json({ error: 'Error interno del servidor', details: err.message });
     }
 });
 

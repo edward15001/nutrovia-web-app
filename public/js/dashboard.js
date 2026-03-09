@@ -82,6 +82,7 @@ function renderDashboard() {
     renderSupplementsTab();
   }
   renderSubscriptionTab();
+
 }
 
 // ─── Status Banner ───────────────────────────────────────────
