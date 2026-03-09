@@ -42,15 +42,17 @@ app.use((err, req, res, next) => {
 });
 
 // ─── Arrancar servidor ───────────────────────────────────────
-app.listen(PORT, () => {
-    console.log(`\n🌿 =========================================`);
-    console.log(`   NutroVia — Servidor iniciado`);
-    console.log(`   http://localhost:${PORT}`);
-    console.log(`   Entorno: ${process.env.NODE_ENV || 'development'}`);
-    console.log(`🌿 =========================================\n`);
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => {
+        console.log(`\n🌿 =========================================`);
+        console.log(`   NutroVia — Servidor iniciado`);
+        console.log(`   http://localhost:${PORT}`);
+        console.log(`   Entorno: ${process.env.NODE_ENV || 'development'}`);
+        console.log(`🌿 =========================================\n`);
 
-    // Iniciar cron jobs
-    initCronJobs();
-});
+        // Iniciar cron jobs solo en local (en Vercel se pueden configurar via cron)
+        initCronJobs();
+    });
+}
 
 module.exports = app;
