@@ -1,0 +1,15 @@
+Testing POST /api/auth/register...
+Stripe customer ID: cus_mock_1773059487177
+[Stripe] Error creating customer for test.script10@1773059486769.com. Using mock ID.
+Ô£à Conexi├│n a PostgreSQL establecida
+User inserted: {
+  id: 'c8185ae5-cd56-4f2b-a4c4-45db90955279',
+  email: 'test.script10@1773059486769.com'
+}
+Testing POST /api/auth/login...
+Login user found: test.script10@1773059486769.com
+Testing Plan fetch...
+Plan result (expect empty since not generated): 0
+Checking test.free1@example.com...
+User found! ID: e78d4338-a35d-40f5-ae07-594249dd849f
+Plans for free1: 1
