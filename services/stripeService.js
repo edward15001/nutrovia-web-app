@@ -1,10 +1,14 @@
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+let stripe = null;
+if (process.env.STRIPE_SECRET_KEY) {
+    stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+}
 
 /**
  * Crea un cliente de Stripe para un nuevo usuario
  */
 async function createCustomer(email, name) {
     try {
+        if (!stripe) throw new Error('Stripe is not configured in this environment (missing STRIPE_SECRET_KEY)');
         const customer = await stripe.customers.create({ email, name });
         return customer.id;
     } catch (err) {
@@ -19,6 +23,7 @@ async function createCustomer(email, name) {
  */
 async function createSetupIntent(customerId) {
     try {
+        if (!stripe) throw new Error('Stripe is not configured');
         const setupIntent = await stripe.setupIntents.create({
             customer: customerId,
             payment_method_types: ['card'],
@@ -36,6 +41,7 @@ async function createSetupIntent(customerId) {
  */
 async function attachPaymentMethod(customerId, paymentMethodId) {
     try {
+        if (!stripe) throw new Error('Stripe is not configured');
         await stripe.paymentMethods.attach(paymentMethodId, { customer: customerId });
         await stripe.customers.update(customerId, {
             invoice_settings: { default_payment_method: paymentMethodId },
@@ -51,6 +57,7 @@ async function attachPaymentMethod(customerId, paymentMethodId) {
  */
 async function createSubscription(customerId, trialEndTimestamp) {
     try {
+        if (!stripe) throw new Error('Stripe is not configured');
         const subscription = await stripe.subscriptions.create({
             customer: customerId,
             items: [{
@@ -78,6 +85,7 @@ async function createSubscription(customerId, trialEndTimestamp) {
  * @param {boolean} atPeriodEnd - Si true, cancela al final del período actual
  */
 async function cancelSubscription(subscriptionId, atPeriodEnd = false) {
+    if (!stripe) return { status: 'mock_canceled' };
     if (atPeriodEnd) {
         return stripe.subscriptions.update(subscriptionId, { cancel_at_period_end: true });
     }
@@ -88,6 +96,7 @@ async function cancelSubscription(subscriptionId, atPeriodEnd = false) {
  * Recupera una suscripción de Stripe
  */
 async function retrieveSubscription(subscriptionId) {
+    if (!stripe) return { status: 'active', id: subscriptionId };
     return stripe.subscriptions.retrieve(subscriptionId);
 }
 
@@ -95,6 +104,7 @@ async function retrieveSubscription(subscriptionId) {
  * Construye el evento de Stripe desde el webhook con verificación de firma
  */
 function constructWebhookEvent(payload, signature) {
+    if (!stripe) throw new Error('Stripe is not configured for webhooks');
     return stripe.webhooks.constructEvent(
         payload,
         signature,

@@ -1,15 +1,18 @@
 const nodemailer = require('nodemailer');
 
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: parseInt(process.env.SMTP_PORT) || 587,
-  secure: false,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-  tls: { rejectUnauthorized: false },
-});
+let transporter = null;
+if (process.env.SMTP_HOST) {
+  transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: parseInt(process.env.SMTP_PORT) || 587,
+    secure: false,
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+    tls: { rejectUnauthorized: false },
+  });
+}
 
 const BASE_STYLE = `
   font-family: 'Arial', sans-serif;
@@ -51,6 +54,10 @@ function emailWrapper(content) {
 
 async function sendEmail(to, subject, htmlContent) {
   try {
+    if (!transporter) {
+      console.log(`[Mock Email] Destino: ${to} | Asunto: ${subject}`);
+      return true;
+    }
     const info = await transporter.sendMail({
       from: process.env.EMAIL_FROM || `NutroVia <${process.env.SMTP_USER}>`,
       to,
