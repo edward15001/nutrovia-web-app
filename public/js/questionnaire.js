@@ -150,10 +150,11 @@ async function registerUser() {
         const data = await res.json();
         if (!res.ok) {
             hideLoading();
-            const alertEl = document.getElementById('alert-7');
-            alertEl.textContent = data.error || (data.errors ? data.errors[0].msg : 'Error al registrar');
-            alertEl.style.display = 'block';
-            goToStep(1);
+            const alertEl = document.getElementById('alert-6');
+            if (alertEl) {
+                alertEl.textContent = data.error || (data.errors ? data.errors[0].msg : 'Error al registrar');
+                alertEl.style.display = 'block';
+            }
             return;
         }
         authToken = data.token;
