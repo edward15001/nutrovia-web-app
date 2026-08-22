@@ -19,6 +19,10 @@ app.use(express.urlencoded({ extended: true }));
 // ─── Archivos estáticos (frontend) ──────────────────────────
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Vercel Analytics is injected in production; return an empty response locally
+// instead of letting the SPA catch-all serve HTML as JavaScript.
+app.get('/_vercel/insights/script.js', (req, res) => res.type('application/javascript').send(''));
+
 // ─── Rutas API ───────────────────────────────────────────────
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/questionnaire', require('./routes/questionnaire'));

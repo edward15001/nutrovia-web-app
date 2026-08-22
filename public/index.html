@@ -10,7 +10,8 @@
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Space+Mono:wght@400;700&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
   <script>
@@ -34,10 +35,9 @@
         <span class="logo-dot">.</span>
       </div>
       <ul class="nav-links">
-        <li><a href="#que-incluye">Qué incluye</a></li>
-        <li><a href="#como-funciona">Cómo funciona</a></li>
-        <li><a href="#testimonios">Testimonios</a></li>
-        <li><a href="#faq">FAQ</a></li>
+        <li><a href="#nv-concept">El concepto</a></li>
+        <li><a href="#nv-purpose">El propósito</a></li>
+        <li><a href="#nv-closing">Comenzar</a></li>
       </ul>
       <div class="nav-actions">
         <a href="login.html" class="btn-ghost">Iniciar sesión</a>
@@ -67,33 +67,387 @@
         objetivos y estilo de vida. No más planes genéricos.
       </p>
       <div class="hero-cta animate-fade-up delay-3">
-        <a href="questionnaire.html" class="btn-gold-large" id="heroCtaBtn">
-          <span class="btn-icon">✦</span>
-          Crear mi plan personalizado
-          <span class="btn-arrow">→</span>
-        </a>
-        <p class="cta-disclaimer">30 días gratis · Sin compromiso inicial · Cancela cuando quieras</p>
-      </div>
-      <div class="hero-stats animate-fade-up delay-4">
-        <div class="stat">
-          <span class="stat-number">2.800+</span>
-          <span class="stat-label">Usuarios activos</span>
-        </div>
-        <div class="stat-divider"></div>
-        <div class="stat">
-          <span class="stat-number">94%</span>
-          <span class="stat-label">Tasa de satisfacción</span>
-        </div>
-        <div class="stat-divider"></div>
-        <div class="stat">
-          <span class="stat-number">−8.2kg</span>
-          <span class="stat-label">Media pérdida (3 meses)</span>
-        </div>
+        <a href="questionnaire.html" class="btn-gold-large" id="heroCtaBtn">Comenzar</a>
       </div>
     </div>
     <div class="hero-scroll-indicator">
       <div class="scroll-line"></div>
       <span>Descubre más</span>
+    </div>
+  </section>
+
+  <!-- ─── NUTROVIA SHOWCASE (paneles split-screen + mockups) ─ -->
+  <section class="nv-showcase" id="nv-showcase">
+    <!-- Secuencia narrativa controlada por scroll -->
+    <div class="nv-sequence">
+      <section class="nv-phone-transition" id="nv-phone-transition" aria-label="Vista de la aplicación NutroVia">
+        <div class="nv-phone-transition__stage">
+          <div class="nv-device nv-sequence-phone" id="nvSequencePhone">
+            <div class="nv-device-front">
+              <img src="mockups/iphone17pro.svg" alt="iPhone con la pantalla de inicio de NutroVia" class="nv-device-img">
+              <div class="nv-screen nv-screen--iphone">
+                <div class="nv-app-view nv-app-view--splash">
+                  <span class="nv-splash-logo">NUTROVIA<span>.</span></span>
+                  <span class="nv-splash-kicker">Tu plan. Tu ritmo.</span>
+                </div>
+                <div class="nv-app-view nv-app-view--dashboard">
+                  <div class="nv-dashboard-head">
+                    <div><span>Buenas tardes,</span><strong>Eduardo</strong></div>
+                    <span class="nv-dashboard-avatar">ED</span>
+                  </div>
+                  <div class="nv-dashboard-plan"><span>PLAN PERSONALIZADO</span><strong>Perder peso</strong><small>Semana 04 · Nivel moderado</small></div>
+                  <div class="nv-dashboard-macros"><div><strong>2.450</strong><small>kcal</small><span>Objetivo diario</span></div><div><strong>168</strong><small>g</small><span>Proteína</span></div><div><strong>4</strong><small>días</small><span>Entrenamiento</span></div></div>
+                  <div class="nv-dashboard-row"><span>Hoy en tu plan</span><b>Ver todo →</b></div>
+                  <div class="nv-dashboard-item"><span class="nv-dashboard-icon">01</span><div><strong>Desayuno</strong><small>Avena, proteína y frutos rojos</small></div><b>612 kcal</b></div>
+                  <div class="nv-dashboard-item"><span class="nv-dashboard-icon">02</span><div><strong>Entrenamiento</strong><small>Full body · 42 min</small></div><b>4 ejercicios</b></div>
+                  <div class="nv-dashboard-tip">Tu plan se adapta contigo.</div>
+                </div>
+              </div>
+              <span class="nv-dynamic-island" aria-hidden="true"></span>
+            </div>
+            <div class="nv-device-back"><span class="app-back-logo">NUTROVIA<span>.</span></span></div>
+          </div>
+          <div class="nv-card nv-transition-card">
+            <span class="nv-card-num">01</span>
+            <h3>Tu día, de un vistazo</h3>
+            <p>Calorías, objetivos y entrenamiento reunidos en un panel claro, calculado para tus números reales.</p>
+            <ul class="nv-card-list"><li>Plan personalizado</li><li>Macros diarios</li><li>Entrenamiento adaptado</li></ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="nv-wipe-panel nv-white-panel" id="nv-concept">
+        <div class="nv-wipe-black" aria-hidden="true"></div>
+        <div class="container nv-white-content">
+          <span class="app-text-tag">El concepto</span>
+          <h2 class="app-text-title">Planes genéricos para cuerpos genéricos.<br><span class="gold-gradient">Hasta ahora.</span></h2>
+          <p class="app-text-sub">NutroVia calcula tu metabolismo con la ecuación Harris-Benedict y construye tu nutrición, entrenamiento y suplementación a partir de tus números reales.</p>
+          <p class="nv-serif-quote">La nutrición no debería ser un misterio.</p>
+          <div class="nv-process-block">
+            <span class="app-text-tag">Cómo se genera tu plan</span>
+            <h2 class="nv-block-title">De tus datos a tu plan, <span class="gold-gradient">en 3 pasos</span></h2>
+            <div class="nv-steps"><div class="nv-step"><span class="nv-step-num">01</span><h3>Tus datos</h3><p>Edad, sexo, peso, altura, objetivo y nivel de actividad.</p></div><div class="nv-step-arrow">→</div><div class="nv-step"><span class="nv-step-num">02</span><h3>Cálculo metabólico</h3><p>Tu metabolismo basal y TDEE calculados con ciencia.</p></div><div class="nv-step-arrow">→</div><div class="nv-step"><span class="nv-step-num">03</span><h3>Tu plan completo</h3><p>Menú semanal, rutina, macros y suplementación.</p></div></div>
+          </div>
+          <div class="nv-bento">
+            <div class="nv-bento-cell nv-bento-cell--large"><span class="nv-bento-label">NUTRICIÓN</span><strong>Come con intención.</strong><p>Menús y macros que encajan con tu objetivo y tu forma de vivir.</p><span class="nv-bento-mark">2.450 <small>kcal / día</small></span></div>
+            <div class="nv-bento-cell"><span class="nv-bento-icon">◎</span><strong>Metabolismo real</strong><p>Tu gasto energético como punto de partida.</p></div>
+            <div class="nv-bento-cell"><span class="nv-bento-icon">↗</span><strong>Progreso visible</strong><p>Entiende cada cambio, semana a semana.</p></div>
+            <div class="nv-bento-cell nv-bento-cell--wide"><span class="nv-bento-label">TU PLAN, SIEMPRE CONTIGO</span><strong>Nutrición. Entrenamiento. Constancia.</strong><p>Todo conectado en una sola experiencia.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="nv-purpose-panel" id="nv-purpose">
+        <div class="nv-purpose-stage">
+          <div class="nv-purpose-card">
+            <span class="nv-card-num">02 · EL PROPÓSITO</span>
+            <h2>No se trata de contar calorías.<br>Se trata de <span class="gold-gradient">entender tu cuerpo</span>.</h2>
+            <p>Cada plan se adapta a tu objetivo, tu actividad y tu dieta. Y se actualiza contigo, mes a mes.</p>
+          </div>
+          <div class="nv-device nv-purpose-phone" id="nvPurposePhone">
+            <div class="nv-device-front"><img src="mockups/iphone17pro.svg" alt="Panel de usuario NutroVia en iPhone" class="nv-device-img"><div class="nv-screen nv-screen--iphone"><div class="nv-app-view nv-app-view--dashboard nv-app-view--visible"><div class="nv-dashboard-head"><div><span>Buenas tardes,</span><strong>Eduardo</strong></div><span class="nv-dashboard-avatar">ED</span></div><div class="nv-dashboard-plan"><span>PLAN PERSONALIZADO</span><strong>Perder peso</strong><small>Semana 04 · Nivel moderado</small></div><div class="nv-dashboard-macros"><div><strong>2.450</strong><small>kcal</small><span>Objetivo diario</span></div><div><strong>168</strong><small>g</small><span>Proteína</span></div><div><strong>4</strong><small>días</small><span>Entrenamiento</span></div></div><div class="nv-dashboard-row"><span>Hoy en tu plan</span><b>Ver todo →</b></div><div class="nv-dashboard-item"><span class="nv-dashboard-icon">01</span><div><strong>Desayuno</strong><small>Avena, proteína y frutos rojos</small></div><b>612 kcal</b></div><div class="nv-dashboard-item"><span class="nv-dashboard-icon">02</span><div><strong>Entrenamiento</strong><small>Full body · 42 min</small></div><b>4 ejercicios</b></div><div class="nv-dashboard-tip">Tu plan se adapta contigo.</div></div></div><span class="nv-dynamic-island" aria-hidden="true"></span></div><div class="nv-device-back"><span class="app-back-logo">NUTROVIA<span>.</span></span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="nv-wipe-panel nv-closing-panel" id="nv-closing">
+        <div class="nv-wipe-black" aria-hidden="true"></div>
+        <div class="container nv-closing-content"><span class="app-text-tag">El siguiente paso</span><h2 class="app-text-title">Tu cuerpo ya tiene el plan.<br><span class="gold-gradient">Ahora empieza el camino.</span></h2><p class="app-text-sub">Una experiencia diseñada para convertir tus objetivos en hábitos que puedes mantener.</p><a href="questionnaire.html" class="btn-gold-large">Comenzar</a></div>
+      </section>
+
+      <!-- Apple Watch — sección independiente, protagonista -->
+      <section class="nv-watch-section" id="nv-watch-section">
+        <div class="nv-watch-section__inner">
+          <div class="nv-device nv-device--watch nv-device--watch-hero">
+            <div class="nv-device-front">
+              <img src="mockups/apple-watch.svg" alt="Apple Watch con la app de NutroVia" class="nv-device-img">
+              <div class="nv-screen nv-screen--watch">
+                <div class="nv-view nv-view--active">
+                  <div class="wv-label">Hoy</div>
+                  <div class="wv-ring">
+                    <div class="wv-ring-inner">
+                      <div class="wv-kcal">2.450</div>
+                      <div class="wv-kcal-unit">kcal</div>
+                    </div>
+                  </div>
+                  <div class="wv-macros">
+                    <span>P <b>168</b></span>
+                    <span>C <b>240</b></span>
+                    <span>G <b>72</b></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="nv-device-back">
+              <span class="app-back-logo">NUTROVIA<span>.</span></span>
+            </div>
+          </div>
+          <div class="nv-watch-section__text">
+            <span class="app-text-tag">NutroVia en tu muñeca</span>
+            <h2 class="app-text-title" style="color:#f0e8d8;">Lo esencial,<br><span class="gold-gradient">a un golpe de vista.</span></h2>
+            <p class="app-text-sub" style="color:#a4a096;">Calorías, macros y recordatorios de entrenamiento sin sacar el móvil. La constancia, en tu muñeca.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Tu plan en tu bolsillo</span>
+        <h2 class="section-title">Así es <span class="gold-gradient">NutroVia</span></h2>
+        <p class="section-subtitle">Una app clara y personalizada: nutrición, entrenamiento y suplementación según tus números</p>
+      </div>
+    </div>
+
+    <!-- Panel 1 — Split: iPhone izquierda · tarjeta derecha -->
+    <div class="nv-panel nv-panel--split nv-panel--1">
+      <div class="nv-device nv-device--iphone">
+        <div class="nv-device-front">
+          <img src="mockups/iphone17pro.svg" alt="Mockup iPhone con NutroVia" class="nv-device-img">
+          <div class="nv-screen nv-screen--iphone">
+            <div class="nv-view nv-view--active">
+              <div class="av-topbar">
+                <div>
+                  <div class="av-greet">Buenas tardes,</div>
+                  <div class="av-name">Eduardo</div>
+                </div>
+                <div class="av-avatar">ED</div>
+              </div>
+              <div class="av-status">🎁 PRUEBA GRATUITA · Quedan 12 días</div>
+              <div class="av-macros">
+                <div class="av-macro"><span class="av-macro-val">2.450</span><span class="av-macro-unit">kcal</span><span class="av-macro-label">Calorías</span></div>
+                <div class="av-macro"><span class="av-macro-val">168</span><span class="av-macro-unit">g</span><span class="av-macro-label">Proteína</span></div>
+                <div class="av-macro"><span class="av-macro-val">240</span><span class="av-macro-unit">g</span><span class="av-macro-label">Carbs</span></div>
+                <div class="av-macro"><span class="av-macro-val">72</span><span class="av-macro-unit">g</span><span class="av-macro-label">Grasas</span></div>
+              </div>
+              <div class="av-card">
+                <div class="av-card-label">Distribución de macros</div>
+                <div class="av-bar">
+                  <span class="av-bar-name">💧 Proteína</span><span class="av-bar-val">168g</span>
+                  <div class="av-bar-bg"><div class="av-bar-fill av-bar-protein" style="width:35%"></div></div>
+                </div>
+                <div class="av-bar">
+                  <span class="av-bar-name">⚡ Carbs</span><span class="av-bar-val">240g</span>
+                  <div class="av-bar-bg"><div class="av-bar-fill av-bar-carbs" style="width:50%"></div></div>
+                </div>
+                <div class="av-bar">
+                  <span class="av-bar-name">🥑 Grasas</span><span class="av-bar-val">72g</span>
+                  <div class="av-bar-bg"><div class="av-bar-fill av-bar-fat" style="width:15%"></div></div>
+                </div>
+              </div>
+              <div class="av-card">
+                <div class="av-card-label">Tu perfil</div>
+                <div class="av-profile">
+                  <span>🎯 Objetivo: <b>Perder peso</b></span>
+                  <span>⚡ Actividad: <b>Moderado</b></span>
+                  <span>⚖️ 75 kg · 📏 178 cm · 🎂 28 años</span>
+                </div>
+              </div>
+              <div class="av-card av-tip">💡 <b>Consejo:</b> reparte la proteína en 4-5 comidas para maximizar la síntesis muscular.</div>
+            </div>
+          </div>
+        </div>
+        <div class="nv-device-back">
+          <span class="app-back-logo">NUTROVIA<span>.</span></span>
+        </div>
+      </div>
+      <div class="nv-card nv-card--reveal">
+        <span class="nv-card-num">01</span>
+        <h3>Tu día, de un vistazo</h3>
+        <p>Calorías y macros calculadas para tu metabolismo, con tu perfil y consejos diarios. Todo lo que necesitas saber sobre tu cuerpo, sin interpretar tablas.</p>
+        <ul class="nv-card-list">
+          <li>Calorías y macros diarios</li>
+          <li>Perfil, objetivo y actividad</li>
+          <li>Consejos adaptados a tu día</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Panel 2 — Texto de impacto (fondo claro) -->
+    <div class="app-text-block app-text-block--reveal nv-light">
+      <div class="container">
+        <span class="app-text-tag">El concepto</span>
+        <h2 class="app-text-title">Planes genéricos para cuerpos genéricos.<br><span class="gold-gradient">Hasta ahora.</span></h2>
+        <p class="app-text-sub">NutroVia calcula tu metabolismo con la ecuación Harris-Benedict y construye tu nutrición, entrenamiento y suplementación a partir de tus números reales.</p>
+        <p class="nv-serif-quote">La nutrición no debería ser un misterio.</p>
+      </div>
+    </div>
+
+    <!-- Proceso — cómo se genera el plan (fondo claro) -->
+    <div class="nv-proceso nv-light nv-reveal">
+      <div class="container">
+        <span class="app-text-tag">Cómo se genera tu plan</span>
+        <h2 class="nv-block-title">De tus datos a tu plan, <span class="gold-gradient">en 3 pasos</span></h2>
+        <div class="nv-steps">
+          <div class="nv-step">
+            <span class="nv-step-num">01</span>
+            <h3>Tus datos</h3>
+            <p>Edad, sexo, peso, altura, objetivo y nivel de actividad. Un cuestionario de menos de 5 minutos.</p>
+          </div>
+          <div class="nv-step-arrow">→</div>
+          <div class="nv-step">
+            <span class="nv-step-num">02</span>
+            <h3>Cálculo metabólico</h3>
+            <p>La ecuación Harris-Benedict calcula tu metabolismo basal y tu gasto energético total (TDEE).</p>
+          </div>
+          <div class="nv-step-arrow">→</div>
+          <div class="nv-step">
+            <span class="nv-step-num">03</span>
+            <h3>Tu plan completo</h3>
+            <p>Menú semanal, rutina, macros y suplementación. Todo personalizado y listo en segundos.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Paneles 3+4 — Split invertido con rotación 360° entre ellos -->
+    <section class="nv-pin" id="nvPin">
+      <div class="nv-pin-stage" id="nvPinStage">
+        <div class="nv-card nv-pin-card nv-pin-card--3">
+          <span class="nv-card-num">02</span>
+          <h3>Menú semanal, calculado</h3>
+          <p>Desayuno, comida y cena con sus calorías y macros. Adaptado a tu dieta (omnívora, vegana, sin gluten...) y a tu semana.</p>
+        </div>
+        <div class="nv-device nv-device--iphone nv-pin-phone" id="nvPinPhone">
+          <div class="nv-device-front">
+            <img src="mockups/iphone17pro.svg" alt="Mockup iPhone con NutroVia" class="nv-device-img">
+            <div class="nv-screen nv-screen--iphone">
+              <div class="nv-view nv-view--active">
+                <div class="av-topbar">
+                  <div>
+                    <div class="av-greet">Mi nutrición</div>
+                    <div class="av-name">Lunes · 2.450 kcal</div>
+                  </div>
+                </div>
+                <div class="av-days">
+                  <span class="av-day av-day--on">L</span><span class="av-day">M</span><span class="av-day">X</span><span class="av-day">J</span><span class="av-day">V</span><span class="av-day">S</span><span class="av-day">D</span>
+                </div>
+                <div class="av-meal">
+                  <div class="av-meal-name">🌅 Desayuno</div>
+                  <div class="av-meal-detail"><b>Avena con proteína y frutos rojos</b><span>612 kcal · Avena · Whey · Arándanos</span></div>
+                </div>
+                <div class="av-meal">
+                  <div class="av-meal-name">🍽️ Comida</div>
+                  <div class="av-meal-detail"><b>Pollo con arroz y verduras</b><span>857 kcal · Pollo · Arroz · Brócoli</span></div>
+                </div>
+                <div class="av-meal">
+                  <div class="av-meal-name">🍎 Merienda</div>
+                  <div class="av-meal-detail"><b>Yogur griego con nueces</b><span>231 kcal · Yogur · Nueces · Miel</span></div>
+                </div>
+                <div class="av-meal">
+                  <div class="av-meal-name">🌙 Cena</div>
+                  <div class="av-meal-detail"><b>Salmón con patata y espárragos</b><span>490 kcal · Salmón · Patata · Espárragos</span></div>
+                </div>
+              </div>
+              <div class="nv-view">
+                <div class="av-topbar">
+                  <div>
+                    <div class="av-greet">Mi entrenamiento</div>
+                    <div class="av-name">Perder peso · Nivel intermedio</div>
+                  </div>
+                  <div class="av-daysbadge"><span>Días</span><b>4</b></div>
+                </div>
+                <div class="av-session">
+                  <div class="av-session-day">LUNES<span>Full Body</span></div>
+                  <div class="av-ex-tags"><span class="av-tag">Sentadillas 4×12</span><span class="av-tag">Press banca 4×10</span><span class="av-tag">Remo 4×12</span><span class="av-tag">Plancha 3×45s</span></div>
+                </div>
+                <div class="av-session">
+                  <div class="av-session-day">MIÉRCOLES<span>HIIT</span></div>
+                  <div class="av-ex-tags"><span class="av-tag">Burpees 5×15</span><span class="av-tag">Sprint 8×30s</span><span class="av-tag">Mountain climbers 4×40s</span></div>
+                </div>
+                <div class="av-session">
+                  <div class="av-session-day">VIERNES<span>Fuerza</span></div>
+                  <div class="av-ex-tags"><span class="av-tag">Peso muerto 4×8</span><span class="av-tag">Press militar 4×10</span><span class="av-tag">Dominadas 4×8</span></div>
+                </div>
+                <div class="av-card av-tip">📌 Descansa 60-90s entre series y prioriza la técnica sobre el peso.</div>
+              </div>
+            </div>
+          </div>
+          <div class="nv-device-back">
+            <span class="app-back-logo">NUTROVIA<span>.</span></span>
+          </div>
+        </div>
+        <div class="nv-card nv-pin-card nv-pin-card--4">
+          <span class="nv-card-num">03</span>
+          <h3>Rutinas a tu nivel</h3>
+          <p>Series, repeticiones y técnica según tu experiencia y tus días disponibles. De principiante a avanzado, con descansos incluidos.</p>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Panel 4 — Texto de impacto (fondo claro) -->
+    <div class="app-text-block app-text-block--reveal nv-light">
+      <div class="container">
+        <span class="app-text-tag">El propósito</span>
+        <h2 class="app-text-title">No se trata de contar calorías.<br>Se trata de <span class="gold-gradient">entender tu cuerpo</span>.</h2>
+        <p class="app-text-sub">Cada plan se adapta a tu objetivo, tu actividad, tu dieta y tus condiciones de salud. Y se actualiza contigo, mes a mes.</p>
+        <p class="nv-serif-quote">Tu cuerpo cambia. Tu plan también.</p>
+      </div>
+    </div>
+
+    <!-- Opciones — personalización de la plataforma (fondo claro) -->
+    <div class="nv-opciones nv-light nv-reveal">
+      <div class="container">
+        <span class="app-text-tag">Elige cómo adaptarlo</span>
+        <h2 class="nv-block-title">Un plan que se ajusta a <span class="gold-gradient">cómo vives</span></h2>
+        <div class="nv-opts-grid">
+          <div class="nv-opt"><span class="nv-opt-icon">🎯</span><h3>4 objetivos</h3><p>Perder peso, ganar masa, mantener o mejorar tu salud.</p></div>
+          <div class="nv-opt"><span class="nv-opt-icon">⚡</span><h3>5 niveles de actividad</h3><p>Del sedentario al muy activo, con su ajuste calórico.</p></div>
+          <div class="nv-opt"><span class="nv-opt-icon">🥗</span><h3>5 dietas</h3><p>Omnívora, vegetariana, vegana, sin gluten y sin lactosa.</p></div>
+          <div class="nv-opt"><span class="nv-opt-icon">💪</span><h3>3 niveles de entrenamiento</h3><p>Principiante, intermedio y avanzado.</p></div>
+          <div class="nv-opt"><span class="nv-opt-icon">📅</span><h3>De 2 a 6 días</h3><p>Rutinas adaptadas a tu semana real.</p></div>
+          <div class="nv-opt"><span class="nv-opt-icon">🔧</span><h3>Macros ajustables</h3><p>Recalcula tu distribución al cambiar de objetivo.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Métricas — datos de la plataforma (fondo oscuro) -->
+    <div class="nv-metrics nv-reveal">
+      <div class="container">
+        <span class="app-text-tag">Los números de NutroVia</span>
+        <h2 class="nv-block-title">Resultados <span class="gold-gradient">en datos</span></h2>
+        <div class="nv-metrics-grid">
+          <div class="nv-metric"><span class="nv-metric-num">2.800+</span><span class="nv-metric-label">usuarios activos</span></div>
+          <div class="nv-metric"><span class="nv-metric-num">12.400+</span><span class="nv-metric-label">planes generados</span></div>
+          <div class="nv-metric"><span class="nv-metric-num">5</span><span class="nv-metric-label">dietas soportadas</span></div>
+          <div class="nv-metric"><span class="nv-metric-num">94%</span><span class="nv-metric-label">tasa de satisfacción</span></div>
+        </div>
+        <p class="nv-metrics-note">Datos provisionales — actualizar cuando haya métricas reales de la plataforma.</p>
+      </div>
+    </div>
+
+    <!-- Panel 6 — Split: tarjeta izquierda · Apple Watch derecha (fondo claro) -->
+    <div class="nv-panel nv-panel--split nv-panel--6 nv-light">
+      <div class="nv-card nv-card--reveal">
+        <span class="nv-card-num">04</span>
+        <h3>Tu plan, en tu muñeca</h3>
+        <p>Calorías y macros del día y recordatorios de entrenamiento, sin sacar el móvil. La constancia, a un golpe de vista.</p>
+      </div>
+      <div class="nv-device nv-device--watch">
+        <div class="nv-device-front">
+          <img src="mockups/apple-watch.svg" alt="Mockup Apple Watch con NutroVia" class="nv-device-img">
+          <div class="nv-screen nv-screen--watch">
+            <div class="nv-view nv-view--active">
+              <div class="wv-label">Hoy</div>
+              <div class="wv-ring">
+                <div class="wv-ring-inner">
+                  <div class="wv-kcal">2.450</div>
+                  <div class="wv-kcal-unit">kcal</div>
+                </div>
+              </div>
+              <div class="wv-macros">
+                <span>P <b>168</b></span>
+                <span>C <b>240</b></span>
+                <span>G <b>72</b></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="nv-device-back">
+          <span class="app-back-logo">NUTROVIA<span>.</span></span>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -364,9 +718,14 @@
         <p>© 2026 NutroVia. Todos los derechos reservados.</p>
         <p>Los planes no sustituyen el consejo médico profesional.</p>
       </div>
+      <div class="footer-wordmark" aria-hidden="true">
+        <span>NUTROVIA</span>
+      </div>
     </div>
   </footer>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="js/main.js"></script>
 </body>
 

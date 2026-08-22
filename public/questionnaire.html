@@ -27,7 +27,7 @@
                 <div class="progress-bar-container">
                     <div class="progress-bar" id="progressBar" style="width:12%"></div>
                 </div>
-                <p class="progress-text" id="progressText">Paso 1 de 7</p>
+                <p class="progress-text" id="progressText">Paso 1 de 8</p>
             </div>
 
             <!-- ═══════ STEP 1: Datos personales ═══════ -->
@@ -297,12 +297,46 @@
                 </div>
             </div>
 
-            <!-- ═══════ STEP 7: Éxito ═══════ -->
+            <!-- ═══════ STEP 7: Pago / Prueba gratuita ═══════ -->
             <div class="quiz-card" id="step-7" style="display:none">
+                <h2>Casi listo 🎉</h2>
+                <p class="subtitle">Guarda tu tarjeta para activar tu plan personalizado.<br><strong>No se te cobrará
+                        nada durante los 30 días de prueba</strong>.</p>
+
+                <div class="pricing-box">
+                    <div class="pricing-label">PLAN NUTROVIA PERSONALIZADO</div>
+                    <div class="pricing-price">60 €<span>/mes</span></div>
+                    <ul class="pricing-list">
+                        <li>✅ Plan de nutrición semanal adaptado a ti</li>
+                        <li>✅ Rutina de entrenamiento según tu nivel</li>
+                        <li>✅ Suplementación personalizada</li>
+                        <li>✅ Dashboard de progreso y consejos</li>
+                    </ul>
+                    <div class="pricing-trial">🎁 30 días de prueba gratuita<br>+ 15 días extra para cancelar sin cargo</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Tarjeta de crédito / débito</label>
+                    <div id="card-element" class="stripe-card"></div>
+                    <div id="card-errors" class="alert alert-error" style="display:none"></div>
+                    <p class="form-hint">🔒 Pago seguro cifrado por Stripe. Guardamos tu método de pago para activar
+                        la prueba, pero <strong>no realizaremos ningún cargo</strong> hasta el día 45 (tras los 30 días
+                        de prueba y la ventana de cancelación).</p>
+                </div>
+                <div id="alert-7" class="alert alert-error" style="display:none"></div>
+                <div class="quiz-nav">
+                    <button class="btn-prev" onclick="goToStep(6)">← Atrás</button>
+                    <button class="btn-next" id="trialBtn" onclick="startTrial()">Empezar prueba gratuita →</button>
+                </div>
+            </div>
+
+            <!-- ═══════ STEP 8: Éxito ═══════ -->
+            <div class="quiz-card" id="step-8" style="display:none">
                 <div class="success-screen">
                     <div class="success-icon">🎉</div>
                     <h2>¡Tu plan está listo!</h2>
-                    <p>Hemos generado tu plan personalizado de nutrición y entrenamiento. Lo acabamos de enviar a tu
+                    <p>Hemos generado tu plan personalizado de nutrición y entrenamiento y tu
+                        <strong>prueba gratuita de 30 días está activa</strong>. Todo lo hemos enviado también a tu
                         email para que puedas consultarlo en cualquier momento.</p>
                     <a href="dashboard.html" class="btn-gold-large">
                         Ir a Mi Panel →

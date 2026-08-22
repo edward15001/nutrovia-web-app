@@ -10,8 +10,14 @@ const formData = {
 };
 
 let currentStep = 1;
-const TOTAL_STEPS = 7;
+const TOTAL_STEPS = 8;
 let authToken = null;
+
+// ═══ Estado del pago (Stripe) ═══════════════════════════════
+let stripe = null;
+let cardElement = null;
+let setupClientSecret = null;
+let paymentInitialized = false;
 
 // ═══ Navegación entre pasos ═══════════════════════════════════
 function goToStep(targetStep) {
@@ -150,11 +156,21 @@ async function registerUser() {
         const data = await res.json();
         if (!res.ok) {
             hideLoading();
+            // Mostrar el error en el paso visible (6, donde está el botón) —
+            // no en un mensaje oculto de otro paso
             const alertEl = document.getElementById('alert-6');
-            if (alertEl) {
-                alertEl.textContent = data.error || (data.errors ? data.errors[0].msg : 'Error al registrar');
-                alertEl.style.display = 'block';
+            const baseMsg = data.error || (data.errors ? data.errors.map(e => e.msg).join(' · ') : 'Error al registrar. Inténtalo de nuevo.');
+            alertEl.textContent = baseMsg;
+            if (res.status === 409) {
+                alertEl.appendChild(document.createTextNode(' '));
+                const loginLink = document.createElement('a');
+                loginLink.href = 'login.html';
+                loginLink.textContent = 'Inicia sesión aquí';
+                loginLink.style.color = 'var(--gold)';
+                loginLink.style.textDecoration = 'underline';
+                alertEl.appendChild(loginLink);
             }
+            alertEl.style.display = 'block';
             return;
         }
         authToken = data.token;
@@ -164,8 +180,9 @@ async function registerUser() {
         // Guardar cuestionario
         await submitQuestionnaire();
 
-        // Ir a la pantalla de éxito directamente
+        // Ir a la pantalla de pago (guardar tarjeta + activar prueba gratuita)
         goToStep(7);
+        initPayment();
     } catch (err) {
         console.error(err);
         const alertEl = document.getElementById('alert-6') || document.getElementById('alert-5');
@@ -209,6 +226,116 @@ async function submitQuestionnaire() {
     } catch (err) {
         console.error('Error enviando cuestionario:', err);
         throw err;
+    }
+}
+
+// ═══ Stripe: guardar tarjeta + activar prueba gratuita ═══════
+async function initPayment() {
+    if (paymentInitialized) return;
+    paymentInitialized = true;
+
+    if (typeof Stripe === 'undefined') {
+        const alertEl = document.getElementById('alert-7');
+        alertEl.textContent = 'No se pudo cargar el sistema de pago seguro. Recarga la página e inténtalo de nuevo.';
+        alertEl.style.display = 'block';
+        return;
+    }
+
+    try {
+        const res = await fetch('/api/subscription/setup-intent', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${authToken}` },
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+            const alertEl = document.getElementById('alert-7');
+            alertEl.textContent = data.error || 'No se pudo preparar el pago. Inténtalo en unos minutos.';
+            alertEl.style.display = 'block';
+            return;
+        }
+
+        setupClientSecret = data.client_secret;
+        stripe = Stripe(data.publishable_key);
+        cardElement = stripe.elements().create('card', {
+            style: {
+                base: {
+                    color: '#e8e0d0',
+                    fontFamily: "'Outfit', sans-serif",
+                    fontSize: '16px',
+                    '::placeholder': { color: '#888880' },
+                },
+                invalid: { color: '#e55b5b' },
+            },
+        });
+        cardElement.mount('#card-element');
+        cardElement.on('change', (e) => {
+            const errEl = document.getElementById('card-errors');
+            if (e.error) {
+                errEl.textContent = e.error.message;
+                errEl.style.display = 'block';
+            } else {
+                errEl.style.display = 'none';
+            }
+        });
+    } catch (err) {
+        console.error('Error iniciando pago:', err);
+        paymentInitialized = false;
+    }
+}
+
+async function startTrial() {
+    const alertEl = document.getElementById('alert-7');
+    const errEl = document.getElementById('card-errors');
+    [alertEl, errEl].forEach(el => { if (el) el.style.display = 'none'; });
+
+    if (!stripe || !cardElement || !setupClientSecret) {
+        alertEl.textContent = 'El formulario de pago aún no está listo. Espera un momento e inténtalo de nuevo.';
+        alertEl.style.display = 'block';
+        return;
+    }
+
+    showLoading('Guardando tu tarjeta de forma segura...');
+    try {
+        const { error, setupIntent } = await stripe.confirmCardSetup(setupClientSecret, {
+            payment_method: {
+                card: cardElement,
+                billing_details: { name: formData.name, email: formData.email },
+            },
+        });
+
+        if (error) {
+            errEl.textContent = error.message;
+            errEl.style.display = 'block';
+            hideLoading();
+            return;
+        }
+
+        const res = await fetch('/api/subscription/start', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`,
+            },
+            body: JSON.stringify({ payment_method_id: setupIntent.payment_method }),
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+            alertEl.textContent = data.error || 'Error al iniciar la prueba gratuita.';
+            alertEl.style.display = 'block';
+            hideLoading();
+            return;
+        }
+
+        // ¡Prueba gratuita activada!
+        goToStep(8);
+    } catch (err) {
+        console.error('Error en startTrial:', err);
+        alertEl.textContent = 'Hubo un error de conexión. Inténtalo de nuevo.';
+        alertEl.style.display = 'block';
+    } finally {
+        hideLoading();
     }
 }
 
