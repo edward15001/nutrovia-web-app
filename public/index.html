@@ -5,13 +5,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description"
-    content="NutroVia — Tu plan de nutrición y entrenamiento personalizado. Ciencia aplicada a tu cuerpo. Empieza gratis 30 días.">
+    content="NutroVia — Tu plan de nutrición y entrenamiento personalizado. Ciencia aplicada a tu cuerpo con el método Harris-Benedict. Empieza gratis 30 días.">
   <title>NutroVia — Nutrición & Entrenamiento Personalizado</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Space+Mono:wght@400;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&family=Space+Mono:wght@400;700&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
   <script>
@@ -21,709 +21,595 @@
 </head>
 
 <body>
-  <!-- ─── NAVBAR ──────────────────────────────────────────── -->
-  <nav class="navbar" id="navbar">
-    <!-- ─── DEMO BANNER ─────────────────────────────────────── -->
-    <div
-      style="background-color: #c94c4c; color: white; text-align: center; padding: 10px 20px; font-weight: 600; font-size: 13px; width: 100%; display: flex; justify-content: center; align-items: center; gap: 8px;">
-      <span>⚠️</span>
-      <span>Esta es una web de demostración. Los servicios de pago no están activos y no se te cobrará nada.</span>
-    </div>
-    <div class="nav-container">
-      <div class="nav-logo">
-        <span class="logo-text">NUTROVIA</span>
-        <span class="logo-dot">.</span>
-      </div>
-      <ul class="nav-links">
-        <li><a href="#nv-concept">El concepto</a></li>
-        <li><a href="#nv-purpose">El propósito</a></li>
-        <li><a href="#nv-closing">Comenzar</a></li>
-      </ul>
-      <div class="nav-actions">
-        <a href="login.html" class="btn-ghost">Iniciar sesión</a>
-        <a href="questionnaire.html" class="btn-gold">Empezar gratis</a>
-      </div>
-      <button class="nav-toggle" id="navToggle" aria-label="Menú">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
-  </nav>
 
-  <!-- ─── HERO ────────────────────────────────────────────── -->
-  <section class="hero" id="hero">
-    <div class="hero-bg"></div>
-    <div class="hero-particles" id="particles"></div>
-    <div class="container hero-content">
-      <div class="hero-badge animate-fade-up">
-        <span class="badge-dot"></span>
-        Plan científico personalizado
-      </div>
-      <h1 class="hero-title animate-fade-up delay-1">
-        Tu mejor versión,<br>
-        <span class="gold-gradient">respaldada por ciencia</span>
-      </h1>
-      <p class="hero-subtitle animate-fade-up delay-2">
-        Recibe un plan de nutrición y entrenamiento completamente adaptado a tu cuerpo,
-        objetivos y estilo de vida. No más planes genéricos.
-      </p>
-      <div class="hero-cta animate-fade-up delay-3">
-        <a href="questionnaire.html" class="btn-gold-large" id="heroCtaBtn">Comenzar</a>
-      </div>
-    </div>
-    <div class="hero-scroll-indicator">
-      <div class="scroll-line"></div>
-      <span>Descubre más</span>
-    </div>
-  </section>
-
-  <!-- ─── NUTROVIA SHOWCASE (paneles split-screen + mockups) ─ -->
-  <section class="nv-showcase" id="nv-showcase">
-    <!-- Secuencia narrativa controlada por scroll -->
-    <div class="nv-sequence">
-      <section class="nv-phone-transition" id="nv-phone-transition" aria-label="Vista de la aplicación NutroVia">
-        <div class="nv-phone-transition__stage">
-          <div class="nv-device nv-sequence-phone" id="nvSequencePhone">
-            <div class="nv-device-front">
-              <img src="mockups/iphone17pro.svg" alt="iPhone con la pantalla de inicio de NutroVia" class="nv-device-img">
-              <div class="nv-screen nv-screen--iphone">
-                <div class="nv-app-view nv-app-view--splash">
-                  <span class="nv-splash-logo">NUTROVIA<span>.</span></span>
-                  <span class="nv-splash-kicker">Tu plan. Tu ritmo.</span>
-                </div>
-                <div class="nv-app-view nv-app-view--dashboard">
-                  <div class="nv-dashboard-head">
-                    <div><span>Buenas tardes,</span><strong>Eduardo</strong></div>
-                    <span class="nv-dashboard-avatar">ED</span>
-                  </div>
-                  <div class="nv-dashboard-plan"><span>PLAN PERSONALIZADO</span><strong>Perder peso</strong><small>Semana 04 · Nivel moderado</small></div>
-                  <div class="nv-dashboard-macros"><div><strong>2.450</strong><small>kcal</small><span>Objetivo diario</span></div><div><strong>168</strong><small>g</small><span>Proteína</span></div><div><strong>4</strong><small>días</small><span>Entrenamiento</span></div></div>
-                  <div class="nv-dashboard-row"><span>Hoy en tu plan</span><b>Ver todo →</b></div>
-                  <div class="nv-dashboard-item"><span class="nv-dashboard-icon">01</span><div><strong>Desayuno</strong><small>Avena, proteína y frutos rojos</small></div><b>612 kcal</b></div>
-                  <div class="nv-dashboard-item"><span class="nv-dashboard-icon">02</span><div><strong>Entrenamiento</strong><small>Full body · 42 min</small></div><b>4 ejercicios</b></div>
-                  <div class="nv-dashboard-tip">Tu plan se adapta contigo.</div>
-                </div>
-              </div>
-              <span class="nv-dynamic-island" aria-hidden="true"></span>
-            </div>
-            <div class="nv-device-back"><span class="app-back-logo">NUTROVIA<span>.</span></span></div>
-          </div>
-          <div class="nv-card nv-transition-card">
-            <span class="nv-card-num">01</span>
-            <h3>Tu día, de un vistazo</h3>
-            <p>Calorías, objetivos y entrenamiento reunidos en un panel claro, calculado para tus números reales.</p>
-            <ul class="nv-card-list"><li>Plan personalizado</li><li>Macros diarios</li><li>Entrenamiento adaptado</li></ul>
-          </div>
-        </div>
-      </section>
-
-      <section class="nv-wipe-panel nv-white-panel" id="nv-concept">
-        <div class="nv-wipe-black" aria-hidden="true"></div>
-        <div class="container nv-white-content">
-          <span class="app-text-tag">El concepto</span>
-          <h2 class="app-text-title">Planes genéricos para cuerpos genéricos.<br><span class="gold-gradient">Hasta ahora.</span></h2>
-          <p class="app-text-sub">NutroVia calcula tu metabolismo con la ecuación Harris-Benedict y construye tu nutrición, entrenamiento y suplementación a partir de tus números reales.</p>
-          <p class="nv-serif-quote">La nutrición no debería ser un misterio.</p>
-          <div class="nv-process-block">
-            <span class="app-text-tag">Cómo se genera tu plan</span>
-            <h2 class="nv-block-title">De tus datos a tu plan, <span class="gold-gradient">en 3 pasos</span></h2>
-            <div class="nv-steps"><div class="nv-step"><span class="nv-step-num">01</span><h3>Tus datos</h3><p>Edad, sexo, peso, altura, objetivo y nivel de actividad.</p></div><div class="nv-step-arrow">→</div><div class="nv-step"><span class="nv-step-num">02</span><h3>Cálculo metabólico</h3><p>Tu metabolismo basal y TDEE calculados con ciencia.</p></div><div class="nv-step-arrow">→</div><div class="nv-step"><span class="nv-step-num">03</span><h3>Tu plan completo</h3><p>Menú semanal, rutina, macros y suplementación.</p></div></div>
-          </div>
-          <div class="nv-bento">
-            <div class="nv-bento-cell nv-bento-cell--large"><span class="nv-bento-label">NUTRICIÓN</span><strong>Come con intención.</strong><p>Menús y macros que encajan con tu objetivo y tu forma de vivir.</p><span class="nv-bento-mark">2.450 <small>kcal / día</small></span></div>
-            <div class="nv-bento-cell"><span class="nv-bento-icon">◎</span><strong>Metabolismo real</strong><p>Tu gasto energético como punto de partida.</p></div>
-            <div class="nv-bento-cell"><span class="nv-bento-icon">↗</span><strong>Progreso visible</strong><p>Entiende cada cambio, semana a semana.</p></div>
-            <div class="nv-bento-cell nv-bento-cell--wide"><span class="nv-bento-label">TU PLAN, SIEMPRE CONTIGO</span><strong>Nutrición. Entrenamiento. Constancia.</strong><p>Todo conectado en una sola experiencia.</p></div>
-          </div>
-        </div>
-      </section>
-
-      <section class="nv-purpose-panel" id="nv-purpose">
-        <div class="nv-purpose-stage">
-          <div class="nv-purpose-card">
-            <span class="nv-card-num">02 · EL PROPÓSITO</span>
-            <h2>No se trata de contar calorías.<br>Se trata de <span class="gold-gradient">entender tu cuerpo</span>.</h2>
-            <p>Cada plan se adapta a tu objetivo, tu actividad y tu dieta. Y se actualiza contigo, mes a mes.</p>
-          </div>
-          <div class="nv-device nv-purpose-phone" id="nvPurposePhone">
-            <div class="nv-device-front"><img src="mockups/iphone17pro.svg" alt="Panel de usuario NutroVia en iPhone" class="nv-device-img"><div class="nv-screen nv-screen--iphone"><div class="nv-app-view nv-app-view--dashboard nv-app-view--visible"><div class="nv-dashboard-head"><div><span>Buenas tardes,</span><strong>Eduardo</strong></div><span class="nv-dashboard-avatar">ED</span></div><div class="nv-dashboard-plan"><span>PLAN PERSONALIZADO</span><strong>Perder peso</strong><small>Semana 04 · Nivel moderado</small></div><div class="nv-dashboard-macros"><div><strong>2.450</strong><small>kcal</small><span>Objetivo diario</span></div><div><strong>168</strong><small>g</small><span>Proteína</span></div><div><strong>4</strong><small>días</small><span>Entrenamiento</span></div></div><div class="nv-dashboard-row"><span>Hoy en tu plan</span><b>Ver todo →</b></div><div class="nv-dashboard-item"><span class="nv-dashboard-icon">01</span><div><strong>Desayuno</strong><small>Avena, proteína y frutos rojos</small></div><b>612 kcal</b></div><div class="nv-dashboard-item"><span class="nv-dashboard-icon">02</span><div><strong>Entrenamiento</strong><small>Full body · 42 min</small></div><b>4 ejercicios</b></div><div class="nv-dashboard-tip">Tu plan se adapta contigo.</div></div></div><span class="nv-dynamic-island" aria-hidden="true"></span></div><div class="nv-device-back"><span class="app-back-logo">NUTROVIA<span>.</span></span></div>
-          </div>
-        </div>
-      </section>
-
-      <section class="nv-wipe-panel nv-closing-panel" id="nv-closing">
-        <div class="nv-wipe-black" aria-hidden="true"></div>
-        <div class="container nv-closing-content"><span class="app-text-tag">El siguiente paso</span><h2 class="app-text-title">Tu cuerpo ya tiene el plan.<br><span class="gold-gradient">Ahora empieza el camino.</span></h2><p class="app-text-sub">Una experiencia diseñada para convertir tus objetivos en hábitos que puedes mantener.</p><a href="questionnaire.html" class="btn-gold-large">Comenzar</a></div>
-      </section>
-
-      <!-- Apple Watch — sección independiente, protagonista -->
-      <section class="nv-watch-section" id="nv-watch-section">
-        <div class="nv-watch-section__inner">
-          <div class="nv-device nv-device--watch nv-device--watch-hero">
-            <div class="nv-device-front">
-              <img src="mockups/apple-watch.svg" alt="Apple Watch con la app de NutroVia" class="nv-device-img">
-              <div class="nv-screen nv-screen--watch">
-                <div class="nv-view nv-view--active">
-                  <div class="wv-label">Hoy</div>
-                  <div class="wv-ring">
-                    <div class="wv-ring-inner">
-                      <div class="wv-kcal">2.450</div>
-                      <div class="wv-kcal-unit">kcal</div>
-                    </div>
-                  </div>
-                  <div class="wv-macros">
-                    <span>P <b>168</b></span>
-                    <span>C <b>240</b></span>
-                    <span>G <b>72</b></span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="nv-device-back">
-              <span class="app-back-logo">NUTROVIA<span>.</span></span>
-            </div>
-          </div>
-          <div class="nv-watch-section__text">
-            <span class="app-text-tag">NutroVia en tu muñeca</span>
-            <h2 class="app-text-title" style="color:#f0e8d8;">Lo esencial,<br><span class="gold-gradient">a un golpe de vista.</span></h2>
-            <p class="app-text-sub" style="color:#a4a096;">Calorías, macros y recordatorios de entrenamiento sin sacar el móvil. La constancia, en tu muñeca.</p>
-          </div>
-        </div>
-      </section>
-    </div>
-
-    <div class="container">
-      <div class="section-header">
-        <span class="section-tag">Tu plan en tu bolsillo</span>
-        <h2 class="section-title">Así es <span class="gold-gradient">NutroVia</span></h2>
-        <p class="section-subtitle">Una app clara y personalizada: nutrición, entrenamiento y suplementación según tus números</p>
-      </div>
-    </div>
-
-    <!-- Panel 1 — Split: iPhone izquierda · tarjeta derecha -->
-    <div class="nv-panel nv-panel--split nv-panel--1">
-      <div class="nv-device nv-device--iphone">
-        <div class="nv-device-front">
-          <img src="mockups/iphone17pro.svg" alt="Mockup iPhone con NutroVia" class="nv-device-img">
-          <div class="nv-screen nv-screen--iphone">
-            <div class="nv-view nv-view--active">
-              <div class="av-topbar">
-                <div>
-                  <div class="av-greet">Buenas tardes,</div>
-                  <div class="av-name">Eduardo</div>
-                </div>
-                <div class="av-avatar">ED</div>
-              </div>
-              <div class="av-status">🎁 PRUEBA GRATUITA · Quedan 12 días</div>
-              <div class="av-macros">
-                <div class="av-macro"><span class="av-macro-val">2.450</span><span class="av-macro-unit">kcal</span><span class="av-macro-label">Calorías</span></div>
-                <div class="av-macro"><span class="av-macro-val">168</span><span class="av-macro-unit">g</span><span class="av-macro-label">Proteína</span></div>
-                <div class="av-macro"><span class="av-macro-val">240</span><span class="av-macro-unit">g</span><span class="av-macro-label">Carbs</span></div>
-                <div class="av-macro"><span class="av-macro-val">72</span><span class="av-macro-unit">g</span><span class="av-macro-label">Grasas</span></div>
-              </div>
-              <div class="av-card">
-                <div class="av-card-label">Distribución de macros</div>
-                <div class="av-bar">
-                  <span class="av-bar-name">💧 Proteína</span><span class="av-bar-val">168g</span>
-                  <div class="av-bar-bg"><div class="av-bar-fill av-bar-protein" style="width:35%"></div></div>
-                </div>
-                <div class="av-bar">
-                  <span class="av-bar-name">⚡ Carbs</span><span class="av-bar-val">240g</span>
-                  <div class="av-bar-bg"><div class="av-bar-fill av-bar-carbs" style="width:50%"></div></div>
-                </div>
-                <div class="av-bar">
-                  <span class="av-bar-name">🥑 Grasas</span><span class="av-bar-val">72g</span>
-                  <div class="av-bar-bg"><div class="av-bar-fill av-bar-fat" style="width:15%"></div></div>
-                </div>
-              </div>
-              <div class="av-card">
-                <div class="av-card-label">Tu perfil</div>
-                <div class="av-profile">
-                  <span>🎯 Objetivo: <b>Perder peso</b></span>
-                  <span>⚡ Actividad: <b>Moderado</b></span>
-                  <span>⚖️ 75 kg · 📏 178 cm · 🎂 28 años</span>
-                </div>
-              </div>
-              <div class="av-card av-tip">💡 <b>Consejo:</b> reparte la proteína en 4-5 comidas para maximizar la síntesis muscular.</div>
-            </div>
-          </div>
-        </div>
-        <div class="nv-device-back">
-          <span class="app-back-logo">NUTROVIA<span>.</span></span>
+  <!-- ─── HEADER / NAVBAR FLOTANTE GLASSMORPHISM AUTO-HIDE ───────── -->
+  <header class="site-header" id="siteHeader">
+    <nav class="navbar navbar--glass" id="navbar">
+      <div class="nav-container">
+        <a href="#hero" class="nav-logo">
+          <img src="/img/logo_nutrovia_negro.png" alt="NutroVia Logo" class="nav-logo-icon">
+          <span class="nav-logo-text">NUTROVIA<span class="logo-dot">.</span></span>
+        </a>
+        <div class="nav-actions" id="navActions">
+          <a href="login.html" class="btn-ghost">Iniciar sesión</a>
+          <a href="questionnaire.html" class="btn-gold">Comenzar</a>
         </div>
       </div>
-      <div class="nv-card nv-card--reveal">
-        <span class="nv-card-num">01</span>
-        <h3>Tu día, de un vistazo</h3>
-        <p>Calorías y macros calculadas para tu metabolismo, con tu perfil y consejos diarios. Todo lo que necesitas saber sobre tu cuerpo, sin interpretar tablas.</p>
-        <ul class="nv-card-list">
-          <li>Calorías y macros diarios</li>
-          <li>Perfil, objetivo y actividad</li>
-          <li>Consejos adaptados a tu día</li>
-        </ul>
-      </div>
-    </div>
+    </nav>
+  </header>
 
-    <!-- Panel 2 — Texto de impacto (fondo claro) -->
-    <div class="app-text-block app-text-block--reveal nv-light">
-      <div class="container">
-        <span class="app-text-tag">El concepto</span>
-        <h2 class="app-text-title">Planes genéricos para cuerpos genéricos.<br><span class="gold-gradient">Hasta ahora.</span></h2>
-        <p class="app-text-sub">NutroVia calcula tu metabolismo con la ecuación Harris-Benedict y construye tu nutrición, entrenamiento y suplementación a partir de tus números reales.</p>
-        <p class="nv-serif-quote">La nutrición no debería ser un misterio.</p>
-      </div>
-    </div>
+  <main>
+    <!-- ─── HERO SECTION ───────────────────────────────────── -->
+    <section class="hero" id="hero">
+      <div class="hero-bg"></div>
+      <div class="hero-particles" id="particles"></div>
 
-    <!-- Proceso — cómo se genera el plan (fondo claro) -->
-    <div class="nv-proceso nv-light nv-reveal">
-      <div class="container">
-        <span class="app-text-tag">Cómo se genera tu plan</span>
-        <h2 class="nv-block-title">De tus datos a tu plan, <span class="gold-gradient">en 3 pasos</span></h2>
-        <div class="nv-steps">
-          <div class="nv-step">
-            <span class="nv-step-num">01</span>
-            <h3>Tus datos</h3>
-            <p>Edad, sexo, peso, altura, objetivo y nivel de actividad. Un cuestionario de menos de 5 minutos.</p>
-          </div>
-          <div class="nv-step-arrow">→</div>
-          <div class="nv-step">
-            <span class="nv-step-num">02</span>
-            <h3>Cálculo metabólico</h3>
-            <p>La ecuación Harris-Benedict calcula tu metabolismo basal y tu gasto energético total (TDEE).</p>
-          </div>
-          <div class="nv-step-arrow">→</div>
-          <div class="nv-step">
-            <span class="nv-step-num">03</span>
-            <h3>Tu plan completo</h3>
-            <p>Menú semanal, rutina, macros y suplementación. Todo personalizado y listo en segundos.</p>
-          </div>
-        </div>
+      <!-- FOTO DE STOCK: Fondo completo de sección con máscara de gradiente oscuro -->
+      <div class="nv-lifestyle-bg nv-lifestyle-bg--hero" aria-hidden="true">
+        <img src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=1600&auto=format&fit=crop" alt="Atleta entrenando" class="nv-lifestyle-fullimg" loading="eager">
+        <div class="nv-lifestyle-gradient-mask"></div>
       </div>
-    </div>
 
-    <!-- Paneles 3+4 — Split invertido con rotación 360° entre ellos -->
-    <section class="nv-pin" id="nvPin">
-      <div class="nv-pin-stage" id="nvPinStage">
-        <div class="nv-card nv-pin-card nv-pin-card--3">
-          <span class="nv-card-num">02</span>
-          <h3>Menú semanal, calculado</h3>
-          <p>Desayuno, comida y cena con sus calorías y macros. Adaptado a tu dieta (omnívora, vegana, sin gluten...) y a tu semana.</p>
+      <div class="container hero-content">
+        <div class="hero-badge animate-fade-up">
+          <span class="badge-dot"></span>
+          Plan científico personalizado
         </div>
-        <div class="nv-device nv-device--iphone nv-pin-phone" id="nvPinPhone">
-          <div class="nv-device-front">
-            <img src="mockups/iphone17pro.svg" alt="Mockup iPhone con NutroVia" class="nv-device-img">
-            <div class="nv-screen nv-screen--iphone">
-              <div class="nv-view nv-view--active">
-                <div class="av-topbar">
-                  <div>
-                    <div class="av-greet">Mi nutrición</div>
-                    <div class="av-name">Lunes · 2.450 kcal</div>
-                  </div>
-                </div>
-                <div class="av-days">
-                  <span class="av-day av-day--on">L</span><span class="av-day">M</span><span class="av-day">X</span><span class="av-day">J</span><span class="av-day">V</span><span class="av-day">S</span><span class="av-day">D</span>
-                </div>
-                <div class="av-meal">
-                  <div class="av-meal-name">🌅 Desayuno</div>
-                  <div class="av-meal-detail"><b>Avena con proteína y frutos rojos</b><span>612 kcal · Avena · Whey · Arándanos</span></div>
-                </div>
-                <div class="av-meal">
-                  <div class="av-meal-name">🍽️ Comida</div>
-                  <div class="av-meal-detail"><b>Pollo con arroz y verduras</b><span>857 kcal · Pollo · Arroz · Brócoli</span></div>
-                </div>
-                <div class="av-meal">
-                  <div class="av-meal-name">🍎 Merienda</div>
-                  <div class="av-meal-detail"><b>Yogur griego con nueces</b><span>231 kcal · Yogur · Nueces · Miel</span></div>
-                </div>
-                <div class="av-meal">
-                  <div class="av-meal-name">🌙 Cena</div>
-                  <div class="av-meal-detail"><b>Salmón con patata y espárragos</b><span>490 kcal · Salmón · Patata · Espárragos</span></div>
-                </div>
-              </div>
-              <div class="nv-view">
-                <div class="av-topbar">
-                  <div>
-                    <div class="av-greet">Mi entrenamiento</div>
-                    <div class="av-name">Perder peso · Nivel intermedio</div>
-                  </div>
-                  <div class="av-daysbadge"><span>Días</span><b>4</b></div>
-                </div>
-                <div class="av-session">
-                  <div class="av-session-day">LUNES<span>Full Body</span></div>
-                  <div class="av-ex-tags"><span class="av-tag">Sentadillas 4×12</span><span class="av-tag">Press banca 4×10</span><span class="av-tag">Remo 4×12</span><span class="av-tag">Plancha 3×45s</span></div>
-                </div>
-                <div class="av-session">
-                  <div class="av-session-day">MIÉRCOLES<span>HIIT</span></div>
-                  <div class="av-ex-tags"><span class="av-tag">Burpees 5×15</span><span class="av-tag">Sprint 8×30s</span><span class="av-tag">Mountain climbers 4×40s</span></div>
-                </div>
-                <div class="av-session">
-                  <div class="av-session-day">VIERNES<span>Fuerza</span></div>
-                  <div class="av-ex-tags"><span class="av-tag">Peso muerto 4×8</span><span class="av-tag">Press militar 4×10</span><span class="av-tag">Dominadas 4×8</span></div>
-                </div>
-                <div class="av-card av-tip">📌 Descansa 60-90s entre series y prioriza la técnica sobre el peso.</div>
-              </div>
-            </div>
-          </div>
-          <div class="nv-device-back">
-            <span class="app-back-logo">NUTROVIA<span>.</span></span>
-          </div>
-        </div>
-        <div class="nv-card nv-pin-card nv-pin-card--4">
-          <span class="nv-card-num">03</span>
-          <h3>Rutinas a tu nivel</h3>
-          <p>Series, repeticiones y técnica según tu experiencia y tus días disponibles. De principiante a avanzado, con descansos incluidos.</p>
+        <h1 class="hero-title hero-title--refined animate-fade-up delay-1">
+          Tu mejor versión,<br>
+          <span class="hero-serif-accent">respaldada por la ciencia</span>
+        </h1>
+        <p class="hero-subtitle animate-fade-up delay-2">
+          Recibe un plan de nutrición y entrenamiento completamente adaptado a <span class="hero-sub-accent">ti.</span>
+        </p>
+        <div class="hero-cta animate-fade-up delay-3">
+          <a href="questionnaire.html" class="btn-gold-large" id="heroCtaBtn">
+            <span class="btn-shine"></span>
+            Comenzar
+          </a>
         </div>
       </div>
     </section>
 
+    <!-- ─── SECUENCIA NARRATIVA ESTILO FUTURE.CO ───────────── -->
+    <div class="nv-narrative-container">
 
-    <!-- Panel 4 — Texto de impacto (fondo claro) -->
-    <div class="app-text-block app-text-block--reveal nv-light">
-      <div class="container">
-        <span class="app-text-tag">El propósito</span>
-        <h2 class="app-text-title">No se trata de contar calorías.<br>Se trata de <span class="gold-gradient">entender tu cuerpo</span>.</h2>
-        <p class="app-text-sub">Cada plan se adapta a tu objetivo, tu actividad, tu dieta y tus condiciones de salud. Y se actualiza contigo, mes a mes.</p>
-        <p class="nv-serif-quote">Tu cuerpo cambia. Tu plan también.</p>
-      </div>
-    </div>
+      <!-- ESCENA 1: Dark Pinned Stage — iPhone Mockup Reveal (FONDO NEGRO LISO) -->
+      <section class="nv-pinned-section nv-phone-scene" id="nv-phone-transition" aria-label="Experiencia NutroVia en iPhone">
+        
+        <div class="nv-phone-stage" id="nvPhoneStage">
+          
+          <!-- Mockup Ilustrado SVG iPhone 17 Pro con Pantalla HTML/CSS Nítida -->
+          <div class="nv-device-wrapper" id="nvSequencePhone">
+            <img src="mockups/iphone17pro.svg" alt="NutroVia en iPhone" class="nv-device-frame">
+            <div class="nv-screen nv-screen--iphone">
+              
+              <!-- Vista 1: Pantalla de Carga/Bienvenida con el Logo de Nutrovia centrado -->
+              <div class="nv-app-view nv-app-view--splash nv-app-view--visible" id="nvPhoneSplash">
+                <div class="splash-welcome-box">
+                  <img src="/img/logo_nutrovia_negro.png" alt="NutroVia Logo" class="splash-logo-img">
+                  <span class="splash-brand-title">NUTROVIA<span class="logo-dot">.</span></span>
+                  <div class="splash-pulse"></div>
+                </div>
+                <div class="splash-glow-aura"></div>
+              </div>
 
-    <!-- Opciones — personalización de la plataforma (fondo claro) -->
-    <div class="nv-opciones nv-light nv-reveal">
-      <div class="container">
-        <span class="app-text-tag">Elige cómo adaptarlo</span>
-        <h2 class="nv-block-title">Un plan que se ajusta a <span class="gold-gradient">cómo vives</span></h2>
-        <div class="nv-opts-grid">
-          <div class="nv-opt"><span class="nv-opt-icon">🎯</span><h3>4 objetivos</h3><p>Perder peso, ganar masa, mantener o mejorar tu salud.</p></div>
-          <div class="nv-opt"><span class="nv-opt-icon">⚡</span><h3>5 niveles de actividad</h3><p>Del sedentario al muy activo, con su ajuste calórico.</p></div>
-          <div class="nv-opt"><span class="nv-opt-icon">🥗</span><h3>5 dietas</h3><p>Omnívora, vegetariana, vegana, sin gluten y sin lactosa.</p></div>
-          <div class="nv-opt"><span class="nv-opt-icon">💪</span><h3>3 niveles de entrenamiento</h3><p>Principiante, intermedio y avanzado.</p></div>
-          <div class="nv-opt"><span class="nv-opt-icon">📅</span><h3>De 2 a 6 días</h3><p>Rutinas adaptadas a tu semana real.</p></div>
-          <div class="nv-opt"><span class="nv-opt-icon">🔧</span><h3>Macros ajustables</h3><p>Recalcula tu distribución al cambiar de objetivo.</p></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Métricas — datos de la plataforma (fondo oscuro) -->
-    <div class="nv-metrics nv-reveal">
-      <div class="container">
-        <span class="app-text-tag">Los números de NutroVia</span>
-        <h2 class="nv-block-title">Resultados <span class="gold-gradient">en datos</span></h2>
-        <div class="nv-metrics-grid">
-          <div class="nv-metric"><span class="nv-metric-num">2.800+</span><span class="nv-metric-label">usuarios activos</span></div>
-          <div class="nv-metric"><span class="nv-metric-num">12.400+</span><span class="nv-metric-label">planes generados</span></div>
-          <div class="nv-metric"><span class="nv-metric-num">5</span><span class="nv-metric-label">dietas soportadas</span></div>
-          <div class="nv-metric"><span class="nv-metric-num">94%</span><span class="nv-metric-label">tasa de satisfacción</span></div>
-        </div>
-        <p class="nv-metrics-note">Datos provisionales — actualizar cuando haya métricas reales de la plataforma.</p>
-      </div>
-    </div>
-
-    <!-- Panel 6 — Split: tarjeta izquierda · Apple Watch derecha (fondo claro) -->
-    <div class="nv-panel nv-panel--split nv-panel--6 nv-light">
-      <div class="nv-card nv-card--reveal">
-        <span class="nv-card-num">04</span>
-        <h3>Tu plan, en tu muñeca</h3>
-        <p>Calorías y macros del día y recordatorios de entrenamiento, sin sacar el móvil. La constancia, a un golpe de vista.</p>
-      </div>
-      <div class="nv-device nv-device--watch">
-        <div class="nv-device-front">
-          <img src="mockups/apple-watch.svg" alt="Mockup Apple Watch con NutroVia" class="nv-device-img">
-          <div class="nv-screen nv-screen--watch">
-            <div class="nv-view nv-view--active">
-              <div class="wv-label">Hoy</div>
-              <div class="wv-ring">
-                <div class="wv-ring-inner">
-                  <div class="wv-kcal">2.450</div>
-                  <div class="wv-kcal-unit">kcal</div>
+              <!-- Vista 2: Dashboard Interactivo Completo -->
+              <div class="nv-app-view nv-app-view--dashboard" id="nvPhoneDash">
+                <div class="nv-dash-header">
+                  <div>
+                    <span class="nv-dash-greeting">Buenas tardes,</span>
+                    <strong class="nv-dash-username">Eduardo</strong>
+                  </div>
+                  <span class="nv-dash-avatar">ED</span>
+                </div>
+                <div class="nv-dash-plan-badge">
+                  <span class="plan-label">PLAN PERSONALIZADO</span>
+                  <span class="plan-name">Perder peso</span>
+                  <span class="plan-meta">Semana 04 · Nivel moderado</span>
+                </div>
+                <div class="nv-dash-macros-grid">
+                  <div class="macro-cell">
+                    <strong>2.450</strong>
+                    <small>kcal</small>
+                    <span>Objetivo</span>
+                  </div>
+                  <div class="macro-cell">
+                    <strong>168</strong>
+                    <small>g</small>
+                    <span>Proteína</span>
+                  </div>
+                  <div class="macro-cell">
+                    <strong>4</strong>
+                    <small>días</small>
+                    <span>Entreno</span>
+                  </div>
+                </div>
+                <div class="nv-dash-section-title">
+                  <span>Hoy en tu plan</span>
+                  <a href="#nv-concept" style="color:var(--gold);font-size:9px;text-decoration:none;">Ver todo →</a>
+                </div>
+                <div class="nv-dash-item">
+                  <span class="nv-dash-item-icon">01</span>
+                  <div class="nv-dash-item-info">
+                    <strong>Desayuno</strong>
+                    <small>Avena, proteína y frutos rojos</small>
+                  </div>
+                  <b style="font-size:10px;color:var(--gold);">612 kcal</b>
+                </div>
+                <div class="nv-dash-item">
+                  <span class="nv-dash-item-icon">02</span>
+                  <div class="nv-dash-item-info">
+                    <strong>Entrenamiento</strong>
+                    <small>Full body · 42 min</small>
+                  </div>
+                  <b style="font-size:10px;color:var(--text-muted);">4 ejercicios</b>
                 </div>
               </div>
-              <div class="wv-macros">
-                <span>P <b>168</b></span>
-                <span>C <b>240</b></span>
-                <span>G <b>72</b></span>
+
+            </div>
+          </div>
+
+          <!-- Tarjeta Narrativa 01: Fija en el lateral derecho al hacer scroll -->
+          <div class="nv-card nv-card--intro" id="nvCardIntro">
+            <span class="nv-card-num">01 · TU DÍA, DE UN VISTAZO</span>
+            <h3 class="nv-card-title">Calorías, macros y entreno en un solo lugar</h3>
+            <p class="nv-card-desc">
+              Un panel claro y conciso calculado para tus números reales. Sin interpretar tablas complejas ni contar calorías a ciegas.
+            </p>
+            <ul class="nv-card-checklist">
+              <li><span class="check-icon">✓</span> Plan de nutrición 100% individualizado</li>
+              <li><span class="check-icon">✓</span> Distribución de macronutrientes exactos</li>
+              <li><span class="check-icon">✓</span> Rutinas adaptadas a tus días disponibles</li>
+            </ul>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- CAPA CREMA 1: El Concepto + Cómo se genera tu plan + Bento Grid (FONDO CLARO LISO) -->
+      <section class="nv-layer-card nv-layer-cream" id="nv-concept" aria-label="El concepto NutroVia">
+        <div class="container nv-cream-content">
+          
+          <div class="nv-header-block">
+            <span class="nv-tag-pill">El concepto</span>
+            <h2 class="nv-editorial-title">
+              Planes genéricos para cuerpos genéricos.<br>
+              <span class="nv-title-accent">Hasta ahora.</span>
+            </h2>
+            <p class="nv-editorial-sub">
+              NutroVia calcula tu metabolismo basal y tu gasto energético diario mediante la ecuación científica Harris-Benedict, estructurando tu nutrición, entrenamiento y suplementación a partir de tu biología real.
+            </p>
+            <p class="nv-serif-quote">«La nutrición no debería ser un misterio.»</p>
+          </div>
+
+          <!-- Proceso en 3 pasos -->
+          <div class="nv-process-wrapper">
+            <span class="nv-tag-pill">Cómo se genera tu plan</span>
+            <h3 class="nv-process-title">De tus datos a tu plan completo, <span class="nv-title-accent">en 3 pasos</span></h3>
+            
+            <div class="nv-steps-row">
+              <div class="nv-step-box">
+                <span class="step-badge">01</span>
+                <h4>Tus datos</h4>
+                <p>Edad, sexo biológico, peso, altura, objetivo y nivel de actividad real.</p>
+              </div>
+              <div class="step-arrow-divider">→</div>
+              <div class="nv-step-box">
+                <span class="step-badge">02</span>
+                <h4>Cálculo metabólico</h4>
+                <p>Tu tasa metabólica basal y TDEE calculados con precisión científica.</p>
+              </div>
+              <div class="step-arrow-divider">→</div>
+              <div class="nv-step-box">
+                <span class="step-badge">03</span>
+                <h4>Tu plan completo</h4>
+                <p>Menú semanal de 7 días, rutina deportiva, macros y suplementación.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bento Grid visual limpio, simétrico y perfectamente cuadrado -->
+          <div class="nv-bento-grid">
+            <!-- Tarjeta 1 (Columna 1, span 2 filas) -->
+            <div class="bento-card bento-card--featured">
+              <div class="bento-top">
+                <span class="bento-label">NUTRICIÓN CON INTENCIÓN</span>
+                <h3>Come con propósito.</h3>
+                <p>Menús calculados que encajan con tu objetivo, tus horarios y tu tipo de dieta.</p>
+              </div>
+              <div class="bento-metric">
+                <span class="metric-num">2.450</span>
+                <span class="metric-unit">kcal / día</span>
+              </div>
+            </div>
+
+            <!-- Tarjeta 2 (Columna 2, Fila 1) -->
+            <div class="bento-card">
+              <div class="bento-icon">🥗</div>
+              <span class="bento-label">ALIMENTACIÓN REAL</span>
+              <h4>Comidas que disfrutas</h4>
+              <p>Recetas balanceadas y variadas sin pasar hambre ni renunciar al sabor.</p>
+            </div>
+
+            <!-- Tarjeta 3 (Columna 3, Fila 1) -->
+            <div class="bento-card">
+              <div class="bento-icon">◎</div>
+              <span class="bento-label">CIENCIA METABÓLICA</span>
+              <h4>Metabolismo Real</h4>
+              <p>Tu gasto energético TDEE calculado con precisión como base no negociable.</p>
+            </div>
+
+            <!-- Tarjeta 4 (Columna 2, Fila 2) -->
+            <div class="bento-card">
+              <div class="bento-icon">↗</div>
+              <span class="bento-label">SEGUIMIENTO CLARO</span>
+              <h4>Progreso Visible</h4>
+              <p>Entiende cada ajuste calórico y la evolución semanal de tu composición corporal.</p>
+            </div>
+
+            <!-- Tarjeta 5 (Columna 3, Fila 2) -->
+            <div class="bento-card">
+              <div class="bento-icon">⚡</div>
+              <span class="bento-label">ENTRENAMIENTO GUIADO</span>
+              <h4>Rutinas a tu Medida</h4>
+              <p>Sesiones estructuradas con series y pausas ajustadas a tus días disponibles.</p>
+            </div>
+
+            <!-- Tarjeta 6 (Fila 3, Ancho Completo 3 columnas) -->
+            <div class="bento-card bento-card--full">
+              <div class="bento-top">
+                <span class="bento-label">ECOSISTEMA COMPLETO</span>
+                <h4>Nutrición. Entrenamiento. Constancia.</h4>
+                <p>Todo sincronizado en una sola experiencia digital intuitiva para cualquier estilo de vida.</p>
+              </div>
+              <div class="bento-tags">
+                <span class="b-tag">Sin gluten</span>
+                <span class="b-tag">Vegano</span>
+                <span class="b-tag">Vegetariano</span>
+                <span class="b-tag">Omnívoro</span>
+                <span class="b-tag">Sin lactosa</span>
+                <span class="b-tag">Keto / Low-Carb</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ─── MINI CARRUSEL HORIZONTAL CONTINUO ESTILO FUTURE.CO (ASIMÉTRICO & WEBP) ─── -->
+      <section class="nv-marquee-section" aria-label="Galería NutroVia en acción">
+        <div class="nv-marquee-header container">
+          <span class="nv-tag-pill">NutroVia en el mundo real</span>
+          <h2 class="nv-marquee-title">Constancia que se adapta a <span class="nv-title-accent">tu ritmo de vida</span></h2>
+        </div>
+
+        <div class="nv-marquee-track-wrapper">
+          <div class="nv-marquee-track">
+            <!-- Bloque 1 de tarjetas con anchos asimétricos -->
+            <div class="nv-marquee-card nv-marquee-card--wide">
+              <img src="/img/img1.webp" alt="Entrenamiento personalizado" class="marquee-card-img" loading="lazy" decoding="async">
+              <div class="marquee-card-overlay"></div>
+              <div class="marquee-card-content">
+                <span class="marquee-tag">ENTRENAMIENTO</span>
+                <h4>Nunca entrenas solo</h4>
+                <p>Progresión calculada semana a semana.</p>
+              </div>
+            </div>
+
+            <div class="nv-marquee-card nv-marquee-card--narrow">
+              <img src="/img/img2.webp" alt="Nutrición real y flexible" class="marquee-card-img" loading="lazy" decoding="async">
+              <div class="marquee-card-overlay"></div>
+              <div class="marquee-card-content">
+                <span class="marquee-tag">FLEXIBILIDAD</span>
+                <h4>Diseñado para la vida real</h4>
+                <p>Ajusta días y horarios sin penalizaciones.</p>
+              </div>
+            </div>
+
+            <div class="nv-marquee-card nv-marquee-card--medium">
+              <img src="/img/img3.webp" alt="Progreso en vivo" class="marquee-card-img" loading="lazy" decoding="async">
+              <div class="marquee-card-overlay"></div>
+              <div class="marquee-card-content">
+                <span class="marquee-tag">SEGUIMIENTO</span>
+                <h4>Progreso que perdura</h4>
+                <p>Métricas precisas en tu móvil y muñeca.</p>
+              </div>
+            </div>
+
+            <div class="nv-marquee-card nv-marquee-card--standard">
+              <img src="/img/img4.webp" alt="Ejecución y técnica" class="marquee-card-img" loading="lazy" decoding="async">
+              <div class="marquee-card-overlay"></div>
+              <div class="marquee-card-content">
+                <span class="marquee-tag">TÉCNICA</span>
+                <h4>Entrena con confianza</h4>
+                <p>Series, pausas y ejercicios estructurados.</p>
+              </div>
+            </div>
+
+            <div class="nv-marquee-card nv-marquee-card--wide">
+              <img src="/img/img5.webp" alt="Ciencia metabólica" class="marquee-card-img" loading="lazy" decoding="async">
+              <div class="marquee-card-overlay"></div>
+              <div class="marquee-card-content">
+                <span class="marquee-tag">CIENCIA</span>
+                <h4>Creado por algoritmos reales</h4>
+                <p>Harris-Benedict y gasto TDEE exacto.</p>
+              </div>
+            </div>
+
+            <div class="nv-marquee-card nv-marquee-card--narrow">
+              <img src="/img/img6.webp" alt="Resultados sostenibles" class="marquee-card-img" loading="lazy" decoding="async">
+              <div class="marquee-card-overlay"></div>
+              <div class="marquee-card-content">
+                <span class="marquee-tag">RESULTADOS</span>
+                <h4>Hábitos de por vida</h4>
+                <p>Transformación física sin dietas milagro.</p>
+              </div>
+            </div>
+
+            <!-- Duplicado para loop continuo infinito sin saltos con mismos anchos asimétricos -->
+            <div class="nv-marquee-card nv-marquee-card--wide" aria-hidden="true">
+              <img src="/img/img1.webp" alt="" class="marquee-card-img" loading="lazy" decoding="async">
+              <div class="marquee-card-overlay"></div>
+              <div class="marquee-card-content">
+                <span class="marquee-tag">ENTRENAMIENTO</span>
+                <h4>Nunca entrenas solo</h4>
+                <p>Progresión calculada semana a semana.</p>
+              </div>
+            </div>
+
+            <div class="nv-marquee-card nv-marquee-card--narrow" aria-hidden="true">
+              <img src="/img/img2.webp" alt="" class="marquee-card-img" loading="lazy" decoding="async">
+              <div class="marquee-card-overlay"></div>
+              <div class="marquee-card-content">
+                <span class="marquee-tag">FLEXIBILIDAD</span>
+                <h4>Diseñado para la vida real</h4>
+                <p>Ajusta días y horarios sin penalizaciones.</p>
+              </div>
+            </div>
+
+            <div class="nv-marquee-card nv-marquee-card--medium" aria-hidden="true">
+              <img src="/img/img3.webp" alt="" class="marquee-card-img" loading="lazy" decoding="async">
+              <div class="marquee-card-overlay"></div>
+              <div class="marquee-card-content">
+                <span class="marquee-tag">SEGUIMIENTO</span>
+                <h4>Progreso que perdura</h4>
+                <p>Métricas precisas en tu móvil y muñeca.</p>
+              </div>
+            </div>
+
+            <div class="nv-marquee-card nv-marquee-card--standard" aria-hidden="true">
+              <img src="/img/img4.webp" alt="" class="marquee-card-img" loading="lazy" decoding="async">
+              <div class="marquee-card-overlay"></div>
+              <div class="marquee-card-content">
+                <span class="marquee-tag">TÉCNICA</span>
+                <h4>Entrena con confianza</h4>
+                <p>Series, pausas y ejercicios estructurados.</p>
+              </div>
+            </div>
+
+            <div class="nv-marquee-card nv-marquee-card--wide" aria-hidden="true">
+              <img src="/img/img5.webp" alt="" class="marquee-card-img" loading="lazy" decoding="async">
+              <div class="marquee-card-overlay"></div>
+              <div class="marquee-card-content">
+                <span class="marquee-tag">CIENCIA</span>
+                <h4>Creado por algoritmos reales</h4>
+                <p>Harris-Benedict y gasto TDEE exacto.</p>
+              </div>
+            </div>
+
+            <div class="nv-marquee-card nv-marquee-card--narrow" aria-hidden="true">
+              <img src="/img/img6.webp" alt="" class="marquee-card-img" loading="lazy" decoding="async">
+              <div class="marquee-card-overlay"></div>
+              <div class="marquee-card-content">
+                <span class="marquee-tag">RESULTADOS</span>
+                <h4>Hábitos de por vida</h4>
+                <p>Transformación física sin dietas milagro.</p>
               </div>
             </div>
           </div>
         </div>
-        <div class="nv-device-back">
-          <span class="app-back-logo">NUTROVIA<span>.</span></span>
-        </div>
-      </div>
-    </div>
-  </section>
+      </section>
 
-  <!-- ─── QUÉ INCLUYE ──────────────────────────────────────── -->
-  <section class="section" id="que-incluye">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-tag">Tu plan incluye</span>
-        <h2 class="section-title">Todo lo que necesitas para transformarte</h2>
-        <p class="section-subtitle">Un ecosistema completo diseñado para maximizar tus resultados</p>
-      </div>
-      <div class="features-grid">
-        <div class="feature-card">
-          <div class="feature-icon">🥗</div>
-          <h3>Plan Nutricional Semanal</h3>
-          <p>Menú de 7 días con desayuno, almuerzo, comida, merienda y cena. Calorías y macros calculados con precisión
-            científica para tu metabolismo.</p>
+      <!-- ESCENA 2: Dark Pinned Stage — El Propósito & Adaptabilidad -->
+      <section class="nv-pinned-section nv-purpose-scene" id="nv-purpose" aria-label="El propósito de NutroVia">
+        <!-- FOTO DE STOCK: Fondo completo de sección -->
+        <div class="nv-lifestyle-bg nv-lifestyle-bg--purpose" aria-hidden="true">
+          <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1600&auto=format&fit=crop" alt="Constancia y entrenamiento" class="nv-lifestyle-fullimg" loading="lazy">
+          <div class="nv-lifestyle-gradient-mask"></div>
         </div>
-        <div class="feature-card featured">
-          <div class="feature-icon">💪</div>
-          <h3>Rutina de Entrenamiento</h3>
-          <p>Plan de ejercicio adaptado a tu nivel (principiante, intermedio o avanzado) con series, repeticiones y
-            técnica detallada.</p>
-          <div class="featured-badge">Más popular</div>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">📊</div>
-          <h3>Macros Personalizados</h3>
-          <p>Distribución de proteínas, carbohidratos y grasas calculada con la ecuación Harris-Benedict adaptada a tu
-            nivel de actividad.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">💊</div>
-          <h3>Guía de Suplementación</h3>
-          <p>Recomendaciones específicas de suplementos basadas en tu objetivo, dieta y condiciones de salud. Sin
-            productos genéricos.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">🌿</div>
-          <h3>Adaptado a tu Dieta</h3>
-          <p>Compatible con dietas omnívora, vegetariana, vegana, sin gluten o sin lactosa. Tu plan se adapta a lo que
-            comes.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">❤️</div>
-          <h3>Salud Integral</h3>
-          <p>Consideramos condiciones como diabetes, hipertensión o celiaquía para ofrecerte un plan completamente
-            seguro y eficaz.</p>
-        </div>
-      </div>
-    </div>
-  </section>
 
-  <!-- ─── CÓMO FUNCIONA ────────────────────────────────────── -->
-  <section class="section section-dark" id="como-funciona">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-tag">Proceso</span>
-        <h2 class="section-title">En 3 pasos, tu plan está listo</h2>
-      </div>
-      <div class="steps-container">
-        <div class="step">
-          <div class="step-number">01</div>
-          <div class="step-content">
-            <h3>Completa el cuestionario</h3>
-            <p>Cuéntanos sobre ti: tus métricas, objetivo, nivel de actividad y preferencias alimenticias. Tarda menos
-              de 5 minutos.</p>
+        <div class="nv-purpose-stage">
+          <div class="nv-purpose-card">
+            <span class="nv-card-num">02 · EL PROPÓSITO</span>
+            <h2 class="nv-purpose-title">
+              No se trata de contar calorías.<br>
+              Se trata de <span class="gold-gradient">entender tu cuerpo</span>.
+            </h2>
+            <p class="nv-purpose-desc">
+              Cada plan se adapta a tu objetivo, tu actividad física y tus intolerancias. Y lo más importante: evoluciona contigo, mes a mes.
+            </p>
+            <div class="nv-purpose-features">
+              <div class="p-feat">
+                <span class="p-feat-icon">🎯</span>
+                <div>
+                  <strong>Objetivos ajustables</strong>
+                  <small>Déficit, superávit o mantenimiento cuando tú lo decidas.</small>
+                </div>
+              </div>
+              <div class="p-feat">
+                <span class="p-feat-icon">🔄</span>
+                <div>
+                  <strong>Recálculo continuo</strong>
+                  <small>Ajuste de macronutrientes según cambie tu peso y fuerza.</small>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="step-connector"></div>
-        <div class="step">
-          <div class="step-number">02</div>
-          <div class="step-content">
-            <h3>Recibe tu plan personalizado</h3>
-            <p>Nuestro motor de inteligencia nutricional genera al instante tu menú semanal y rutina de entrenamiento
-              adaptados a ti.</p>
-          </div>
-        </div>
-        <div class="step-connector"></div>
-        <div class="step">
-          <div class="step-number">03</div>
-          <div class="step-content">
-            <h3>30 días gratis, sin riesgos</h3>
-            <p>Empieza con total libertad. Si en 45 días no es para ti, cancelas sin coste. Solo si decides continuar,
-              se activa la mensualidad de 60 €.</p>
-          </div>
-        </div>
-      </div>
-      <div class="pricing-card">
-        <div class="pricing-trial">
-          <span class="trial-badge">Prueba gratuita</span>
-          <h3>30 días <span class="gold">sin coste</span></h3>
-          <p>14 días adicionales para cancelar sin cargo</p>
-        </div>
-        <div class="pricing-divider"></div>
-        <div class="pricing-main">
-          <p class="price-label">Después, solo</p>
-          <div class="price">
-            <span class="price-amount">60</span>
-            <span class="price-currency">€</span>
-            <span class="price-period">/mes</span>
-          </div>
-          <ul class="price-features">
-            <li>✓ Plan actualizable cada mes</li>
-            <li>✓ Cancela en cualquier momento</li>
-            <li>✓ Soporte personalizado</li>
-          </ul>
-        </div>
-        <div class="pricing-cta">
-          <a href="questionnaire.html" class="btn-gold-large">Empezar los 30 días gratis</a>
-        </div>
-      </div>
-    </div>
-  </section>
 
-  <!-- ─── TESTIMONIOS ──────────────────────────────────────── -->
-  <section class="section" id="testimonios">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-tag">Testimonios</span>
-        <h2 class="section-title">Lo que dicen nuestros usuarios</h2>
-      </div>
-      <div class="testimonials-grid">
-        <div class="testimonial-card">
-          <div class="stars">★★★★★</div>
-          <p>"Llevaba años sin saber cómo comer bien para mis entrenos. NutroVia me dio un plan claro y adaptado a mi
-            celiaquía. En 2 meses bajé 7 kilos sin pasarla mal."</p>
-          <div class="testimonial-author">
-            <div class="author-avatar">MG</div>
-            <div>
-              <strong>María G.</strong>
-              <span>Objetivo: perder peso · 2 meses</span>
+          <div class="nv-purpose-device" id="nvPurposePhone">
+            <div class="nv-device-wrapper">
+              <img src="mockups/iphone17pro.svg" alt="NutroVia en iPhone" class="nv-device-frame">
+              <div class="nv-screen nv-screen--iphone">
+                <div class="nv-app-view nv-app-view--dashboard nv-app-view--visible">
+                  <div class="nv-dash-header">
+                    <div>
+                      <span class="nv-dash-greeting">Mi nutrición</span>
+                      <strong class="nv-dash-username">Lunes · 2.450 kcal</strong>
+                    </div>
+                    <span class="nv-dash-avatar">ED</span>
+                  </div>
+                  <div class="nv-dash-days-row">
+                    <span class="day-chip active">L</span>
+                    <span class="day-chip">M</span>
+                    <span class="day-chip">X</span>
+                    <span class="day-chip">J</span>
+                    <span class="day-chip">V</span>
+                    <span class="day-chip">S</span>
+                    <span class="day-chip">D</span>
+                  </div>
+                  <div class="nv-dash-item">
+                    <span class="nv-dash-item-icon">🥗</span>
+                    <div class="nv-dash-item-info">
+                      <strong>Comida</strong>
+                      <small>Pollo con arroz y verduras al vapor</small>
+                    </div>
+                    <b class="nv-dash-item-val">857 kcal</b>
+                  </div>
+                  <div class="nv-dash-item">
+                    <span class="nv-dash-item-icon">🌙</span>
+                    <div class="nv-dash-item-info">
+                      <strong>Cena</strong>
+                      <small>Salmón con patata asada y espárragos</small>
+                    </div>
+                    <b class="nv-dash-item-val">490 kcal</b>
+                  </div>
+                  <div class="nv-dash-tip">
+                    ✨ Distribución de macros: 35% P · 50% C · 15% G
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        <div class="testimonial-card featured-testimonial">
-          <div class="stars">★★★★★</div>
-          <p>"Como vegano era difícil encontrar un plan de ganancia muscular que tuviera sentido. NutroVia me
-            sorprendió: los macros están perfectamente calibrados y el menú es variado."</p>
-          <div class="testimonial-author">
-            <div class="author-avatar">AL</div>
-            <div>
-              <strong>Alejandro L.</strong>
-              <span>Objetivo: ganar masa · 4 meses</span>
+      </section>
+
+      <!-- ESCENA 3: Dark Hero — Apple Watch Protagonista e Independiente -->
+      <section class="nv-watch-hero-section" id="nv-watch-section" aria-label="NutroVia en Apple Watch">
+        <!-- FOTO DE STOCK: Fondo completo de sección -->
+        <div class="nv-lifestyle-bg nv-lifestyle-bg--watch" aria-hidden="true">
+          <img src="https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?q=80&w=1600&auto=format&fit=crop" alt="Atleta al aire libre con reloj" class="nv-lifestyle-fullimg" loading="lazy">
+          <div class="nv-lifestyle-gradient-mask"></div>
+        </div>
+
+        <div class="container nv-watch-container">
+          
+          <div class="nv-watch-device-col">
+            <div class="nv-watch-wrapper" id="nvWatchMockup">
+              <img src="mockups/apple-watch.svg" alt="NutroVia en Apple Watch" class="nv-watch-frame">
+              <div class="nv-screen nv-screen--watch">
+                <div class="watch-ui-container">
+                  <span class="watch-tag">HOY</span>
+                  <div class="watch-ring-wrapper">
+                    <svg viewBox="0 0 100 100" class="watch-ring-svg">
+                      <circle cx="50" cy="50" r="42" class="ring-bg"></circle>
+                      <circle cx="50" cy="50" r="42" class="ring-fg"></circle>
+                    </svg>
+                    <div class="watch-ring-center">
+                      <span class="watch-calories-num">2.450</span>
+                      <span class="watch-calories-unit">kcal</span>
+                    </div>
+                  </div>
+                  <div class="watch-macros-pills">
+                    <div class="w-pill"><span class="p-p">P</span> 168</div>
+                    <div class="w-pill"><span class="p-c">C</span> 240</div>
+                    <div class="w-pill"><span class="p-g">G</span> 72</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="testimonial-card">
-          <div class="stars">★★★★★</div>
-          <p>"La prueba gratuita me convenció en la primera semana. El plan de entrenamiento es progresivo y real. Ya
-            estoy en mi cuarto mes y no lo cambiaría por nada."</p>
-          <div class="testimonial-author">
-            <div class="author-avatar">SC</div>
-            <div>
-              <strong>Sara C.</strong>
-              <span>Objetivo: mejorar salud · 4 meses</span>
+
+          <div class="nv-watch-text-col">
+            <span class="nv-tag-pill">NutroVia en tu muñeca</span>
+            <h2 class="nv-watch-title">
+              Lo esencial,<br>
+              <span class="gold-gradient">a un golpe de vista.</span>
+            </h2>
+            <p class="nv-watch-desc">
+              Calorías restantes, desglose de macronutrientes en vivo y alertas de entrenamiento sin necesidad de sacar el teléfono del bolsillo. La constancia vive en tu muñeca.
+            </p>
+            <div class="nv-watch-features">
+              <div class="w-item">
+                <span class="w-icon">⚡</span>
+                <span>Sincronización instantánea</span>
+              </div>
+              <div class="w-item">
+                <span class="w-icon">📊</span>
+                <span>Anillo de calorías diario</span>
+              </div>
+              <div class="w-item">
+                <span class="w-icon">🏃</span>
+                <span>Recordatorio de sesiones</span>
+              </div>
+            </div>
+            <div class="nv-watch-cta" style="margin-top: 36px;">
+              <a href="questionnaire.html" class="btn-gold-large">
+                Crear mi plan ahora →
+              </a>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-  </section>
 
-  <!-- ─── FAQ ──────────────────────────────────────────────── -->
-  <section class="section section-dark" id="faq">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-tag">Preguntas frecuentes</span>
-        <h2 class="section-title">Todo lo que necesitas saber</h2>
-      </div>
-      <div class="faq-list">
-        <div class="faq-item">
-          <button class="faq-question">¿Cómo funciona el período de prueba gratuita? <span
-              class="faq-arrow">↓</span></button>
-          <div class="faq-answer">
-            <p>Al registrarte, tienes 30 días completamente gratuitos. Al finalizar, dispones de 15 días más para
-              cancelar sin ningún coste. Solo cuando pasen esos 45 días en total (si no has cancelado), se activará tu
-              suscripción de 60 €/mes.</p>
-          </div>
         </div>
-        <div class="faq-item">
-          <button class="faq-question">¿Me cobran algo al registrarme? <span class="faq-arrow">↓</span></button>
-          <div class="faq-answer">
-            <p>No. Al registrarte guardamos tu método de pago de forma segura, pero no se realiza ningún cargo hasta el
-              día 45. Si cancelas antes, no pagas absolutamente nada.</p>
-          </div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-question">¿Cómo se calculan los planes? <span class="faq-arrow">↓</span></button>
-          <div class="faq-answer">
-            <p>Usamos la ecuación científica Harris-Benedict para calcular tu metabolismo basal y TDEE (gasto energético
-              total). Las calorías y macros se ajustan a tu objetivo, y el menú semanal se adapta a tu preferencia
-              dietética y condiciones de salud.</p>
-          </div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-question">¿Puedo cancelar cuando quiera? <span class="faq-arrow">↓</span></button>
-          <div class="faq-answer">
-            <p>Sí. Puedes cancelar en cualquier momento desde tu panel de usuario. Si cancelas durante la prueba o la
-              ventana de cancelación (días 1-45), no se te cobra nada. Si cancelas después, el acceso continúa hasta el
-              final del período ya pagado.</p>
-          </div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-question">¿Cuándo se cobra la mensualidad? <span class="faq-arrow">↓</span></button>
-          <div class="faq-answer">
-            <p>El cobro es el mismo día del mes en que te inscribiste. Por ejemplo, si te inscribes el 10 de enero, te
-              cobraremos el 10 de cada mes a partir del día 45. Recibirás un aviso por email 24 horas antes de cada
-              cargo.</p>
-          </div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-question">¿El plan es seguro si tengo condiciones de salud? <span
-              class="faq-arrow">↓</span></button>
-          <div class="faq-answer">
-            <p>El cuestionario incluye preguntas sobre condiciones como diabetes, hipertensión o alergias. El plan se
-              adapta para excluir alimentos contraindicados. De todos modos, recomendamos consultar con tu médico antes
-              de iniciar cualquier plan nutricional.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+      </section>
 
-  <!-- ─── CTA FINAL ────────────────────────────────────────── -->
-  <section class="section cta-section">
-    <div class="container">
-      <div class="cta-final-card">
-        <div class="cta-glow"></div>
-        <span class="section-tag">¿Listo para empezar?</span>
-        <h2>Tu transformación empieza hoy,<br><span class="gold-gradient">sin excusas</span></h2>
-        <p>Únete a más de 2.800 personas que ya están viviendo su mejor versión con NutroVia.</p>
-        <a href="questionnaire.html" class="btn-gold-large">
-          <span class="btn-icon">✦</span>
-          Crear mi plan ahora — Es gratis
-        </a>
-        <p class="cta-disclaimer">Sin tarjeta de crédito los primeros 30 días</p>
-      </div>
     </div>
-  </section>
+  </main>
 
   <!-- ─── FOOTER ───────────────────────────────────────────── -->
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-top">
-        <div class="footer-brand">
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-top-row">
+        <div class="footer-brand-col">
           <div class="nav-logo">
-            <span class="logo-text">NUTROVIA</span><span class="logo-dot">.</span>
+            <span class="logo-text">NUTROVIA</span>
+            <span class="logo-dot">.</span>
           </div>
-          <p>Nutrición y entrenamiento personalizado, respaldado por ciencia.</p>
+          <p class="footer-motto">
+            Plataforma científica de nutrición y entrenamiento de alta precisión. Diseñada para transformar hábitos de por vida.
+          </p>
         </div>
-        <div class="footer-links">
-          <div class="footer-col">
-            <h4>Producto</h4>
-            <a href="#que-incluye">¿Qué incluye?</a>
-            <a href="#como-funciona">Cómo funciona</a>
-            <a href="#faq">FAQ</a>
-          </div>
-          <div class="footer-col">
-            <h4>Cuenta</h4>
-            <a href="questionnaire.html">Registrarse</a>
-            <a href="login.html">Iniciar sesión</a>
-            <a href="dashboard.html">Mi panel</a>
-          </div>
+
+        <div class="footer-links-col">
+          <h4>Navegación</h4>
+          <a href="#hero">Inicio</a>
+          <a href="#nv-phone-transition">La App</a>
+          <a href="#nv-concept">El Concepto</a>
+          <a href="#nv-purpose">El Propósito</a>
+          <a href="#nv-watch-section">Apple Watch</a>
+        </div>
+
+        <div class="footer-links-col">
+          <h4>Plataforma</h4>
+          <a href="questionnaire.html">Crear Plan</a>
+          <a href="login.html">Iniciar Sesión</a>
+          <a href="dashboard.html">Mi Panel</a>
+          <a href="#faq">Preguntas Frecuentes</a>
         </div>
       </div>
-      <div class="footer-bottom">
+
+      <div class="footer-bottom-row">
         <p>© 2026 NutroVia. Todos los derechos reservados.</p>
-        <p>Los planes no sustituyen el consejo médico profesional.</p>
+        <p class="footer-disclaimer">Los planes generados no sustituyen el diagnóstico ni consejo médico profesional.</p>
       </div>
-      <div class="footer-wordmark" aria-hidden="true">
+
+      <div class="footer-big-watermark" aria-hidden="true">
         <span>NUTROVIA</span>
       </div>
     </div>
   </footer>
 
+  <!-- Librerías de animación GSAP y ScrollTrigger -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="js/main.js"></script>

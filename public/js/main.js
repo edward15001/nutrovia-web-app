@@ -1,225 +1,221 @@
-// ─── NutroVia — main.js (Landing Page) ───────────────────
+// ─── NutroVia — main.js (Landing Page Engine) ────────────
 
-// Navbar scroll effect
-const navbar = document.getElementById('navbar');
-window.addEventListener('scroll', () => {
-    navbar.classList.toggle('scrolled', window.scrollY > 40);
-});
+document.addEventListener('DOMContentLoaded', () => {
+  // ─── 1. Navbar Flotante Glassmorphism con Auto-Hide al Scroll ──
+  let lastScrollY = window.scrollY;
+  const siteHeader = document.getElementById('siteHeader') || document.querySelector('.site-header');
+  const navbar = document.getElementById('navbar') || document.querySelector('.navbar');
 
-// Mobile nav toggle
-const navToggle = document.getElementById('navToggle');
-const navLinks = document.querySelector('.nav-links');
-const navActions = document.querySelector('.nav-actions');
-navToggle?.addEventListener('click', () => {
-    navLinks.classList.toggle('open');
-    navActions.classList.toggle('open');
-});
+  window.addEventListener('scroll', () => {
+    const currentScrollY = window.scrollY;
 
-// Particles animation
-function createParticles() {
+    // Auto-hide: se oculta al bajar y reaparece al subir
+    if (currentScrollY > 80 && currentScrollY > lastScrollY) {
+      siteHeader?.classList.add('nav--hidden');
+    } else {
+      siteHeader?.classList.remove('nav--hidden');
+    }
+
+    // Efecto de condensación de cristal al avanzar el scroll
+    if (currentScrollY > 40) {
+      navbar?.classList.add('navbar--scrolled');
+    } else {
+      navbar?.classList.remove('navbar--scrolled');
+    }
+
+    lastScrollY = currentScrollY;
+  }, { passive: true });
+
+  // ─── 2. Ambient Particles Generator ──────────────────────
+  function createParticles() {
     const container = document.getElementById('particles');
     if (!container) return;
-    for (let i = 0; i < 20; i++) {
-        const p = document.createElement('div');
-        p.className = 'particle';
-        p.style.cssText = `
-      left: ${Math.random() * 100}%;
-      width: ${Math.random() * 3 + 1}px;
-      height: ${Math.random() * 3 + 1}px;
-      animation-duration: ${Math.random() * 15 + 10}s;
-      animation-delay: ${Math.random() * 10}s;
-      opacity: ${Math.random() * 0.5 + 0.1};
-    `;
-        container.appendChild(p);
+    for (let i = 0; i < 24; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      const size = Math.random() * 3 + 1.5;
+      p.style.cssText = `
+        left: ${Math.random() * 100}%;
+        width: ${size}px;
+        height: ${size}px;
+        animation-duration: ${Math.random() * 12 + 8}s;
+        animation-delay: ${Math.random() * 8}s;
+        opacity: ${Math.random() * 0.4 + 0.1};
+      `;
+      container.appendChild(p);
     }
-}
-createParticles();
+  }
+  createParticles();
 
-// FAQ accordion
-document.querySelectorAll('.faq-question').forEach(btn => {
+  // ─── 3. FAQ Accordion ────────────────────────────────────
+  document.querySelectorAll('.faq-question').forEach(btn => {
     btn.addEventListener('click', () => {
-        const item = btn.closest('.faq-item');
-        const isOpen = item.classList.contains('open');
-        document.querySelectorAll('.faq-item').forEach(el => el.classList.remove('open'));
-        if (!isOpen) item.classList.add('open');
+      const item = btn.closest('.faq-item');
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(el => el.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
     });
-});
+  });
 
-// Intersection Observer for scroll animations
-const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -60px 0px' };
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-        }
-    });
-}, observerOptions);
+  // ─── 4. FUTURE.CO SCROLL ENGINE (GSAP + ScrollTrigger) ───
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const hasGsap = typeof window.gsap !== 'undefined' && typeof window.ScrollTrigger !== 'undefined';
 
-document.querySelectorAll('.feature-card, .step, .testimonial-card, .faq-item').forEach(el => {
-    el.style.opacity = '0';
-    el.style.transform = 'translateY(20px)';
-    el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-    observer.observe(el);
-});
+  const sequencePhone = document.getElementById('nvSequencePhone');
+  const phoneStage = document.getElementById('nvPhoneStage');
+  const cardIntro = document.getElementById('nvCardIntro');
+  const phoneSplash = document.getElementById('nvPhoneSplash');
+  const phoneDash = document.getElementById('nvPhoneDash');
+  const phoneSection = document.getElementById('nv-phone-transition');
+  const conceptLayer = document.getElementById('nv-concept');
+  const purposeSection = document.getElementById('nv-purpose');
+  const purposeCard = document.querySelector('.nv-purpose-card');
+  const purposePhone = document.getElementById('nvPurposePhone');
+  const watchSection = document.getElementById('nv-watch-section');
 
-// ─── NutroVia showcase: secuencia narrativa sincronizada con scroll ───
-(function () {
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const hasGsap = window.gsap && window.ScrollTrigger;
-    const splash = document.querySelector('#nvSequencePhone .nv-app-view--splash');
-    const dashboard = document.querySelector('#nvSequencePhone .nv-app-view--dashboard');
-    const sequencePhone = document.getElementById('nvSequencePhone');
-    const transitionCard = document.querySelector('.nv-transition-card');
-    const phoneStage = document.querySelector('.nv-phone-transition__stage');
-    const phoneSection = document.getElementById('nv-phone-transition');
-    const conceptPanel = document.getElementById('nv-concept');
-    const purposePanel = document.getElementById('nv-purpose');
-    const purposeStage = document.querySelector('.nv-purpose-stage');
-    const purposeCard = document.querySelector('.nv-purpose-card');
-    const purposePhone = document.getElementById('nvPurposePhone');
-    const closingPanel = document.getElementById('nv-closing');
-    const watchSection = document.getElementById('nv-watch-section');
+  // Fallback para dispositivos móviles o usuarios con reduced motion
+  if (!hasGsap || prefersReduced || window.innerWidth < 900) {
+    if (phoneSplash) phoneSplash.style.opacity = '0';
+    if (phoneDash) phoneDash.style.opacity = '1';
+    if (cardIntro) cardIntro.style.opacity = '1';
+    return;
+  }
 
-    const showAppView = (view) => {
-        if (!splash || !dashboard) return;
-        splash.classList.toggle('nv-app-view--visible', view === 'splash');
-        dashboard.classList.toggle('nv-app-view--visible', view === 'dashboard');
-    };
+  gsap.registerPlugin(ScrollTrigger);
 
-    showAppView('splash');
+  // Set inicial
+  gsap.set(cardIntro, { autoAlpha: 0, x: 60 });
+  gsap.set(sequencePhone, { x: 0, scale: 1 });
+  gsap.set(phoneSplash, { autoAlpha: 1 });
+  gsap.set(phoneDash, { autoAlpha: 0 });
 
-    // Reduced motion keeps every section readable without scroll-driven transforms.
-    if (!hasGsap || prefersReduced) {
-        document.querySelectorAll('.nv-transition-card').forEach(el => {
-            el.style.opacity = '1';
-            el.style.transform = 'none';
-        });
-        document.querySelectorAll('.nv-wipe-panel, .nv-purpose-stage, .nv-purpose-card, #nvPurposePhone, .nv-watch-section').forEach(el => {
-            el.style.transform = 'none';
-            el.style.opacity = '1';
-            el.style.clipPath = 'none';
-        });
-        showAppView('dashboard');
-        return;
-    }
-
-    gsap.registerPlugin(ScrollTrigger);
-
-    const viewport = () => window.innerHeight;
-
-    const triggerOptions = (id, trigger, start, end) => ({
-        id,
-        trigger,
-        start,
-        end,
+  // ─── TIMELINE 1: iPhone Mockup Reveal & Card Stacking Transition ──
+  if (phoneSection && sequencePhone) {
+    const phoneTimeline = gsap.timeline({
+      scrollTrigger: {
+        trigger: phoneSection,
+        start: 'top top',
+        end: '+=160%',
+        pin: true,
         scrub: 1,
-        invalidateOnRefresh: true,
+        invalidateOnRefresh: true
+      }
     });
 
-    // Keep trigger elements in normal flow. Panels slide up as a single unit
-    // with their content, using translateY for the reveal.
-    gsap.set(sequencePhone, { xPercent: -50, yPercent: -50, x: 0, rotationY: 0, rotationZ: 0 });
-    gsap.set(transitionCard, { yPercent: -50, x: 22, autoAlpha: 0 });
-    gsap.set(conceptPanel, { y: '100vh', scale: 0.85 });
-    gsap.set(purposeStage, { yPercent: 50, y: 0, scale: 0.85, borderRadius: 0 });
-    gsap.set(purposeCard, { y: 32, autoAlpha: 0 });
-    gsap.set(purposePhone, { rotationY: -12, rotationZ: 3, x: 16, autoAlpha: 0 });
-    gsap.set(closingPanel, { y: '100vh' });
-    gsap.set(watchSection, { y: '100vh' });
+    phoneTimeline
+      // 1. Traslación del iPhone hacia la izquierda (x: 0 -> x: -240)
+      .to(sequencePhone, {
+        x: -240,
+        duration: 0.6,
+        ease: 'none'
+      })
+      // 2. Conmutación de pantalla en el mockup: Splash se desvanece, Dashboard aparece
+      .to(phoneSplash, {
+        autoAlpha: 0,
+        duration: 0.25,
+        ease: 'power1.inOut'
+      }, '-=0.45')
+      .to(phoneDash, {
+        autoAlpha: 1,
+        duration: 0.35,
+        ease: 'power1.inOut'
+      }, '-=0.25')
+      // 3. Entrada de la Tarjeta 01 desde la derecha
+      .to(cardIntro, {
+        x: 0,
+        autoAlpha: 1,
+        duration: 0.35,
+        ease: 'power2.out'
+      }, '-=0.3')
+      // 4. Encogimiento sutil del mockup mientras la capa crema "El concepto" sube cubriéndolo
+      .to(phoneStage, {
+        scale: 0.92,
+        opacity: 0.75,
+        duration: 0.4,
+        ease: 'power1.in'
+      });
+  }
 
-    // Master 1: phone content and card, followed by the dark-stage framing.
-    const isMobile = window.innerWidth <= 900;
-    const phoneX = isMobile ? '-14vw' : '-22vw';
-    const phoneRotZ = isMobile ? '-1.5' : '-3';
-
-    const phoneMaster = gsap.timeline({
-        scrollTrigger: triggerOptions(
-            'nv-phone-master',
-            phoneSection,
-            'top top',
-            () => `+=${Math.max(phoneSection.offsetHeight - viewport(), 1)}`
-        ),
+  // ─── TIMELINE 2: Concept Cream Layer Card Stacking ────────
+  // Entrada: sube desde abajo cubriendo a la sección oscura anterior como una card.
+  // Salida: se desplaza hacia arriba con el scroll natural a tamaño 100%, sin encogimiento ni scale.
+  if (conceptLayer) {
+    gsap.from(conceptLayer, {
+      scrollTrigger: {
+        trigger: conceptLayer,
+        start: 'top 98%',
+        end: 'top 20%',
+        scrub: 1
+      },
+      y: 160,
+      opacity: 0.95,
+      ease: 'none'
     });
-    phoneMaster
-        .to(sequencePhone, {
-            x: phoneX,
-            rotationY: 360,
-            rotationZ: phoneRotZ,
-            duration: 0.62,
-            ease: 'none',
-            onUpdate() {
-                showAppView(this.progress() < 0.88 ? 'splash' : 'dashboard');
-            },
-        })
-        .to(transitionCard, { x: 0, autoAlpha: 1, duration: 0.14, ease: 'none' })
-        .to({}, { duration: 0.18 })
-        .to(phoneStage, { scale: isMobile ? 0.98 : 0.96, borderRadius: isMobile ? 12 : 18, duration: 0.06, ease: 'none' });
+  }
 
-    // Master 2: concept block entrance — pins and grows from compressed,
-    // covering the dark section below. After the entrance the pin releases
-    // and the block scrolls away normally (no scale/exit animation).
-    const conceptMaster = gsap.timeline({
+  // ─── TIMELINE 3: Purpose Section (Dark Pinned) ───────────
+  if (purposeSection && purposeCard && purposePhone) {
+    gsap.set(purposeCard, { autoAlpha: 0, y: 30 });
+    gsap.set(purposePhone, { autoAlpha: 0, scale: 0.92, y: 20 });
+
+    const purposeTimeline = gsap.timeline({
+      scrollTrigger: {
+        trigger: purposeSection,
+        start: 'top top',
+        end: '+=100%',
+        pin: true,
+        scrub: 1,
+        invalidateOnRefresh: true
+      }
+    });
+
+    purposeTimeline
+      .to(purposeCard, { autoAlpha: 1, y: 0, duration: 0.4, ease: 'power1.out' })
+      .to(purposePhone, { autoAlpha: 1, scale: 1, y: 0, duration: 0.4, ease: 'power1.out' }, '<')
+      .to({}, { duration: 0.3 }); // Hold
+  }
+
+  // ─── TIMELINE 4: Apple Watch Mockup Hero Standalone ──────
+  if (watchSection) {
+    const watchMockup = document.getElementById('nvWatchMockup');
+    const watchText = watchSection.querySelector('.nv-watch-text-col');
+
+    if (watchMockup && watchText) {
+      gsap.from(watchMockup, {
         scrollTrigger: {
-            id: 'nv-concept-master',
-            trigger: conceptPanel,
-            start: 'top top',
-            end: () => `+=${Math.max(conceptPanel.offsetHeight - viewport(), 1)}`,
-            scrub: 1,
-            pin: true,
-            invalidateOnRefresh: true,
+          trigger: watchSection,
+          start: 'top 75%',
+          end: 'top 35%',
+          scrub: 1
         },
-    });
-    conceptMaster
-        .to(conceptPanel, { y: 0, scale: 1, duration: 1, ease: 'none' });
+        scale: 0.9,
+        y: 40,
+        opacity: 0.7,
+        ease: 'power2.out'
+      });
 
-    // Master 3: purpose block entrance — grows from compressed as it
-    // enters the viewport, with content fade-in.
-    const purposeMaster = gsap.timeline({
-        scrollTrigger: triggerOptions(
-            'nv-purpose-master',
-            purposePanel,
-            'top bottom',
-            () => 'top top'
-        ),
-    });
-    purposeMaster
-        .to(purposeStage, { scale: 1, yPercent: 0, duration: 0.72, ease: 'none' })
-        .to(purposeCard, { y: 0, autoAlpha: 1, duration: 0.28, ease: 'none' })
-        .to(purposePhone, { rotationY: 8, rotationZ: -2, x: 0, autoAlpha: 1, duration: 0.28, ease: 'none' }, '<');
+      gsap.from(watchText, {
+        scrollTrigger: {
+          trigger: watchSection,
+          start: 'top 75%',
+          end: 'top 35%',
+          scrub: 1
+        },
+        x: 30,
+        opacity: 0,
+        ease: 'power2.out'
+      });
+    }
+  }
 
-    // Master 4 starts exactly when the purpose stage has completed its own
-    // measured travel. It uses the purpose section as a stable trigger, so the
-    // closing card cannot cover purpose content before that content is ready.
-    const closingMaster = gsap.timeline({
-        scrollTrigger: triggerOptions(
-            'nv-closing-master',
-            purposePanel,
-            'top top',
-            () => 'bottom bottom'
-        ),
-    });
-    closingMaster
-        .to(closingPanel, { y: 0, duration: 1, ease: 'none' });
+  // ─── 5. Recalcular triggers al cargar imágenes/fuentes ────
+  const refreshTriggers = () => {
+    ScrollTrigger.refresh();
+  };
 
-    // Master 5: Apple Watch hero section rises as a single unit.
-    const watchMaster = gsap.timeline({
-        scrollTrigger: triggerOptions(
-            'nv-watch-master',
-            watchSection,
-            'top bottom',
-            () => 'top 30%'
-        ),
-    });
-    watchMaster
-        .to(watchSection, { y: 0, duration: 1, ease: 'none' });
-
-    const refreshScroll = () => {
-        requestAnimationFrame(() => ScrollTrigger.refresh());
-    };
-    window.addEventListener('load', refreshScroll, { once: true });
-    window.addEventListener('resize', refreshScroll);
-    document.querySelectorAll('img').forEach(image => image.addEventListener('load', refreshScroll, { once: true }));
-    if (document.fonts?.ready) document.fonts.ready.then(refreshScroll);
-    refreshScroll();
-})();
+  window.addEventListener('load', refreshTriggers);
+  window.addEventListener('resize', refreshTriggers);
+  if (document.fonts?.ready) {
+    document.fonts.ready.then(refreshTriggers);
+  }
+});
