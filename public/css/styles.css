@@ -3170,29 +3170,38 @@ ul {
   /* Purpose & Watch en mobile */
   .nv-pinned-section.nv-purpose-scene {
     min-height: auto;
-    padding: 60px 18px;
+    padding: 70px 20px;
+    position: relative;
+    overflow: visible;
   }
 
   .nv-purpose-stage {
-    flex-direction: column-reverse;
+    flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: 36px;
+    gap: 40px;
+    width: 100%;
+    position: relative;
   }
 
   .nv-purpose-card {
     max-width: 100%;
+    width: 100%;
     opacity: 1 !important;
     visibility: visible !important;
     transform: none !important;
+    position: relative;
+    z-index: 2;
   }
 
   .nv-purpose-device {
-    width: min(74vw, 280px);
+    width: min(76vw, 290px);
     margin: 0 auto;
     opacity: 1 !important;
     visibility: visible !important;
     transform: none !important;
+    position: relative;
+    z-index: 1;
   }
 
   .nv-watch-container {
