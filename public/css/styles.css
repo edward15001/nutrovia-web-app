@@ -401,35 +401,39 @@ ul {
 }
 
 .nv-lifestyle-bg--hero .nv-lifestyle-fullimg {
-  filter: contrast(1.08) brightness(0.52);
+  filter: contrast(1.02) brightness(0.6);
 }
 
+/* Gradiente muy suave con fade extendido al 100% de la sección */
 .nv-lifestyle-bg--hero .nv-lifestyle-gradient-mask {
-  background: linear-gradient(180deg, 
-    rgba(9, 9, 9, 0.3) 0%, 
-    rgba(9, 9, 9, 0.5) 30%, 
-    rgba(9, 9, 9, 0.78) 60%, 
-    rgba(9, 9, 9, 0.95) 85%, 
-    #090909 100%
+  background: linear-gradient(180deg,
+    rgba(9, 9, 9, 0.05) 0%,
+    rgba(9, 9, 9, 0.18) 15%,
+    rgba(9, 9, 9, 0.40) 38%,
+    rgba(9, 9, 9, 0.68) 58%,
+    rgba(9, 9, 9, 0.88) 74%,
+    #090909 88%
   );
 }
 
+/* ─── Propósito: más claro (brightness 0.72, menos overlay) ─── */
 .nv-lifestyle-bg--purpose .nv-lifestyle-fullimg {
-  filter: contrast(1.1) brightness(0.4) saturate(0.85);
+  filter: contrast(1.0) brightness(0.72) saturate(0.9);
 }
 
 .nv-lifestyle-bg--purpose .nv-lifestyle-gradient-mask {
-  background: radial-gradient(circle at 30% 50%, rgba(9, 9, 9, 0.6) 0%, #090909 85%),
-              linear-gradient(180deg, #090909 0%, rgba(9, 9, 9, 0.7) 35%, rgba(9, 9, 9, 0.9) 75%, #090909 100%);
+  background: radial-gradient(ellipse at 35% 50%, rgba(9, 9, 9, 0.22) 0%, rgba(9, 9, 9, 0.58) 80%),
+              linear-gradient(180deg, rgba(9, 9, 9, 0.72) 0%, rgba(9, 9, 9, 0.25) 45%, rgba(9, 9, 9, 0.55) 82%, #090909 100%);
 }
 
+/* ─── Apple Watch: más claro (brightness 0.68) ─── */
 .nv-lifestyle-bg--watch .nv-lifestyle-fullimg {
-  filter: contrast(1.15) brightness(0.35) saturate(0.8);
+  filter: contrast(1.04) brightness(0.68) saturate(0.88);
 }
 
 .nv-lifestyle-bg--watch .nv-lifestyle-gradient-mask {
-  background: radial-gradient(circle at 70% 50%, rgba(9, 9, 9, 0.55) 0%, #090909 85%),
-              linear-gradient(180deg, #090909 0%, rgba(9, 9, 9, 0.65) 30%, rgba(9, 9, 9, 0.88) 75%, #090909 100%);
+  background: radial-gradient(ellipse at 68% 50%, rgba(9, 9, 9, 0.20) 0%, rgba(9, 9, 9, 0.56) 80%),
+              linear-gradient(180deg, rgba(9, 9, 9, 0.75) 0%, rgba(9, 9, 9, 0.28) 40%, rgba(9, 9, 9, 0.58) 80%, #090909 100%);
 }
 
 .hero-particles {
@@ -622,6 +626,22 @@ ul {
 .nv-pinned-section.nv-phone-scene {
   padding: 0px 24px 80px;
   margin-top: -225px;
+  background: transparent;
+}
+
+/* Pseudo-gradiente de transición hero → iPhone:
+   Un velo negro que cubre el borde superior del nv-phone-scene
+   para que no haya línea de corte visible */
+.nv-pinned-section.nv-phone-scene::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 180px;
+  background: linear-gradient(to bottom, #090909 0%, transparent 100%);
+  pointer-events: none;
+  z-index: 0;
 }
 
 /* ESCENA 1: iPhone Reveal Stage */
