@@ -43,24 +43,14 @@
     </nav>
   </header>
 
-  <!-- Panel lateral móvil (Drawer sin bordes, con sombreado sobre la página) -->
+  <!-- Panel lateral móvil (Sombra suave desde la derecha, sin bordes ni opacidad dura) -->
   <div class="mobile-drawer-backdrop" id="mobileDrawerBackdrop"></div>
   <aside class="mobile-drawer" id="mobileDrawer" aria-hidden="true">
     <div class="mobile-drawer-inner">
-      <div class="mobile-drawer-header">
-        <div class="drawer-logo">
-          <img src="/img/logo_nutrovia_negro.png" alt="NutroVia Logo" class="nav-logo-icon">
-          <span class="nav-logo-text">NUTROVIA<span class="logo-dot">.</span></span>
-        </div>
-        <button class="drawer-close-btn" id="drawerCloseBtn" aria-label="Cerrar menú">✕</button>
-      </div>
-      <div class="mobile-drawer-content">
-        <p class="drawer-tagline">Tu mejor versión, respaldada por la ciencia.</p>
-        <div class="mobile-drawer-actions">
-          <a href="login.html" class="btn-drawer-ghost">Iniciar sesión</a>
-          <a href="questionnaire.html" class="btn-drawer-gold">Comenzar</a>
-        </div>
-      </div>
+      <nav class="mobile-drawer-nav">
+        <a href="login.html" class="mobile-drawer-link">Iniciar sesión</a>
+        <a href="questionnaire.html" class="mobile-drawer-link mobile-drawer-link--gold">Comenzar</a>
+      </nav>
     </div>
   </aside>
 

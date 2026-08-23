@@ -30,7 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const mobileToggle = document.getElementById('navMobileToggle');
   const mobileDrawer = document.getElementById('mobileDrawer');
   const mobileBackdrop = document.getElementById('mobileDrawerBackdrop');
-  const drawerCloseBtn = document.getElementById('drawerCloseBtn');
 
   function openDrawer() {
     mobileDrawer?.classList.add('open');
@@ -57,10 +56,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  drawerCloseBtn?.addEventListener('click', closeDrawer);
   mobileBackdrop?.addEventListener('click', closeDrawer);
 
-  document.querySelectorAll('.mobile-drawer-actions a').forEach(a => {
+  document.querySelectorAll('.mobile-drawer-link').forEach(a => {
     a.addEventListener('click', closeDrawer);
   });
 
