@@ -371,7 +371,7 @@ ul {
   align-items: center;
   text-align: center;
   position: relative;
-  padding: 195px 24px 70px;
+  padding: 195px 24px 30px;
   background: #090909;
   overflow: visible;
 }
@@ -401,18 +401,19 @@ ul {
 }
 
 .nv-lifestyle-bg--hero .nv-lifestyle-fullimg {
-  filter: contrast(1.02) brightness(0.6);
+  filter: contrast(1.02) brightness(0.62);
 }
 
-/* Gradiente muy suave con fade extendido al 100% de la sección */
+/* Gradiente suave: la imagen se mantiene visible más abajo
+   para que la transición al mockup sea natural sin hueco negro */
 .nv-lifestyle-bg--hero .nv-lifestyle-gradient-mask {
   background: linear-gradient(180deg,
-    rgba(9, 9, 9, 0.05) 0%,
-    rgba(9, 9, 9, 0.18) 15%,
-    rgba(9, 9, 9, 0.40) 38%,
-    rgba(9, 9, 9, 0.68) 58%,
-    rgba(9, 9, 9, 0.88) 74%,
-    #090909 88%
+    rgba(9, 9, 9, 0.0)  0%,
+    rgba(9, 9, 9, 0.10) 20%,
+    rgba(9, 9, 9, 0.30) 45%,
+    rgba(9, 9, 9, 0.62) 65%,
+    rgba(9, 9, 9, 0.86) 82%,
+    #090909 95%
   );
 }
 
@@ -629,20 +630,6 @@ ul {
   background: transparent;
 }
 
-/* Pseudo-gradiente de transición hero → iPhone:
-   Un velo negro que cubre el borde superior del nv-phone-scene
-   para que no haya línea de corte visible */
-.nv-pinned-section.nv-phone-scene::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 180px;
-  background: linear-gradient(to bottom, #090909 0%, transparent 100%);
-  pointer-events: none;
-  z-index: 0;
-}
 
 /* ESCENA 1: iPhone Reveal Stage */
 .nv-phone-stage {
