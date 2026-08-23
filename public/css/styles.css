@@ -376,11 +376,68 @@ ul {
   overflow: visible;
 }
 
+/* ─── FONDOS DE ESTILO DE VIDA CON MÁSCARAS DE GRADIENTE SUAVE ─── */
+.nv-lifestyle-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.nv-lifestyle-fullimg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+
+.nv-lifestyle-gradient-mask {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.nv-lifestyle-bg--hero .nv-lifestyle-fullimg {
+  filter: contrast(1.08) brightness(0.52);
+}
+
+.nv-lifestyle-bg--hero .nv-lifestyle-gradient-mask {
+  background: linear-gradient(180deg, 
+    rgba(9, 9, 9, 0.3) 0%, 
+    rgba(9, 9, 9, 0.5) 30%, 
+    rgba(9, 9, 9, 0.78) 60%, 
+    rgba(9, 9, 9, 0.95) 85%, 
+    #090909 100%
+  );
+}
+
+.nv-lifestyle-bg--purpose .nv-lifestyle-fullimg {
+  filter: contrast(1.1) brightness(0.4) saturate(0.85);
+}
+
+.nv-lifestyle-bg--purpose .nv-lifestyle-gradient-mask {
+  background: radial-gradient(circle at 30% 50%, rgba(9, 9, 9, 0.6) 0%, #090909 85%),
+              linear-gradient(180deg, #090909 0%, rgba(9, 9, 9, 0.7) 35%, rgba(9, 9, 9, 0.9) 75%, #090909 100%);
+}
+
+.nv-lifestyle-bg--watch .nv-lifestyle-fullimg {
+  filter: contrast(1.15) brightness(0.35) saturate(0.8);
+}
+
+.nv-lifestyle-bg--watch .nv-lifestyle-gradient-mask {
+  background: radial-gradient(circle at 70% 50%, rgba(9, 9, 9, 0.55) 0%, #090909 85%),
+              linear-gradient(180deg, #090909 0%, rgba(9, 9, 9, 0.65) 30%, rgba(9, 9, 9, 0.88) 75%, #090909 100%);
+}
+
 .hero-particles {
   position: absolute;
   inset: 0;
   pointer-events: none;
   overflow: hidden;
+  z-index: 2;
 }
 
 .particle {
@@ -393,7 +450,7 @@ ul {
 
 .hero-content {
   position: relative;
-  z-index: 2;
+  z-index: 3;
   max-width: 860px;
   margin-bottom: 20px;
 }
@@ -1663,6 +1720,56 @@ ul {
 .p-p { color: #3fa9f5; }
 .p-c { color: #ff9500; }
 .p-g { color: #30d158; }
+
+/* ─── Apple Watch Text Column Styles ─────────────────────── */
+.nv-watch-text-col {
+  max-width: 520px;
+  position: relative;
+  z-index: 3;
+}
+
+.nv-watch-title {
+  font-size: clamp(28px, 4.2vw, 48px);
+  font-weight: 900;
+  line-height: 1.12;
+  color: #ffffff;
+  margin: 16px 0 20px;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.85);
+}
+
+.nv-watch-desc {
+  font-size: 16.5px;
+  color: #e5e0d8;
+  line-height: 1.65;
+  margin-bottom: 28px;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.75);
+}
+
+.nv-watch-features {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.w-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 12px 20px;
+  border-radius: 100px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.w-icon {
+  font-size: 18px;
+}
 
 /* ─── MINI CARRUSEL HORIZONTAL CONTINUO ESTILO FUTURE.CO ─── */
 .nv-marquee-section {
@@ -3204,22 +3311,39 @@ ul {
     z-index: 1;
   }
 
+  .nv-watch-hero-section {
+    min-height: auto;
+    padding: 70px 20px;
+  }
+
   .nv-watch-container {
-    flex-direction: column;
+    flex-direction: column-reverse;
+    align-items: center;
     text-align: center;
     gap: 36px;
+    width: 100%;
   }
 
   .nv-watch-wrapper {
     width: min(72vw, 270px);
+    margin: 0 auto;
   }
 
   .nv-watch-text-col {
+    max-width: 100%;
     text-align: center;
+    width: 100%;
   }
 
-  .nv-watch-checklist {
+  .nv-watch-features {
     align-items: center;
+  }
+
+  .w-item {
+    justify-content: center;
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto;
   }
 
   /* Bento Grid */
