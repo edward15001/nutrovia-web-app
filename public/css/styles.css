@@ -1538,6 +1538,7 @@ ul {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--border);
   border-radius: var(--radius);
+  min-height: 72px;
 }
 
 .p-feat-icon {
@@ -3342,8 +3343,16 @@ ul {
     width: 100%;
   }
 
+  /* Features del watch en mobile: mismo ancho que las del iPhone */
   .nv-watch-features {
-    align-items: center;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .nv-watch-features .p-feat {
+    width: 100%;
+    text-align: left;
+    min-height: 72px;
   }
 
   .w-item {
