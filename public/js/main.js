@@ -26,7 +26,45 @@ document.addEventListener('DOMContentLoaded', () => {
     lastScrollY = currentScrollY;
   }, { passive: true });
 
-  // ─── 2. Ambient Particles Generator ──────────────────────
+  // ─── 2. Mobile Drawer Menu (Bocadillo / Hamburguesa Lateral) ──
+  const mobileToggle = document.getElementById('navMobileToggle');
+  const mobileDrawer = document.getElementById('mobileDrawer');
+  const mobileBackdrop = document.getElementById('mobileDrawerBackdrop');
+  const drawerCloseBtn = document.getElementById('drawerCloseBtn');
+
+  function openDrawer() {
+    mobileDrawer?.classList.add('open');
+    mobileBackdrop?.classList.add('open');
+    mobileToggle?.setAttribute('aria-expanded', 'true');
+    mobileDrawer?.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeDrawer() {
+    mobileDrawer?.classList.remove('open');
+    mobileBackdrop?.classList.remove('open');
+    mobileToggle?.setAttribute('aria-expanded', 'false');
+    mobileDrawer?.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  mobileToggle?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (mobileDrawer?.classList.contains('open')) {
+      closeDrawer();
+    } else {
+      openDrawer();
+    }
+  });
+
+  drawerCloseBtn?.addEventListener('click', closeDrawer);
+  mobileBackdrop?.addEventListener('click', closeDrawer);
+
+  document.querySelectorAll('.mobile-drawer-actions a').forEach(a => {
+    a.addEventListener('click', closeDrawer);
+  });
+
+  // ─── 3. Ambient Particles Generator ──────────────────────
   function createParticles() {
     const container = document.getElementById('particles');
     if (!container) return;
@@ -47,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   createParticles();
 
-  // ─── 3. FAQ Accordion ────────────────────────────────────
+  // ─── 4. FAQ Accordion ────────────────────────────────────
   document.querySelectorAll('.faq-question').forEach(btn => {
     btn.addEventListener('click', () => {
       const item = btn.closest('.faq-item');
@@ -57,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // ─── 4. FUTURE.CO SCROLL ENGINE (GSAP + ScrollTrigger) ───
+  // ─── 5. FUTURE.CO SCROLL ENGINE (GSAP + ScrollTrigger) ───
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const hasGsap = typeof window.gsap !== 'undefined' && typeof window.ScrollTrigger !== 'undefined';
 
@@ -73,8 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const purposePhone = document.getElementById('nvPurposePhone');
   const watchSection = document.getElementById('nv-watch-section');
 
-  // Fallback para dispositivos móviles o usuarios con reduced motion
-  if (!hasGsap || prefersReduced || window.innerWidth < 900) {
+  if (!hasGsap || prefersReduced) {
     if (phoneSplash) phoneSplash.style.opacity = '0';
     if (phoneDash) phoneDash.style.opacity = '1';
     if (cardIntro) cardIntro.style.opacity = '1';
@@ -83,58 +120,80 @@ document.addEventListener('DOMContentLoaded', () => {
 
   gsap.registerPlugin(ScrollTrigger);
 
-  // Set inicial
-  gsap.set(cardIntro, { autoAlpha: 0, x: 60 });
-  gsap.set(sequencePhone, { x: 0, scale: 1 });
-  gsap.set(phoneSplash, { autoAlpha: 1 });
-  gsap.set(phoneDash, { autoAlpha: 0 });
+  const mm = gsap.matchMedia();
 
-  // ─── TIMELINE 1: iPhone Mockup Reveal & Card Stacking Transition ──
-  if (phoneSection && sequencePhone) {
-    const phoneTimeline = gsap.timeline({
-      scrollTrigger: {
-        trigger: phoneSection,
-        start: 'top top',
-        end: '+=160%',
-        pin: true,
-        scrub: 1,
-        invalidateOnRefresh: true
-      }
-    });
+  // ─── DESKTOP TIMELINE (min-width: 901px) ─────────────────
+  mm.add("(min-width: 901px)", () => {
+    gsap.set(cardIntro, { autoAlpha: 0, x: 60 });
+    gsap.set(sequencePhone, { x: 0, scale: 1 });
+    gsap.set(phoneSplash, { autoAlpha: 1 });
+    gsap.set(phoneDash, { autoAlpha: 0 });
 
-    phoneTimeline
-      // 1. Traslación del iPhone hacia la izquierda (x: 0 -> x: -240)
-      .to(sequencePhone, {
-        x: -240,
-        duration: 0.6,
-        ease: 'none'
-      })
-      // 2. Conmutación de pantalla en el mockup: Splash se desvanece, Dashboard aparece
-      .to(phoneSplash, {
-        autoAlpha: 0,
-        duration: 0.25,
-        ease: 'power1.inOut'
-      }, '-=0.45')
-      .to(phoneDash, {
-        autoAlpha: 1,
-        duration: 0.35,
-        ease: 'power1.inOut'
-      }, '-=0.25')
-      // 3. Entrada de la Tarjeta 01 desde la derecha
-      .to(cardIntro, {
-        x: 0,
-        autoAlpha: 1,
-        duration: 0.35,
-        ease: 'power2.out'
-      }, '-=0.3')
-      // 4. Encogimiento sutil del mockup mientras la capa crema "El concepto" sube cubriéndolo
-      .to(phoneStage, {
-        scale: 0.92,
-        opacity: 0.75,
-        duration: 0.4,
-        ease: 'power1.in'
+    if (phoneSection && sequencePhone) {
+      const phoneTimeline = gsap.timeline({
+        scrollTrigger: {
+          trigger: phoneSection,
+          start: 'top top',
+          end: '+=160%',
+          pin: true,
+          scrub: 1,
+          invalidateOnRefresh: true
+        }
       });
-  }
+
+      phoneTimeline
+        .to(sequencePhone, {
+          x: -240,
+          duration: 0.6,
+          ease: 'none'
+        })
+        .to(phoneSplash, {
+          autoAlpha: 0,
+          duration: 0.25,
+          ease: 'power1.inOut'
+        }, '-=0.45')
+        .to(phoneDash, {
+          autoAlpha: 1,
+          duration: 0.35,
+          ease: 'power1.inOut'
+        }, '-=0.25')
+        .to(cardIntro, {
+          x: 0,
+          autoAlpha: 1,
+          duration: 0.35,
+          ease: 'power2.out'
+        }, '-=0.3')
+        .to(phoneStage, {
+          scale: 0.92,
+          opacity: 0.75,
+          duration: 0.4,
+          ease: 'power1.in'
+        });
+    }
+  });
+
+  // ─── MOBILE / TABLET TIMELINE (max-width: 900px) ─────────
+  mm.add("(max-width: 900px)", () => {
+    // En móviles el teléfono se mantiene centrado en x: 0 (nunca se desliza hacia fuera)
+    gsap.set(sequencePhone, { x: 0, scale: 1 });
+    gsap.set(cardIntro, { autoAlpha: 1, x: 0 });
+    gsap.set(phoneSplash, { autoAlpha: 1 });
+    gsap.set(phoneDash, { autoAlpha: 0 });
+
+    if (phoneSection && phoneSplash && phoneDash) {
+      // Conmutación suave entre pantalla de carga y dashboard al hacer scroll
+      gsap.timeline({
+        scrollTrigger: {
+          trigger: phoneSection,
+          start: 'top 30%',
+          end: 'top -20%',
+          scrub: 1
+        }
+      })
+      .to(phoneSplash, { autoAlpha: 0, duration: 0.3 })
+      .to(phoneDash, { autoAlpha: 1, duration: 0.3 }, '-=0.15');
+    }
+  });
 
   // ─── TIMELINE 2: Concept Cream Layer Card Stacking ────────
   // Entrada: sube desde abajo cubriendo a la sección oscura anterior como una card.

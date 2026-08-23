@@ -34,9 +34,35 @@
           <a href="login.html" class="btn-ghost">Iniciar sesión</a>
           <a href="questionnaire.html" class="btn-gold">Comenzar</a>
         </div>
+        <!-- Botón tipo bocadillo / hamburguesa móvil -->
+        <button class="nav-mobile-toggle" id="navMobileToggle" aria-label="Abrir menú de navegación" aria-expanded="false">
+          <span class="toggle-bar"></span>
+          <span class="toggle-bar"></span>
+        </button>
       </div>
     </nav>
   </header>
+
+  <!-- Panel lateral móvil (Drawer sin bordes, con sombreado sobre la página) -->
+  <div class="mobile-drawer-backdrop" id="mobileDrawerBackdrop"></div>
+  <aside class="mobile-drawer" id="mobileDrawer" aria-hidden="true">
+    <div class="mobile-drawer-inner">
+      <div class="mobile-drawer-header">
+        <div class="drawer-logo">
+          <img src="/img/logo_nutrovia_negro.png" alt="NutroVia Logo" class="nav-logo-icon">
+          <span class="nav-logo-text">NUTROVIA<span class="logo-dot">.</span></span>
+        </div>
+        <button class="drawer-close-btn" id="drawerCloseBtn" aria-label="Cerrar menú">✕</button>
+      </div>
+      <div class="mobile-drawer-content">
+        <p class="drawer-tagline">Tu mejor versión, respaldada por la ciencia.</p>
+        <div class="mobile-drawer-actions">
+          <a href="login.html" class="btn-drawer-ghost">Iniciar sesión</a>
+          <a href="questionnaire.html" class="btn-drawer-gold">Comenzar</a>
+        </div>
+      </div>
+    </div>
+  </aside>
 
   <main>
     <!-- ─── HERO SECTION ───────────────────────────────────── -->

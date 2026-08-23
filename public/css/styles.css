@@ -816,15 +816,8 @@ ul {
   padding: 44px 16px 20px;
   display: flex;
   flex-direction: column;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.5s ease, visibility 0.5s ease;
+  background: #090909;
   overflow-y: auto;
-}
-
-.nv-app-view--visible {
-  opacity: 1;
-  visibility: visible;
 }
 
 /* Vista Splash / Bienvenida con Logo de Nutrovia */
@@ -833,6 +826,11 @@ ul {
   justify-content: center;
   background: radial-gradient(circle at center, #1c1811 0%, #090909 75%);
   padding: 40px 18px 24px;
+  z-index: 5;
+}
+
+.nv-app-view--dashboard {
+  z-index: 1;
 }
 
 .splash-welcome-box {
@@ -2958,58 +2956,291 @@ ul {
   }
 }
 
+/* ─── MOBILE DRAWER & BOCADILLO BUTTON ─────────────────── */
+.nav-mobile-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  cursor: pointer;
+  padding: 0;
+  transition: var(--transition);
+}
+
+.nav-mobile-toggle:hover {
+  background: rgba(201, 168, 76, 0.15);
+  border-color: var(--gold);
+}
+
+.toggle-bar {
+  width: 18px;
+  height: 2px;
+  background: var(--text);
+  border-radius: 2px;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.nav-mobile-toggle[aria-expanded="true"] .toggle-bar:nth-child(1) {
+  transform: translateY(3.5px) rotate(45deg);
+}
+
+.nav-mobile-toggle[aria-expanded="true"] .toggle-bar:nth-child(2) {
+  transform: translateY(-3.5px) rotate(-45deg);
+}
+
+/* Mobile Drawer Backdrop */
+.mobile-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 998;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.35s ease, visibility 0.35s ease;
+}
+
+.mobile-drawer-backdrop.open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* Mobile Drawer (Sin bordes duros, sombreado flotante sobre la página) */
+.mobile-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(85vw, 320px);
+  background: linear-gradient(180deg, #141414 0%, #0d0d0d 100%);
+  box-shadow: -20px 0 60px rgba(0, 0, 0, 0.9);
+  z-index: 999;
+  transform: translateX(100%);
+  visibility: hidden;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.35s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-drawer.open {
+  transform: translateX(0);
+  visibility: visible;
+}
+
+.mobile-drawer-inner {
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.mobile-drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.drawer-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.drawer-close-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-muted);
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.drawer-close-btn:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.mobile-drawer-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1;
+  gap: 24px;
+}
+
+.drawer-tagline {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  text-align: center;
+}
+
+.mobile-drawer-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.btn-drawer-ghost {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 20px;
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--text);
+  font-weight: 700;
+  font-size: 15px;
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.btn-drawer-ghost:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.btn-drawer-gold {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 20px;
+  border-radius: 100px;
+  background: linear-gradient(135deg, #c9a84c 0%, #e2c974 50%, #c9a84c 100%);
+  color: #090909;
+  font-weight: 800;
+  font-size: 15px;
+  text-decoration: none;
+  box-shadow: 0 10px 25px rgba(201, 168, 76, 0.25);
+  transition: var(--transition);
+}
+
 @media (max-width: 900px) {
-  .nav-links, .nav-actions {
-    display: none;
+  /* Navbar */
+  .nav-actions {
+    display: none !important;
   }
   
-  .nav-toggle {
+  .nav-mobile-toggle {
     display: flex;
-  }
-  
-  .nav-links.open {
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: var(--bg-card);
-    border-bottom: 1px solid var(--border);
-    padding: 24px;
-    gap: 18px;
-  }
-  
-  .nav-actions.open {
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    top: calc(100% + 230px);
-    left: 0;
-    right: 0;
-    background: var(--bg-card);
-    border-bottom: 1px solid var(--border);
-    padding: 16px 24px 24px;
   }
 
-  .nv-phone-stage,
+  .site-header {
+    top: 12px;
+    width: min(94%, 500px);
+  }
+
+  .navbar {
+    padding: 8px 16px;
+  }
+
+  /* Hero en mobile */
+  .hero {
+    min-height: auto;
+    padding: 110px 18px 24px;
+  }
+
+  .hero-title,
+  .hero-title--refined {
+    font-size: clamp(30px, 7.5vw, 42px);
+    line-height: 1.15;
+    margin-bottom: 16px;
+  }
+
+  .hero-subtitle {
+    font-size: 15px;
+    line-height: 1.5;
+    margin-bottom: 24px;
+  }
+
+  /* Escena 1: Mockup iPhone en mobile */
+  .nv-pinned-section.nv-phone-scene {
+    min-height: auto;
+    padding: 10px 16px 60px;
+    margin-top: 0px !important;
+  }
+
+  .nv-phone-stage {
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+  }
+
+  .nv-device-wrapper {
+    width: min(76vw, 290px);
+    margin: 0 auto;
+    transform: none !important;
+  }
+
+  .nv-card--intro {
+    position: relative !important;
+    right: auto !important;
+    top: auto !important;
+    transform: none !important;
+    width: 100%;
+    max-width: 440px;
+    margin: 0 auto;
+    opacity: 1 !important;
+    visibility: visible !important;
+    padding: 24px 20px;
+  }
+
+  .nv-card-title {
+    font-size: 24px;
+  }
+
+  .nv-card-desc {
+    font-size: 14px;
+  }
+
+  /* Purpose & Watch en mobile */
   .nv-purpose-stage,
   .nv-watch-container {
     flex-direction: column;
     text-align: center;
-    gap: 48px;
+    gap: 36px;
   }
 
-  .nv-card {
-    max-width: 100%;
+  .nv-watch-wrapper {
+    width: min(72vw, 270px);
   }
 
-  .nv-card--intro {
-    position: relative;
-    right: auto;
-    top: auto;
-    transform: none;
-    margin: 0 auto;
+  .nv-watch-text-col {
+    text-align: center;
+  }
+
+  .nv-watch-checklist {
+    align-items: center;
+  }
+
+  /* Bento Grid */
+  .nv-bento-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .bento-card--featured,
+  .bento-card--full {
+    grid-column: auto;
+    grid-row: auto;
+    min-height: auto;
   }
 
   .nv-steps-row {
@@ -3019,17 +3250,6 @@ ul {
 
   .step-arrow-divider {
     transform: rotate(90deg);
-  }
-
-  .nv-bento-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .bento-card--featured,
-  .bento-card--wide {
-    grid-column: auto;
-    grid-row: auto;
-    min-height: 200px;
   }
 
   .footer-top-row {
