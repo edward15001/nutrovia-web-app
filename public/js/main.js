@@ -120,8 +120,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const mm = gsap.matchMedia();
 
-  // ─── DESKTOP TIMELINE (min-width: 901px) ─────────────────
+  // ─── DESKTOP TIMELINES (min-width: 901px) ─────────────────
   mm.add("(min-width: 901px)", () => {
+    // 1. Phone Hero Stage
     gsap.set(cardIntro, { autoAlpha: 0, x: 60 });
     gsap.set(sequencePhone, { x: 0, scale: 1 });
     gsap.set(phoneSplash, { autoAlpha: 1 });
@@ -168,11 +169,81 @@ document.addEventListener('DOMContentLoaded', () => {
           ease: 'power1.in'
         });
     }
+
+    // 2. Concept Cream Layer Card Stacking (Sube cubriendo la sección anterior)
+    if (conceptLayer) {
+      gsap.from(conceptLayer, {
+        scrollTrigger: {
+          trigger: conceptLayer,
+          start: 'top 98%',
+          end: 'top 20%',
+          scrub: 1
+        },
+        y: 160,
+        opacity: 0.95,
+        ease: 'none'
+      });
+    }
+
+    // 3. Purpose Section (Pinned en Desktop)
+    if (purposeSection && purposeCard && purposePhone) {
+      gsap.set(purposeCard, { autoAlpha: 0, y: 30 });
+      gsap.set(purposePhone, { autoAlpha: 0, scale: 0.92, y: 20 });
+
+      const purposeTimeline = gsap.timeline({
+        scrollTrigger: {
+          trigger: purposeSection,
+          start: 'top top',
+          end: '+=100%',
+          pin: true,
+          scrub: 1,
+          invalidateOnRefresh: true
+        }
+      });
+
+      purposeTimeline
+        .to(purposeCard, { autoAlpha: 1, y: 0, duration: 0.4, ease: 'power1.out' })
+        .to(purposePhone, { autoAlpha: 1, scale: 1, y: 0, duration: 0.4, ease: 'power1.out' }, '<')
+        .to({}, { duration: 0.3 }); // Hold
+    }
+
+    // 4. Apple Watch Mockup Hero
+    if (watchSection) {
+      const watchMockup = document.getElementById('nvWatchMockup');
+      const watchText = watchSection.querySelector('.nv-watch-text-col');
+
+      if (watchMockup && watchText) {
+        gsap.from(watchMockup, {
+          scrollTrigger: {
+            trigger: watchSection,
+            start: 'top 75%',
+            end: 'top 35%',
+            scrub: 1
+          },
+          scale: 0.9,
+          y: 40,
+          opacity: 0.7,
+          ease: 'power2.out'
+        });
+
+        gsap.from(watchText, {
+          scrollTrigger: {
+            trigger: watchSection,
+            start: 'top 75%',
+            end: 'top 35%',
+            scrub: 1
+          },
+          x: 30,
+          opacity: 0,
+          ease: 'power2.out'
+        });
+      }
+    }
   });
 
-  // ─── MOBILE / TABLET TIMELINE (max-width: 900px) ─────────
+  // ─── MOBILE / TABLET TIMELINES (max-width: 900px) ─────────
   mm.add("(max-width: 900px)", () => {
-    // En móviles el teléfono se mantiene centrado en x: 0 (nunca se desliza hacia fuera)
+    // 1. En móviles el teléfono se mantiene centrado en x: 0 (nunca se desliza hacia fuera)
     gsap.set(sequencePhone, { x: 0, scale: 1 });
     gsap.set(cardIntro, { autoAlpha: 1, x: 0 });
     gsap.set(phoneSplash, { autoAlpha: 1 });
@@ -191,81 +262,26 @@ document.addEventListener('DOMContentLoaded', () => {
       .to(phoneSplash, { autoAlpha: 0, duration: 0.3 })
       .to(phoneDash, { autoAlpha: 1, duration: 0.3 }, '-=0.15');
     }
+
+    // 2. En móviles, desactivar pines y transformaciones agresivas para evitar huecos en iOS Safari
+    if (conceptLayer) {
+      gsap.set(conceptLayer, { y: 0, opacity: 1, clearProps: 'transform' });
+    }
+
+    if (purposeSection && purposeCard && purposePhone) {
+      gsap.set([purposeCard, purposePhone], { autoAlpha: 1, y: 0, scale: 1, clearProps: 'all' });
+    }
+
+    if (watchSection) {
+      const watchMockup = document.getElementById('nvWatchMockup');
+      const watchText = watchSection.querySelector('.nv-watch-text-col');
+      if (watchMockup && watchText) {
+        gsap.set([watchMockup, watchText], { opacity: 1, scale: 1, x: 0, y: 0, clearProps: 'all' });
+      }
+    }
   });
 
-  // ─── TIMELINE 2: Concept Cream Layer Card Stacking ────────
-  // Entrada: sube desde abajo cubriendo a la sección oscura anterior como una card.
-  // Salida: se desplaza hacia arriba con el scroll natural a tamaño 100%, sin encogimiento ni scale.
-  if (conceptLayer) {
-    gsap.from(conceptLayer, {
-      scrollTrigger: {
-        trigger: conceptLayer,
-        start: 'top 98%',
-        end: 'top 20%',
-        scrub: 1
-      },
-      y: 160,
-      opacity: 0.95,
-      ease: 'none'
-    });
-  }
-
-  // ─── TIMELINE 3: Purpose Section (Dark Pinned) ───────────
-  if (purposeSection && purposeCard && purposePhone) {
-    gsap.set(purposeCard, { autoAlpha: 0, y: 30 });
-    gsap.set(purposePhone, { autoAlpha: 0, scale: 0.92, y: 20 });
-
-    const purposeTimeline = gsap.timeline({
-      scrollTrigger: {
-        trigger: purposeSection,
-        start: 'top top',
-        end: '+=100%',
-        pin: true,
-        scrub: 1,
-        invalidateOnRefresh: true
-      }
-    });
-
-    purposeTimeline
-      .to(purposeCard, { autoAlpha: 1, y: 0, duration: 0.4, ease: 'power1.out' })
-      .to(purposePhone, { autoAlpha: 1, scale: 1, y: 0, duration: 0.4, ease: 'power1.out' }, '<')
-      .to({}, { duration: 0.3 }); // Hold
-  }
-
-  // ─── TIMELINE 4: Apple Watch Mockup Hero Standalone ──────
-  if (watchSection) {
-    const watchMockup = document.getElementById('nvWatchMockup');
-    const watchText = watchSection.querySelector('.nv-watch-text-col');
-
-    if (watchMockup && watchText) {
-      gsap.from(watchMockup, {
-        scrollTrigger: {
-          trigger: watchSection,
-          start: 'top 75%',
-          end: 'top 35%',
-          scrub: 1
-        },
-        scale: 0.9,
-        y: 40,
-        opacity: 0.7,
-        ease: 'power2.out'
-      });
-
-      gsap.from(watchText, {
-        scrollTrigger: {
-          trigger: watchSection,
-          start: 'top 75%',
-          end: 'top 35%',
-          scrub: 1
-        },
-        x: 30,
-        opacity: 0,
-        ease: 'power2.out'
-      });
-    }
-  }
-
-  // ─── 5. Recalcular triggers al cargar imágenes/fuentes ────
+  // ─── 6. Recalcular triggers al cargar imágenes/fuentes ────
   const refreshTriggers = () => {
     ScrollTrigger.refresh();
   };
