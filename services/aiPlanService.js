@@ -53,36 +53,91 @@ REGLAS OBLIGATORIAS:
 10. Sé específico y variado: usa nombres descriptivos (nada genérico como "Ensalada mixta"), no repitas el mismo plato dos días seguidos, y da cantidades en gramos coherentes con las calorías de cada comida.`;
 
 /**
+ * Normaliza el plan devuelto por la IA antes de validarlo:
+ *  - claves de comida en minúsculas ("Desayuno" → "desayuno")
+ *  - calorias numéricas aunque vengan como "450 kcal" o "450"
+ */
+function normalizePlan(plan) {
+  if (!plan || typeof plan !== 'object') return plan;
+  if (plan.weekly_menu && typeof plan.weekly_menu === 'object') {
+    for (const day of Object.values(plan.weekly_menu)) {
+      if (!day || typeof day !== 'object') continue;
+      for (const key of Object.keys(day)) {
+        const lower = key.toLowerCase();
+        if (lower !== key && ['desayuno', 'almuerzo', 'comida', 'merienda', 'cena'].includes(lower)) {
+          day[lower] = day[key];
+          delete day[key];
+        }
+      }
+      for (const meal of ['desayuno', 'almuerzo', 'comida', 'merienda', 'cena']) {
+        const m = day[meal];
+        if (!m || typeof m !== 'object') continue;
+        if (typeof m.calorias === 'string') {
+          const n = parseInt(m.calorias.replace(/[^\d]/g, ''), 10);
+          if (!isNaN(n)) m.calorias = n;
+        }
+      }
+    }
+  }
+  return plan;
+}
+
+/**
  * Valida la estructura del plan generado por la IA.
  * Devuelve true si el shape es usable (con tolerancias razonables).
+ * Registra el motivo exacto del fallo para poder diagnosticar.
  */
 function validatePlanShape(plan) {
-  if (!plan || typeof plan !== 'object') return false;
-
-  // Menú semanal: al menos 5 días con 5 comidas con nombre/calorias/ingredientes
-  if (plan.weekly_menu && typeof plan.weekly_menu === 'object') {
-    const days = Object.values(plan.weekly_menu).filter(d => d && typeof d === 'object');
-    if (days.length < 5) return false;
-    const mealsOk = days.every(d =>
-      ['desayuno', 'almuerzo', 'comida', 'merienda', 'cena'].every(k =>
-        d[k] && typeof d[k].nombre === 'string' && d[k].nombre.length > 0 &&
-        typeof d[k].calorias === 'number' && Array.isArray(d[k].ingredientes)
-      )
-    );
-    if (!mealsOk) return false;
+  if (!plan || typeof plan !== 'object') {
+    console.error('IA: shape — el plan no es un objeto');
+    return false;
   }
 
-  // Entrenamiento: sesiones con dia/tipo/ejercicios
+  if (!plan.weekly_menu || typeof plan.weekly_menu !== 'object') {
+    console.error('IA: shape — falta weekly_menu');
+    return false;
+  }
+  const days = Object.values(plan.weekly_menu).filter(d => d && typeof d === 'object');
+  if (days.length < 5) {
+    console.error(`IA: shape — solo ${days.length} días válidos (se esperan >= 5)`);
+    return false;
+  }
+  for (const d of days) {
+    for (const k of ['desayuno', 'almuerzo', 'comida', 'merienda', 'cena']) {
+      const meal = d[k];
+      if (!meal || typeof meal.nombre !== 'string' || !meal.nombre.length) {
+        console.error(`IA: shape — falta nombre en comida "${k}"`);
+        return false;
+      }
+      if (typeof meal.calorias !== 'number') {
+        console.error(`IA: shape — calorias no numérico en "${k}": ${JSON.stringify(meal.calorias)}`);
+        return false;
+      }
+      if (!Array.isArray(meal.ingredientes)) {
+        console.error(`IA: shape — ingredientes no es array en "${k}"`);
+        return false;
+      }
+    }
+  }
+
   if (plan.training_plan && typeof plan.training_plan === 'object') {
     const sessions = plan.training_plan.sesiones;
-    if (!Array.isArray(sessions) || sessions.length === 0) return false;
+    if (!Array.isArray(sessions) || sessions.length === 0) {
+      console.error('IA: shape — training_plan sin sesiones');
+      return false;
+    }
     if (!sessions.every(s =>
       s && typeof s.dia === 'string' && typeof s.tipo === 'string' && Array.isArray(s.ejercicios) && s.ejercicios.length > 0
-    )) return false;
+    )) {
+      console.error('IA: shape — sesión de entrenamiento incompleta');
+      return false;
+    }
   }
 
-  // Suplementos: array de objetos con nombre
-  if (plan.supplements !== undefined && !Array.isArray(plan.supplements)) return false;
+  if (plan.supplements !== undefined && !Array.isArray(plan.supplements)) {
+    console.error('IA: shape — supplements no es array');
+    return false;
+  }
 
   return true;
 }
@@ -209,10 +264,17 @@ ${JSON.stringify(macros, null, 2)}`;
 
     // Quitar posibles cercos markdown ```json ... ```
     const cleaned = content.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
-    const plan = JSON.parse(cleaned);
+    let plan;
+    try {
+      plan = JSON.parse(cleaned);
+    } catch (err) {
+      console.error(`IA: JSON no parseable (${err.message}) — inicio de la respuesta: ${content.slice(0, 300).replace(/\n/g, ' ')}`);
+      return null;
+    }
+
+    plan = normalizePlan(plan);
 
     if (!validatePlanShape(plan)) {
-      console.error('IA: plan generado no válido (shape incorrecto)');
       return null;
     }
 
