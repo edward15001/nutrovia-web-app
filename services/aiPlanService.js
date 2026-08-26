@@ -264,6 +264,8 @@ ${JSON.stringify(macros, null, 2)}`;
 
     const data = await res.json();
     const content = data?.choices?.[0]?.message?.content;
+    // Diagnóstico: por qué terminó la generación (length = se cortó por tokens)
+    console.log(`IA: finish_reason=${data?.choices?.[0]?.finish_reason} usage=${JSON.stringify(data?.usage)} chars=${content ? content.length : 0}`);
     if (!content) return null;
 
     // Quitar posibles cercos markdown ```json ... ```
