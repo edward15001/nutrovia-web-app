@@ -50,7 +50,8 @@ REGLAS OBLIGATORIAS:
 7. Genera exactamente tantas sesiones de entrenamiento como "training_days_per_week" indique el perfil (entre 1 y 6), repartidas por la semana.
 8. Comidas y ejercicios reales, concretos y ejecutables. Nada genérico ni inventado. Ingredientes: entre 3 y 5 por comida, con cantidades aproximadas en gramos coherentes con las calorías de esa comida.
 9. Devuelve ÚNICAMENTE un objeto JSON válido. Sin markdown, sin comentarios, sin texto fuera del JSON.
-10. Sé específico y variado: usa nombres descriptivos (nada genérico como "Ensalada mixta"), no repitas el mismo plato dos días seguidos, y da cantidades en gramos coherentes con las calorías de cada comida.`;
+10. Sé específico y variado: usa nombres descriptivos (nada genérico como "Ensalada mixta"), no repitas el mismo plato dos días seguidos, y da cantidades en gramos coherentes con las calorías de cada comida.
+11. No añadas campos, texto ni explicaciones fuera de la estructura JSON del ejemplo: solo weekly_menu, training_plan, supplements, notas_dieta y consejos_generales.`;
 
 /**
  * Normaliza el plan devuelto por la IA antes de validarlo:
@@ -238,8 +239,11 @@ ${JSON.stringify(macros, null, 2)}`;
           // proveedores) rechaza con 400 "Failed to validate JSON" prompts
           // anidados como este. El prompt exige JSON estricto y abajo se
           // valida + fallback al motor si algo no cuadra.
+          // max_tokens 4000: el plan completo supera los 2000 tokens y se
+          // truncaba ("Unterminated string"). GPT-OSS a 500 tok/s genera
+          // 4000 tokens en ~8s, dentro del timeout.
           temperature: 0.8,
-          max_tokens: 2000,
+          max_tokens: 4000,
         }),
         signal: controller.signal,
       });
