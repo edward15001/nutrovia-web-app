@@ -17,12 +17,13 @@
  *  - AI_PLAN_MODEL    (por defecto "gpt-4o-mini")
  *  - AI_PLAN_API_URL  (por defecto la de OpenAI; permite usar Groq, DeepInfra,
  *                      Fireworks u otros endpoints compatibles con OpenAI)
- *  - AI_PLAN_TIMEOUT_MS (por defecto 7000 — ajustado al límite de Vercel Hobby)
+ *  - AI_PLAN_TIMEOUT_MS (por defecto 8500 — ajustado al límite de 10s de Vercel Hobby;
+ *                      el AbortController garantiza que nunca se supere)
  */
 
 const AI_PLAN_MODEL = process.env.AI_PLAN_MODEL || 'gpt-4o-mini';
 const AI_PLAN_API_URL = process.env.AI_PLAN_API_URL || 'https://api.openai.com/v1/chat/completions';
-const AI_PLAN_TIMEOUT_MS = parseInt(process.env.AI_PLAN_TIMEOUT_MS || '7000', 10);
+const AI_PLAN_TIMEOUT_MS = parseInt(process.env.AI_PLAN_TIMEOUT_MS || '8500', 10);
 
 function isConfigured() {
   return !!process.env.OPENAI_API_KEY;
@@ -40,7 +41,8 @@ REGLAS OBLIGATORIAS:
 6. Respeta el equipamiento de entrenamiento: "casa" = solo peso corporal, gomas elásticas o mancuernas; "gimnasio" = máquinas y barras; "mixto" = ambos.
 7. Genera exactamente tantas sesiones de entrenamiento como "training_days_per_week" indique el perfil (entre 1 y 6), repartidas por la semana.
 8. Comidas y ejercicios reales, concretos y ejecutables. Nada genérico ni inventado. Ingredientes: entre 3 y 5 por comida, con cantidades aproximadas en gramos coherentes con las calorías de esa comida.
-9. Devuelve ÚNICAMENTE un objeto JSON válido. Sin markdown, sin comentarios, sin texto fuera del JSON.`;
+9. Devuelve ÚNICAMENTE un objeto JSON válido. Sin markdown, sin comentarios, sin texto fuera del JSON.
+10. Sé CONCISO para caber en el límite de tokens: nombres de comida de máximo 5 palabras, 3 ingredientes por comida como máximo (con gramos), y ninguna explicación fuera del JSON.`;
 
 /**
  * Valida la estructura del plan generado por la IA.
@@ -171,7 +173,7 @@ ${JSON.stringify(macros, null, 2)}`;
           ],
           response_format: { type: 'json_object' },
           temperature: 0.7,
-          max_tokens: 1600,
+          max_tokens: 1200,
         }),
         signal: controller.signal,
       });
@@ -180,7 +182,13 @@ ${JSON.stringify(macros, null, 2)}`;
     }
 
     if (!res.ok) {
-      console.error(`IA: error HTTP ${res.status} generando plan (${res.statusText})`);
+      // Intentar leer el detalle del error (tipo: insufficient_quota, rate_limit_exceeded...)
+      let detail = '';
+      try {
+        const errBody = await res.json();
+        detail = errBody?.error?.message || errBody?.error?.type || '';
+      } catch (_) { /* cuerpo no legible */ }
+      console.error(`IA: error HTTP ${res.status} generando plan (${res.statusText})${detail ? ' — ' + detail : ''}`);
       return null;
     }
 
