@@ -255,6 +255,30 @@
                     </div>
                 </div>
 
+                <div style="margin-top: 24px;">
+                    <label class="form-label">¿Dónde entrenas?</label>
+                    <div class="option-grid cols-1">
+                        <button class="option-btn" onclick="selectOption(this, 'training_equipment', 'casa')"
+                            style="padding:12px 16px">
+                            <span class="option-icon">🏠</span>
+                            <span class="option-text"><span class="option-title">En casa</span><span
+                                    class="option-desc">Solo peso corporal, gomas o mancuernas</span></span>
+                        </button>
+                        <button class="option-btn" onclick="selectOption(this, 'training_equipment', 'gimnasio')"
+                            style="padding:12px 16px">
+                            <span class="option-icon">🏋️</span>
+                            <span class="option-text"><span class="option-title">En el gimnasio</span><span
+                                    class="option-desc">Tengo acceso a máquinas y barras</span></span>
+                        </button>
+                        <button class="option-btn" onclick="selectOption(this, 'training_equipment', 'mixto')"
+                            style="padding:12px 16px">
+                            <span class="option-icon">🔄</span>
+                            <span class="option-text"><span class="option-title">Mixto</span><span
+                                    class="option-desc">Entreno en casa y en el gimnasio</span></span>
+                        </button>
+                    </div>
+                </div>
+
                 <div id="alert-5" class="alert alert-error" style="display:none"></div>
                 <div class="quiz-nav">
                     <button class="btn-prev" onclick="goToStep(4)">← Atrás</button>

@@ -6,6 +6,7 @@ const formData = {
     sex: null, age: null, height: null, weight: null, targetWeight: null,
     goal: null, activity_level: null,
     dietary_preference: null, training_experience: null, training_days: 3,
+    training_equipment: 'mixto',
     health_conditions: [],
 };
 
@@ -99,6 +100,7 @@ function validateStep(step) {
         case 5: {
             if (!formData.dietary_preference) return showAlert('Selecciona tu preferencia dietética.');
             if (!formData.training_experience) return showAlert('Selecciona tu nivel de experiencia en el gym.');
+            if (!formData.training_equipment) return showAlert('Selecciona dónde entrenas.');
             return true;
         }
         default: return true;
@@ -176,10 +178,12 @@ async function prefillForm() {
         formData.dietary_preference = p.dietary_preference;
         formData.training_experience = p.training_experience || 'principiante';
         formData.training_days = p.training_days_per_week || 3;
+        formData.training_equipment = p.training_equipment || 'mixto';
 
         // Marcar opciones seleccionadas
         [['sex', p.sex], ['goal', p.goal], ['activity_level', p.activity_level],
-         ['dietary_preference', p.dietary_preference], ['training_experience', formData.training_experience]]
+         ['dietary_preference', p.dietary_preference], ['training_experience', formData.training_experience],
+         ['training_equipment', formData.training_equipment]]
             .forEach(([field, value]) => {
                 if (!value) return;
                 document.querySelectorAll('.option-btn').forEach(btn => {
@@ -317,6 +321,7 @@ async function submitQuestionnaire() {
                 health_conditions: formData.health_conditions.filter(c => c !== 'ninguna'),
                 training_experience: formData.training_experience || 'principiante',
                 training_days_per_week: formData.training_days,
+                training_equipment: formData.training_equipment || 'mixto',
             }),
         });
 

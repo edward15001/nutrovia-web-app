@@ -229,7 +229,13 @@ function renderDayMenu(day) {
     { key: 'cena', label: '🌙 Cena' },
   ];
 
+  const dietNotes = planData?.notas_dieta || [];
+  const notesHtml = dietNotes.length
+    ? `<div style="background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.35);border-radius:8px;padding:12px 14px;font-size:13px;color:var(--text-muted);margin-bottom:20px;line-height:1.6;">${dietNotes.join('<br>')}</div>`
+    : '';
+
   document.getElementById('dayMenuContent').innerHTML = `
+    ${notesHtml}
     <div class="dash-card-label" style="margin-bottom:20px;">${day} — ${planData.daily_calories} kcal totales</div>
     ${meals.map(meal => {
     const m = menu[meal.key];
@@ -260,6 +266,7 @@ function renderTrainingTab() {
       </div>
       <div style="margin-left:auto;display:flex;gap:12px;flex-wrap:wrap;">
         <div class="date-badge"><span class="date-label">Días/semana</span><span class="date-val">${tp.dias_semana}</span></div>
+        <div class="date-badge"><span class="date-label">Entrenas</span><span class="date-val">${equipmentLabel(tp.equipamiento)}</span></div>
       </div>
     </div>
   `;
@@ -287,6 +294,22 @@ function renderTrainingTab() {
       ${notes.map(n => `<div style="font-size:13px;color:var(--text-muted);padding:10px 14px;background:var(--bg);border-radius:8px;border-left:3px solid var(--gold);">${n}</div>`).join('')}
     </div>
   `;
+
+  const progression = tp.progresion || [];
+  if (progression.length) {
+    document.getElementById('trainingProgression').innerHTML = `
+      <div class="dash-card-label">📈 Progresión semana a semana</div>
+      <div style="margin-top:14px;display:flex;flex-direction:column;gap:8px;">
+        ${progression.map(n => `<div style="font-size:13px;color:var(--text-muted);padding:10px 14px;background:var(--bg);border-radius:8px;border-left:3px solid #4caf50;">${n}</div>`).join('')}
+      </div>
+    `;
+  } else {
+    document.getElementById('trainingProgression').innerHTML = '';
+  }
+}
+
+function equipmentLabel(eq) {
+  return { casa: 'En casa', gimnasio: 'Gimnasio', mixto: 'Mixto' }[eq] || 'Mixto';
 }
 
 // ─── Supplements Tab ─────────────────────────────────────────

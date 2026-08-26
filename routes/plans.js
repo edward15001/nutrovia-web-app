@@ -10,7 +10,8 @@ router.get('/', authMiddleware, async (req, res) => {
         const result = await db.query(
             `SELECT np.*, qa.goal, qa.activity_level, qa.dietary_preference,
               qa.age, qa.sex, qa.weight_kg, qa.height_cm, qa.target_weight_kg,
-              qa.health_conditions, qa.training_experience, qa.training_days_per_week
+              qa.health_conditions, qa.training_experience, qa.training_days_per_week,
+              qa.training_equipment
        FROM nutrition_plans np
        JOIN questionnaire_answers qa ON qa.user_id = np.user_id
        WHERE np.user_id = $1`,
@@ -33,6 +34,8 @@ router.get('/', authMiddleware, async (req, res) => {
             weekly_menu: row.weekly_menu,
             training_plan: row.training_plan,
             supplements: row.supplements,
+            notas_dieta: row.notas_dieta,
+            consejos_generales: row.consejos_generales,
             profile: {
                 goal: row.goal,
                 activity_level: row.activity_level,
@@ -45,6 +48,7 @@ router.get('/', authMiddleware, async (req, res) => {
                 health_conditions: row.health_conditions,
                 training_experience: row.training_experience,
                 training_days_per_week: row.training_days_per_week,
+                training_equipment: row.training_equipment,
             },
             generated_at: row.generated_at,
         });

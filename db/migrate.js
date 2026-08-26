@@ -15,6 +15,13 @@ const MIGRATIONS = [
   // Último email de check-in semanal enviado (para no duplicar avisos)
   `ALTER TABLE users ADD COLUMN IF NOT EXISTS last_checkin_email_at TIMESTAMPTZ`,
 
+  // Equipamiento disponible para el entrenamiento (casa / gimnasio / mixto)
+  `ALTER TABLE questionnaire_answers ADD COLUMN IF NOT EXISTS training_equipment VARCHAR(20) DEFAULT 'mixto'`,
+
+  // Notas dietéticas y consejos generales del plan (se muestran en el dashboard)
+  `ALTER TABLE nutrition_plans ADD COLUMN IF NOT EXISTS notas_dieta JSONB NOT NULL DEFAULT '[]'`,
+  `ALTER TABLE nutrition_plans ADD COLUMN IF NOT EXISTS consejos_generales JSONB NOT NULL DEFAULT '[]'`,
+
   // Sólo un registro de cuestionario y un plan por usuario (para el upsert ON CONFLICT).
   // PostgreSQL no soporta ADD CONSTRAINT IF NOT EXISTS, así que comprobamos pg_constraint.
   `DO $$ BEGIN

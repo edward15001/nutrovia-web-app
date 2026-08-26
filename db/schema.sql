@@ -38,6 +38,7 @@ CREATE TABLE IF NOT EXISTS questionnaire_answers (
     -- Experiencia entrenamiento
     training_experience VARCHAR(20) DEFAULT 'principiante' CHECK (training_experience IN ('principiante', 'intermedio', 'avanzado')),
     training_days_per_week INTEGER DEFAULT 3,
+    training_equipment  VARCHAR(20) DEFAULT 'mixto' CHECK (training_equipment IN ('casa', 'gimnasio', 'mixto')),
     created_at          TIMESTAMPTZ DEFAULT NOW(),
     -- Última vez que el usuario registró/actualizó sus valores
     updated_at          TIMESTAMPTZ DEFAULT NOW(),
@@ -58,6 +59,10 @@ CREATE TABLE IF NOT EXISTS nutrition_plans (
     weekly_menu      JSONB NOT NULL DEFAULT '{}',
     training_plan    JSONB NOT NULL DEFAULT '{}',
     supplements      JSONB NOT NULL DEFAULT '[]',
+    -- Notas dietéticas por condición de salud (array de strings)
+    notas_dieta       JSONB NOT NULL DEFAULT '[]',
+    -- Consejos generales mostrados en el dashboard (array de strings)
+    consejos_generales JSONB NOT NULL DEFAULT '[]',
     generated_at     TIMESTAMPTZ DEFAULT NOW(),
     -- Sólo un plan activo por usuario
     UNIQUE(user_id)
