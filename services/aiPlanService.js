@@ -15,24 +15,23 @@
  * Variables de entorno (todas opcionales):
  *  - OPENAI_API_KEY   (obligatoria para activar la IA; con Groq por defecto, esta
  *                      variable debe contener la clave de Groq "gsk_...")
- *  - AI_PLAN_MODEL    (por defecto "openai/gpt-oss-20b" de Groq — 1000 tok/s,
- *                      suficiente para generar el plan completo dentro del
- *                      límite de 10s de Vercel Hobby; "openai/gpt-oss-120b"
- *                      produce mejor texto pero tarda el doble)
+ *  - AI_PLAN_MODEL    (por defecto "openai/gpt-oss-120b" de Groq — mejor
+ *                      calidad de texto; requiere Default Max Duration >= 45s
+ *                      en Vercel → Settings → Functions)
  *  - AI_PLAN_API_URL  (por defecto la de Groq; permite usar OpenAI, DeepInfra,
  *                      Fireworks u otros endpoints compatibles con OpenAI)
- *  - AI_PLAN_TIMEOUT_MS (por defecto 8000 — seguro dentro del límite de 10s de
- *                      Vercel Hobby. Para dar más tiempo a la IA: sube el límite
- *                      en Vercel → Settings → Functions → Default Max Duration,
- *                      y define aquí p.ej. AI_PLAN_TIMEOUT_MS=45000)
+ *  - AI_PLAN_TIMEOUT_MS (por defecto 45000 — requiere Default Max Duration >= 45s
+ *                      en Vercel → Settings → Functions; el AbortController
+ *                      garantiza que nunca se supere el timeout propio)
  */
 
-// Por defecto se usa Groq (muy rápido, cabe en el límite de 10s de Vercel
-// Hobby; GPT-OSS 20B cuesta ~0,04 céntimos por plan generado). OpenAI y otros
-// proveedores compatibles se eligen definiendo AI_PLAN_API_URL y AI_PLAN_MODEL.
-const AI_PLAN_MODEL = process.env.AI_PLAN_MODEL || 'openai/gpt-oss-20b';
+// Por defecto se usa Groq con GPT-OSS 120B (mejor calidad). Requiere que la
+// función de Vercel pueda correr >= 45s (Default Max Duration en Settings →
+// Functions). OpenAI y otros proveedores compatibles se eligen definiendo
+// AI_PLAN_API_URL y AI_PLAN_MODEL.
+const AI_PLAN_MODEL = process.env.AI_PLAN_MODEL || 'openai/gpt-oss-120b';
 const AI_PLAN_API_URL = process.env.AI_PLAN_API_URL || 'https://api.groq.com/openai/v1/chat/completions';
-const AI_PLAN_TIMEOUT_MS = parseInt(process.env.AI_PLAN_TIMEOUT_MS || '8000', 10);
+const AI_PLAN_TIMEOUT_MS = parseInt(process.env.AI_PLAN_TIMEOUT_MS || '45000', 10);
 
 function isConfigured() {
   return !!process.env.OPENAI_API_KEY;
@@ -240,11 +239,11 @@ ${JSON.stringify(macros, null, 2)}`;
           // proveedores) rechaza con 400 "Failed to validate JSON" prompts
           // anidados como este. El prompt exige JSON estricto y abajo se
           // valida + fallback al motor si algo no cuadra.
-          // max_tokens 4000: el plan completo supera los 2000 tokens y se
-          // truncaba ("Unterminated string"). GPT-OSS a 500 tok/s genera
-          // 4000 tokens en ~8s, dentro del timeout.
+          // max_tokens 6000: el plan completo supera los 2000 tokens y con
+          // menos se truncaba ("Unterminated string"). Con el timeout de 45s
+          // y GPT-OSS 120B (500 tok/s) hay margen de sobra.
           temperature: 0.8,
-          max_tokens: 4000,
+          max_tokens: 6000,
         }),
         signal: controller.signal,
       });
