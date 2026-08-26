@@ -179,9 +179,12 @@ ${JSON.stringify(macros, null, 2)}`;
             { role: 'system', content: SYSTEM_PROMPT },
             { role: 'user', content: userPrompt },
           ],
-          response_format: { type: 'json_object' },
+          // Sin response_format json_object: el modo JSON de Groq (y otros
+          // proveedores) rechaza con 400 "Failed to validate JSON" prompts
+          // anidados como este. El prompt exige JSON estricto y abajo se
+          // valida + fallback al motor si algo no cuadra.
           temperature: 0.8,
-          max_tokens: 1600,
+          max_tokens: 2000,
         }),
         signal: controller.signal,
       });
