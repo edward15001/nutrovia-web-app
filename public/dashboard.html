@@ -70,9 +70,16 @@
                     <h1 id="dashGreeting">Mi panel</h1>
                     <p id="dashDate"></p>
                 </div>
-                <button onclick="document.getElementById('sidebar').classList.toggle('open')"
-                    style="display:none;background:transparent;border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:8px;font-size:18px;"
-                    id="mobileMenuBtn">☰</button>
+                <div style="display:flex;gap:10px;align-items:center;">
+                    <button onclick="window.location.href='questionnaire.html?update=1'"
+                        style="background:var(--bg);border:1px solid var(--border-gold);color:var(--gold);padding:10px 16px;border-radius:8px;font-size:13px;font-weight:600;font-family:var(--font);cursor:pointer;transition:var(--transition);"
+                        onmouseover="this.style.background='rgba(201,168,76,0.08)'" onmouseout="this.style.background='var(--bg)'">
+                        ✏️ Actualizar mis datos
+                    </button>
+                    <button onclick="document.getElementById('sidebar').classList.toggle('open')"
+                        style="display:none;background:transparent;border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:8px;font-size:18px;"
+                        id="mobileMenuBtn">☰</button>
+                </div>
             </div>
 
             <!-- Status Banner -->
@@ -140,6 +147,20 @@
             </div>
 
         </main>
+    </div>
+
+    <!-- ═══ Check-in semanal: ¿Cómo va ese progreso? ═══ -->
+    <div class="checkin-overlay" id="checkinOverlay" style="display:none">
+        <div class="checkin-modal">
+            <div class="checkin-emoji">🌱</div>
+            <h3 class="checkin-title">¿Cómo va ese progreso?</h3>
+            <p class="checkin-text">Llevas un tiempo sin actualizar tus datos. ¿Quieres contarnos cómo va todo?
+                Si algo ha cambiado, podemos ajustar tu plan al momento.</p>
+            <div class="checkin-actions">
+                <button class="btn-gold" onclick="checkinAllGood()">Todo va bien 💪</button>
+                <button class="btn-cancel" onclick="checkinWantChange()">Quiero cambiar algo ✏️</button>
+            </div>
+        </div>
     </div>
 
     <!-- Loading overlay -->

@@ -2,7 +2,7 @@
 
 ![Node.js](https://img.shields.io/badge/Node.js-18+-green) ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue) ![Stripe](https://img.shields.io/badge/Stripe-Integrado-purple)
 
-Aplicación web profesional de nutrición y entrenamiento personalizado con planes generados por motor científico (Harris-Benedict), suscripción de 60 €/mes con 30 días de prueba gratuita y 15 días de ventana de cancelación.
+Aplicación web profesional de nutrición y entrenamiento personalizado con planes generados por motor científico (Harris-Benedict), suscripción de 25 €/mes con 7 días de prueba gratuita y cancelación sin cargo. Los valores del usuario se pueden volver a registrar cuando quiera (el plan se recalcula al momento) y un check-in semanal automático pregunta "¿Cómo va ese progreso?" si no hay cambios en 7 días.
 
 ---
 
@@ -82,9 +82,10 @@ La app estará disponible en: **http://localhost:3000**
 │
 ├── routes/
 │   ├── auth.js               # Registro / Login
-│   ├── questionnaire.js      # Cuestionario → Plan
-│   ├── subscription.js       # Ciclo de vida suscripción
+│   ├── questionnaire.js      # Cuestionario → Plan (re-registro ilimitado)
+│   ├── subscription.js       # Ciclo de vida suscripción (7 días prueba)
 │   ├── plans.js              # Consulta plan del usuario
+│   ├── checkin.js            # Check-in semanal de progreso
 │   └── webhook.js            # Eventos Stripe
 │
 ├── controllers/
@@ -196,9 +197,11 @@ DATABASE_URL=postgresql://user:pass@host:5432/nutrovia_db
 | POST | `/api/questionnaire` | Enviar cuestionario | ✅ |
 | GET | `/api/plan` | Obtener plan personalizado | ✅ |
 | POST | `/api/subscription/setup-intent` | Crear SetupIntent Stripe | ✅ |
-| POST | `/api/subscription/start` | Activar prueba gratuita | ✅ |
+| POST | `/api/subscription/start` | Activar prueba gratuita (7 días) | ✅ |
 | GET | `/api/subscription/status` | Estado de suscripción | ✅ |
-| POST | `/api/subscription/cancel` | Cancelar suscripción | ✅ |
+| POST | `/api/subscription/cancel` | Cancelar suscripción (sin cargo en prueba) | ✅ |
+| GET | `/api/checkin/status` | ¿Toca check-in semanal? | ✅ |
+| POST | `/api/checkin/respond` | Responder al check-in | ✅ |
 | POST | `/api/webhook/stripe` | Webhook de Stripe | ❌ |
 
 ---
@@ -206,9 +209,17 @@ DATABASE_URL=postgresql://user:pass@host:5432/nutrovia_db
 ## 📊 Flujo de suscripción
 
 ```
-Día 0   → Usuario se registra + tarjeta guardada (sin cobro)
-Día 30  → Email: "Prueba terminada, tienes 15 días para cancelar"
-Día 44  → Email: "Mañana se activa tu suscripción"
-Día 45  → Si no cancela → suscripción activa → Stripe cobra 60 €
-Día 75+ → Cobro recurrente cada mes, el día del mes de inscripción
+Día 0   → Usuario se registra + guarda tarjeta (sin cobro) + plan generado
+Día 7   → Email: "Último día de prueba, cancela o se activa tu suscripción"
+Día 8   → Si no cancela → suscripción activa → Stripe cobra 25 €
+Mensual → Cobro recurrente de 25 € el día del mes de inscripción
+
+Cancelación → En la prueba: inmediata y sin cargo. Activa: al final del período ya pagado.
+
+Re-registro → El usuario puede actualizar sus valores cuando quiera (cuestionario con datos
+precargados). El plan se recalcula al momento y el check-in semanal se reinicia.
+
+Check-in  → Si no hay cambios ni check-ins en 7 días, la app pregunta "¿Cómo va ese
+progreso?" (modal en el dashboard + email semanal). "Todo va bien" lo pausa otros 7 días;
+"Quiero cambiar algo" abre el cuestionario para actualizar los valores.
 ```

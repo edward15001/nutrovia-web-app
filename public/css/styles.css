@@ -2705,6 +2705,69 @@ ul {
   gap: 16px;
 }
 
+/* ─── Check-in semanal (¿Cómo va ese progreso?) ─────────── */
+.checkin-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 10, 10, 0.82);
+  backdrop-filter: blur(10px);
+  z-index: 2100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.checkin-modal {
+  background: linear-gradient(160deg, #1a1a1a, #101010);
+  border: 1px solid var(--border-gold);
+  border-radius: 16px;
+  max-width: 420px;
+  width: 100%;
+  padding: 36px 32px;
+  text-align: center;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+  animation: fadeUp 0.35s ease;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.checkin-emoji {
+  font-size: 46px;
+  margin-bottom: 14px;
+}
+
+.checkin-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0 0 10px;
+}
+
+.checkin-text {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text-muted);
+  margin: 0 0 26px;
+}
+
+.checkin-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.checkin-actions .btn-gold,
+.checkin-actions .btn-cancel {
+  width: 100%;
+  justify-content: center;
+  padding: 13px;
+  font-size: 14px;
+}
+
 .spinner {
   width: 44px;
   height: 44px;

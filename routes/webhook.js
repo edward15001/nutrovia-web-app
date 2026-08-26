@@ -5,8 +5,10 @@ const stripeService = require('../services/stripeService');
 const emailService = require('../services/emailService');
 
 // ─── POST /api/webhook/stripe ────────────────────────────────
+// Acepta tanto /api/webhook como /api/webhook/stripe (el README y
+// `stripe listen --forward-to` usan la segunda).
 // Stripe requiere el body en raw (Buffer), no parseado como JSON
-router.post('/', express.raw({ type: 'application/json' }), async (req, res) => {
+router.post(['/', '/stripe'], express.raw({ type: 'application/json' }), async (req, res) => {
     const signature = req.headers['stripe-signature'];
 
     let event;
@@ -25,6 +27,10 @@ router.post('/', express.raw({ type: 'application/json' }), async (req, res) => 
             case 'invoice.payment_succeeded': {
                 const invoice = event.data.object;
                 const customerId = invoice.customer;
+                const stripeSubscriptionId = invoice.subscription;
+
+                // Ignorar facturas de 0 € (p.ej. la inicial de un trial): no son pagos reales
+                if (!invoice.amount_paid || invoice.amount_paid <= 0) break;
 
                 const userResult = await db.query(
                     'SELECT id, name, email FROM users WHERE stripe_customer_id = $1',
@@ -46,13 +52,22 @@ router.post('/', express.raw({ type: 'application/json' }), async (req, res) => 
                     new Date(invoice.period_end * 1000),
                 ]);
 
-                // Actualizar suscripción a activa
+                // Actualizar la suscripción a activa. Buscamos por stripe_subscription_id
+                // (no por user_id) para no tocar una sub nueva con una factura tardía de la anterior.
                 const nextBilling = new Date(invoice.period_end * 1000);
-                await db.query(`
-          UPDATE subscriptions
-          SET status = 'active', next_billing_date = $1
-          WHERE user_id = $2
-        `, [nextBilling, user.id]);
+                if (stripeSubscriptionId) {
+                    await db.query(`
+            UPDATE subscriptions
+            SET status = 'active', next_billing_date = $1
+            WHERE stripe_subscription_id = $2
+          `, [nextBilling, stripeSubscriptionId]);
+                } else {
+                    await db.query(`
+            UPDATE subscriptions
+            SET status = 'active', next_billing_date = $1
+            WHERE user_id = $2
+          `, [nextBilling, user.id]);
+                }
 
                 // Email confirmación de pago
                 await emailService.sendPaymentConfirmedEmail(user, invoice.amount_paid / 100, nextBilling);
@@ -86,13 +101,16 @@ router.post('/', express.raw({ type: 'application/json' }), async (req, res) => 
             // ─── Suscripción cancelada desde Stripe ───────────────
             case 'customer.subscription.deleted': {
                 const subscription = event.data.object;
-                const customerId = subscription.customer;
+                const subscriptionId = subscription.id;
 
+                // Buscar por stripe_subscription_id (único), NO por customer_id:
+                // si el usuario se re-suscribió, hay varias filas con el mismo
+                // stripe_customer_id y cancelaríamos la suscripción nueva.
                 await db.query(`
           UPDATE subscriptions
           SET status = 'cancelled', cancelled_at = NOW()
-          WHERE stripe_customer_id = $1 AND status != 'cancelled'
-        `, [customerId]);
+          WHERE stripe_subscription_id = $1 AND status != 'cancelled'
+        `, [subscriptionId]);
                 break;
             }
 

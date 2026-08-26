@@ -12,6 +12,9 @@ CREATE TABLE IF NOT EXISTS users (
     email         VARCHAR(255) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     stripe_customer_id VARCHAR(100),
+    -- Check-ins de progreso ("¿Cómo va ese progreso?")
+    last_checkin_at      TIMESTAMPTZ,
+    last_checkin_email_at TIMESTAMPTZ,
     created_at    TIMESTAMPTZ DEFAULT NOW(),
     updated_at    TIMESTAMPTZ DEFAULT NOW()
 );
@@ -35,7 +38,11 @@ CREATE TABLE IF NOT EXISTS questionnaire_answers (
     -- Experiencia entrenamiento
     training_experience VARCHAR(20) DEFAULT 'principiante' CHECK (training_experience IN ('principiante', 'intermedio', 'avanzado')),
     training_days_per_week INTEGER DEFAULT 3,
-    created_at          TIMESTAMPTZ DEFAULT NOW()
+    created_at          TIMESTAMPTZ DEFAULT NOW(),
+    -- Última vez que el usuario registró/actualizó sus valores
+    updated_at          TIMESTAMPTZ DEFAULT NOW(),
+    -- Sólo un registro de cuestionario por usuario
+    UNIQUE(user_id)
 );
 
 -- ─── Planes de Nutrición ────────────────────────────────────
@@ -66,8 +73,8 @@ CREATE TABLE IF NOT EXISTS subscriptions (
     stripe_payment_method_id VARCHAR(100),
     -- Fechas clave
     trial_start             TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    trial_end               TIMESTAMPTZ NOT NULL,          -- trial_start + 30 días
-    cancel_window_end       TIMESTAMPTZ NOT NULL,          -- trial_end + 15 días
+    trial_end               TIMESTAMPTZ NOT NULL,          -- trial_start + TRIAL_DAYS (por defecto 7 días)
+    cancel_window_end       TIMESTAMPTZ NOT NULL,          -- Coincide con trial_end: ventana de cancelación sin cargo
     charge_day              INTEGER NOT NULL,              -- Día del mes en que se cobra (1-28)
     next_billing_date       TIMESTAMPTZ,
     -- Estado

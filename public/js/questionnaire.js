@@ -10,7 +10,17 @@ const formData = {
 };
 
 let currentStep = 1;
-const TOTAL_STEPS = 8;
+
+// ═══ Modo de uso ════════════════════════════════════════════
+// - Normal:       registro + tarjeta + prueba gratuita (usuario nuevo)
+// - ?update=1:    actualizar valores → regenera el plan (sin pago)
+// - ?subscribe=1: re-suscribirse tras cancelar (con pago, sin registro)
+const urlParams = new URLSearchParams(window.location.search);
+const updateMode = urlParams.get('update') === '1';
+const resubMode = urlParams.get('subscribe') === '1';
+const loggedIn = !!localStorage.getItem('nutrovia_token');
+const isEditFlow = updateMode || resubMode;
+const TOTAL_STEPS = updateMode ? 6 : (resubMode ? 7 : 8);
 let authToken = null;
 
 // ═══ Estado del pago (Stripe) ═══════════════════════════════
@@ -21,6 +31,9 @@ let paymentInitialized = false;
 
 // ═══ Navegación entre pasos ═══════════════════════════════════
 function goToStep(targetStep) {
+    // En modo edición el paso 1 (registro) está oculto
+    if (isEditFlow && targetStep < 2) targetStep = 2;
+
     if (!validateStep(currentStep)) return;
     if (targetStep > currentStep) collectStepData(currentStep);
 
@@ -33,9 +46,16 @@ function goToStep(targetStep) {
 }
 
 function updateProgress() {
-    const pct = Math.round((currentStep / TOTAL_STEPS) * 100);
+    // La pantalla de éxito (paso 8) siempre muestra la barra completa
+    if (currentStep >= 8) {
+        document.getElementById('progressBar').style.width = '100%';
+        document.getElementById('progressText').textContent = '¡Plan listo!';
+        return;
+    }
+    const stepIndex = isEditFlow ? currentStep - 1 : currentStep;
+    const pct = Math.min(100, Math.round((stepIndex / TOTAL_STEPS) * 100));
     document.getElementById('progressBar').style.width = `${pct}%`;
-    document.getElementById('progressText').textContent = `Paso ${currentStep} de ${TOTAL_STEPS}`;
+    document.getElementById('progressText').textContent = `Paso ${stepIndex} de ${TOTAL_STEPS}`;
 }
 
 // ═══ Validación por paso ═════════════════════════════════════
@@ -120,8 +140,8 @@ function toggleCondition(el) {
     const val = el.dataset.value;
 
     if (val === 'ninguna') {
-        // Desmarcar todas las demás
-        document.querySelectorAll('.checkbox-item[data-value!="ninguna"]').forEach(i => i.classList.remove('checked'));
+        // Desmarcar todas las demás (el selector != no es válido en querySelectorAll)
+        document.querySelectorAll('.checkbox-item:not([data-value="ninguna"])').forEach(i => i.classList.remove('checked'));
         formData.health_conditions = el.classList.contains('checked') ? ['ninguna'] : [];
     } else {
         // Desmarcar "ninguna"
@@ -140,8 +160,89 @@ function updateSlider(el) {
     formData.training_days = parseInt(el.value);
 }
 
-// ═══ Registro de usuario ═════════════════════════════════════
+// ═══ Rellenar formulario con los datos actuales (modo edición) ═
+async function prefillForm() {
+    try {
+        const res = await fetch('/api/plan', {
+            headers: { Authorization: `Bearer ${authToken}` }
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        const p = data.profile || {};
+
+        formData.sex = p.sex;
+        formData.goal = p.goal;
+        formData.activity_level = p.activity_level;
+        formData.dietary_preference = p.dietary_preference;
+        formData.training_experience = p.training_experience || 'principiante';
+        formData.training_days = p.training_days_per_week || 3;
+
+        // Marcar opciones seleccionadas
+        [['sex', p.sex], ['goal', p.goal], ['activity_level', p.activity_level],
+         ['dietary_preference', p.dietary_preference], ['training_experience', formData.training_experience]]
+            .forEach(([field, value]) => {
+                if (!value) return;
+                document.querySelectorAll('.option-btn').forEach(btn => {
+                    if ((btn.getAttribute('onclick') || '').includes(`'${field}', '${value}'`)) {
+                        btn.classList.add('selected');
+                    }
+                });
+            });
+
+        // Campos numéricos
+        if (p.age) document.getElementById('q-age').value = p.age;
+        if (p.height_cm) document.getElementById('q-height').value = p.height_cm;
+        if (p.weight_kg) document.getElementById('q-weight').value = p.weight_kg;
+        if (p.target_weight_kg) document.getElementById('q-target-weight').value = p.target_weight_kg;
+
+        // Condiciones de salud
+        if (Array.isArray(p.health_conditions)) {
+            p.health_conditions.forEach(v => {
+                document.querySelector(`.checkbox-item[data-value="${v}"]`)?.classList.add('checked');
+            });
+            formData.health_conditions = p.health_conditions.filter(c => c !== 'ninguna');
+        }
+
+        // Días de entrenamiento
+        const slider = document.getElementById('trainingDays');
+        slider.value = formData.training_days;
+        document.getElementById('trainingDaysVal').textContent =
+            `${formData.training_days} día${formData.training_days > 1 ? 's' : ''}`;
+    } catch (err) {
+        console.error('Error rellenando formulario:', err);
+    }
+}
+
+// ═══ Registro / actualización de usuario ═════════════════════
 async function registerUser() {
+    if (isEditFlow) {
+        // Ya estamos registrados: solo actualizar el cuestionario
+        showLoading(updateMode ? 'Actualizando tu plan...' : 'Guardando tus datos...');
+        try {
+            authToken = localStorage.getItem('nutrovia_token');
+            await submitQuestionnaire();
+            if (updateMode) {
+                document.getElementById('successText').innerHTML =
+                    'Hemos actualizado tu plan con tus nuevos datos. Tu menú semanal, tu rutina de entrenamiento y tu suplementación ya se han recalculado.';
+                goToStep(8);
+            } else {
+                // Re-suscripción: ir a guardar tarjeta
+                goToStep(7);
+                initPayment();
+            }
+        } catch (err) {
+            console.error(err);
+            const alertEl = document.getElementById('alert-6');
+            if (alertEl) {
+                alertEl.textContent = 'Hubo un error actualizando tus datos. Inténtalo de nuevo.';
+                alertEl.style.display = 'block';
+            }
+        } finally {
+            hideLoading();
+        }
+        return;
+    }
+
     showLoading('Creando tu cuenta...');
     try {
         const res = await fetch('/api/auth/register', {
@@ -349,7 +450,22 @@ function hideLoading() {
 }
 
 // ═══ Init ════════════════════════════════════════════════════
-// Si ya tiene sesión, ir directamente al dashboard
-if (localStorage.getItem('nutrovia_token')) {
-    window.location.href = 'dashboard.html';
+if (loggedIn) {
+    if (!isEditFlow) {
+        // Si ya tiene sesión y entra normal, ir directamente al dashboard
+        window.location.href = 'dashboard.html';
+    } else {
+        // Modo edición: saltar el registro y rellenar con los datos actuales
+        authToken = localStorage.getItem('nutrovia_token');
+        const storedUser = JSON.parse(localStorage.getItem('nutrovia_user') || '{}');
+        formData.name = storedUser.name || '';
+        formData.email = storedUser.email || '';
+
+        document.getElementById('submitBtn').textContent = updateMode ? 'Actualizar mi plan ✔' : 'Continuar al pago ✔';
+        document.getElementById('step-1').style.display = 'none';
+        currentStep = 2;
+        document.getElementById('step-2').style.display = 'block';
+        updateProgress();
+        prefillForm();
+    }
 }

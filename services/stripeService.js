@@ -3,93 +3,130 @@ if (process.env.STRIPE_SECRET_KEY) {
     stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 }
 
+// Precio del plan mensual (configurable). Por defecto 25 €.
+const PLAN_PRICE_EUR = parseFloat(process.env.PLAN_PRICE_EUR || '25');
+const PLAN_PRICE_CENTS = Math.round(PLAN_PRICE_EUR * 100);
+
 /**
  * Crea un cliente de Stripe para un nuevo usuario
+ * Sin clave configurada devuelve un ID mock (desarrollo local);
+ * con Stripe configurado, los errores reales se propagan (no se enmascaran).
  */
 async function createCustomer(email, name) {
-    try {
-        if (!stripe) throw new Error('Stripe is not configured in this environment (missing STRIPE_SECRET_KEY)');
-        const customer = await stripe.customers.create({ email, name });
-        return customer.id;
-    } catch (err) {
-        console.warn(`[Stripe] Error creating customer for ${email}. Using mock ID.`);
+    if (!stripe) {
+        console.warn('[Stripe] No configurado (falta STRIPE_SECRET_KEY). Usando customer mock.');
         return `cus_mock_${Date.now()}`;
     }
+    const customer = await stripe.customers.create({ email, name });
+    return customer.id;
 }
 
 /**
  * Crea un SetupIntent para guardar la tarjeta sin cobrar
- * El cobro real se activa cuando finaliza el período de gracia (45 días)
+ * El cobro real se activa al finalizar la prueba gratuita (7 días)
+ * Sin clave configurada devuelve un intent mock (desarrollo local).
  */
 async function createSetupIntent(customerId) {
-    try {
-        if (!stripe) throw new Error('Stripe is not configured');
-        const setupIntent = await stripe.setupIntents.create({
-            customer: customerId,
-            payment_method_types: ['card'],
-            usage: 'off_session',
-        });
-        return setupIntent;
-    } catch (err) {
-        console.warn(`[Stripe] Error creating setup intent. Using mock intent.`);
+    if (!stripe) {
+        console.warn('[Stripe] No configurado. Usando setup intent mock.');
         return { client_secret: 'mock_secret_123', id: 'seti_mock_123' };
     }
+    const setupIntent = await stripe.setupIntents.create({
+        customer: customerId,
+        payment_method_types: ['card'],
+        usage: 'off_session',
+    });
+    return setupIntent;
 }
 
 /**
  * Confirma el método de pago como predeterminado en el cliente
  */
 async function attachPaymentMethod(customerId, paymentMethodId) {
-    try {
-        if (!stripe) throw new Error('Stripe is not configured');
-        await stripe.paymentMethods.attach(paymentMethodId, { customer: customerId });
-        await stripe.customers.update(customerId, {
-            invoice_settings: { default_payment_method: paymentMethodId },
-        });
-    } catch (err) {
-        console.warn(`[Stripe] Error attaching payment method. Ignoring in local dev.`);
+    if (!stripe) {
+        console.warn('[Stripe] No configurado. Omitiendo attach de método de pago.');
+        return;
     }
+    await stripe.paymentMethods.attach(paymentMethodId, { customer: customerId });
+    await stripe.customers.update(customerId, {
+        invoice_settings: { default_payment_method: paymentMethodId },
+    });
+}
+
+// Cache del Price de Stripe. Buscamos uno existente (por si el servidor se reinició)
+// antes de crear otro nuevo, para no duplicar prices en cada cold start.
+let cachedPriceId = null;
+
+async function getOrCreatePrice() {
+    if (cachedPriceId) return cachedPriceId;
+
+    const existing = await stripe.prices.list({
+        limit: 100,
+        active: true,
+        currency: 'eur',
+        recurring: { interval: 'month' },
+    });
+    const match = existing.data.find(p => p.unit_amount === PLAN_PRICE_CENTS);
+    if (match) {
+        cachedPriceId = match.id;
+        return match.id;
+    }
+
+    const price = await stripe.prices.create({
+        currency: 'eur',
+        unit_amount: PLAN_PRICE_CENTS, // 25.00 EUR en céntimos por defecto
+        recurring: { interval: 'month' },
+        product_data: { name: 'NutroVia Plan Personalizado' },
+    });
+    cachedPriceId = price.id;
+    return price.id;
 }
 
 /**
- * Crea una suscripción en Stripe con prueba gratuita de 45 días
- * El primer cobro ocurre al día 45 desde trial_start
+ * Crea una suscripción en Stripe con prueba gratuita (7 días por defecto)
+ * El primer cobro ocurre al finalizar la prueba si el usuario no cancela
+ * Sin clave configurada devuelve un ID mock (desarrollo local).
  */
 async function createSubscription(customerId, trialEndTimestamp) {
-    try {
-        if (!stripe) throw new Error('Stripe is not configured');
-        const subscription = await stripe.subscriptions.create({
-            customer: customerId,
-            items: [{
-                price_data: {
-                    currency: 'eur',
-                    product_data: { name: 'NutroVia Plan Personalizado' },
-                    unit_amount: 6000, // 60.00 EUR en céntimos
-                    recurring: { interval: 'month' },
-                }
-            }],
-            trial_end: trialEndTimestamp, // Unix timestamp del día 45
-            payment_behavior: 'default_incomplete',
-            expand: ['latest_invoice.payment_intent'],
-        });
-        return subscription;
-    } catch (err) {
-        console.warn(`[Stripe] Error creating subscription. Ignoring in local dev.`);
+    if (!stripe) {
+        console.warn('[Stripe] No configurado. Usando suscripción mock.');
         return { id: `sub_mock_${Date.now()}` };
     }
+    const priceId = await getOrCreatePrice();
+    const subscription = await stripe.subscriptions.create({
+        customer: customerId,
+        items: [{ price: priceId }],
+        trial_end: trialEndTimestamp, // Unix timestamp del fin de la prueba
+        payment_behavior: 'default_incomplete',
+        expand: ['latest_invoice.payment_intent'],
+    });
+    return subscription;
 }
 
 /**
- * Cancela la suscripción en Stripe
+ * Cancela la suscripción en Stripe (idempotente: si ya no existe, se considera cancelada)
  * @param {string} subscriptionId
  * @param {boolean} atPeriodEnd - Si true, cancela al final del período actual
  */
 async function cancelSubscription(subscriptionId, atPeriodEnd = false) {
-    if (!stripe) return { status: 'mock_canceled' };
-    if (atPeriodEnd) {
-        return stripe.subscriptions.update(subscriptionId, { cancel_at_period_end: true });
+    // En desarrollo sin Stripe real, o con ids de fallback (mock), no llamamos a la API
+    if (!stripe || (subscriptionId && subscriptionId.startsWith('sub_mock_'))) {
+        return { status: 'mock_canceled' };
     }
-    return stripe.subscriptions.cancel(subscriptionId);
+    try {
+        if (atPeriodEnd) {
+            return await stripe.subscriptions.update(subscriptionId, { cancel_at_period_end: true });
+        }
+        return await stripe.subscriptions.cancel(subscriptionId);
+    } catch (err) {
+        // Cancelar un trial elimina la suscripción en Stripe, así que al re-suscribirse
+        // puede que la anterior ya no exista. No es un error real.
+        if (err && err.type === 'StripeInvalidRequestError' && /no such subscription/i.test(err.message || '')) {
+            console.warn(`[Stripe] Suscripción ${subscriptionId} ya no existe (ya cancelada).`);
+            return { status: 'already_canceled' };
+        }
+        throw err;
+    }
 }
 
 /**

@@ -9,7 +9,8 @@ router.get('/', authMiddleware, async (req, res) => {
     try {
         const result = await db.query(
             `SELECT np.*, qa.goal, qa.activity_level, qa.dietary_preference,
-              qa.age, qa.sex, qa.weight_kg, qa.height_cm, qa.health_conditions
+              qa.age, qa.sex, qa.weight_kg, qa.height_cm, qa.target_weight_kg,
+              qa.health_conditions, qa.training_experience, qa.training_days_per_week
        FROM nutrition_plans np
        JOIN questionnaire_answers qa ON qa.user_id = np.user_id
        WHERE np.user_id = $1`,
@@ -40,7 +41,10 @@ router.get('/', authMiddleware, async (req, res) => {
                 age: row.age,
                 weight_kg: row.weight_kg,
                 height_cm: row.height_cm,
+                target_weight_kg: row.target_weight_kg,
                 health_conditions: row.health_conditions,
+                training_experience: row.training_experience,
+                training_days_per_week: row.training_days_per_week,
             },
             generated_at: row.generated_at,
         });

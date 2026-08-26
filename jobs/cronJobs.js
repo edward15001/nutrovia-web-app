@@ -18,11 +18,17 @@ function initCronJobs() {
         await activateExpiredTrials();
     }, { timezone: 'Europe/Madrid' });
 
-    console.log('✅ Cron jobs registrados (diario 08:00 Madrid)');
+    // ─── Cron semanal (lunes 09:00): check-in de progreso ─────
+    cron.schedule('0 9 * * 1', async () => {
+        console.log(`\n[${new Date().toISOString()}] 🌱 Ejecutando check-ins semanales...`);
+        await checkWeeklyCheckins();
+    }, { timezone: 'Europe/Madrid' });
+
+    console.log('✅ Cron jobs registrados (diario 08:00 + check-in lunes 09:00 Madrid)');
 }
 
 /**
- * Día 30: Envía aviso de fin de prueba a usuarios cuyo trial termina hoy
+ * Último día de prueba: envía aviso a usuarios cuyo trial termina hoy
  */
 async function checkTrialEnding() {
     try {
@@ -53,7 +59,7 @@ async function checkTrialEnding() {
 }
 
 /**
- * Día 44: Envía aviso de cobro inminente (mañana día 45)
+ * Último día de prueba: envía aviso de cobro inminente (mañana se cobra 25 €)
  */
 async function checkChargeWarning() {
     try {
@@ -84,8 +90,8 @@ async function checkChargeWarning() {
 }
 
 /**
- * Día 45+: Activa suscripciones cuyo período de gracia expiró y
- * que no han sido canceladas — Stripe cobra automáticamente.
+ * Tras la prueba: activa suscripciones que no fueron canceladas.
+ * Stripe cobra 25 €/mes automáticamente al terminar el trial.
  */
 async function activateExpiredTrials() {
     try {
@@ -111,6 +117,37 @@ async function activateExpiredTrials() {
         }
     } catch (err) {
         console.error('❌ Error en activateExpiredTrials:', err.message);
+    }
+}
+
+/**
+ * Check-in semanal: envía "¿Cómo va ese progreso?" a usuarios que llevan
+ * más de 7 días sin actualizar sus valores ni responder al check-in,
+ * y que no han recibido ya un email de check-in esta semana.
+ */
+async function checkWeeklyCheckins() {
+    try {
+        const result = await db.query(`
+      SELECT u.id, u.name, u.email
+      FROM users u
+      JOIN questionnaire_answers qa ON qa.user_id = u.id
+      WHERE (u.last_checkin_email_at IS NULL OR u.last_checkin_email_at < NOW() - INTERVAL '7 days')
+        AND NOW() - GREATEST(COALESCE(qa.updated_at, qa.created_at), COALESCE(u.last_checkin_at, '1970-01-01')) >= INTERVAL '7 days'
+    `);
+
+        console.log(`🌱 Check-ins semanales pendientes: ${result.rows.length}`);
+
+        for (const user of result.rows) {
+            const sent = await emailService.sendCheckinEmail({ name: user.name, email: user.email });
+            if (sent) {
+                await db.query(
+                    'UPDATE users SET last_checkin_email_at = NOW() WHERE id = $1',
+                    [user.id]
+                );
+            }
+        }
+    } catch (err) {
+        console.error('❌ Error en checkWeeklyCheckins:', err.message);
     }
 }
 

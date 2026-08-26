@@ -16,6 +16,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   await Promise.all([loadPlan(), loadSubscription()]);
   renderDashboard();
   hideLoading();
+  // Check-in semanal: preguntar si lleva 7+ días sin actividad
+  await checkCheckin();
 });
 
 function initTopbar() {
@@ -105,26 +107,26 @@ function renderStatusBanner() {
       banner.className = 'status-banner trial';
       badge.textContent = 'PRUEBA GRATUITA';
       title.textContent = `Quedan ${subData.days_remaining_trial} días de prueba gratis`;
-      subtitle.textContent = `Prueba sin coste hasta el ${fmt(subData.trial_end)}. Luego tienes 15 días más para cancelar.`;
+      subtitle.textContent = `Sin coste hasta el ${fmt(subData.trial_end)}. Si no te gusta, cancela y no se te cobra nada.`;
       action.innerHTML = `<button class="btn-cancel" onclick="handleCancel()">Cancelar suscripción</button>`;
     } else if (subData.phase === 'ventana_cancelacion') {
       banner.className = 'status-banner warning';
-      badge.textContent = 'VENTANA DE CANCELACIÓN';
-      title.textContent = `Quedan ${subData.days_to_charge} días para cancelar sin cargo`;
-      subtitle.textContent = `El ${fmt(subData.cancel_window_end)} se activará tu suscripción de 60 €/mes si no cancelas antes.`;
+      badge.textContent = 'PRUEBA TERMINADA';
+      title.textContent = 'Tu prueba gratuita ha terminado';
+      subtitle.textContent = 'Si no cancelas, tu suscripción de 25 €/mes queda activa. Cancela cuando quieras.';
       action.innerHTML = `<button class="btn-cancel" onclick="handleCancel()">Cancelar ahora</button>`;
     }
   } else if (subData.status === 'active') {
     banner.className = 'status-banner active';
     badge.textContent = 'SUSCRIPCIÓN ACTIVA';
     title.textContent = `Próximo cobro: ${fmt(subData.next_billing_date)}`;
-    subtitle.textContent = '60 € · Pago mensual automático';
+    subtitle.textContent = '25 € · Pago mensual automático. Cancela cuando quieras.';
     action.innerHTML = `<button class="btn-cancel" onclick="showTab('subscription', null)">Ver detalles</button>`;
   } else if (subData.status === 'cancelled') {
     banner.className = 'status-banner cancelled';
     badge.textContent = 'CANCELADA';
     title.textContent = 'Suscripción cancelada';
-    subtitle.textContent = `Acceso hasta el ${fmt(subData.cancelled_at)}. Puedes volver cuando quieras.`;
+    subtitle.textContent = 'Sin cargos futuros. Puedes volver a suscribirte cuando quieras.';
     action.innerHTML = '';
   } else if (subData.status === 'past_due') {
     banner.className = 'status-banner cancelled';
@@ -340,13 +342,13 @@ function renderSubscriptionTab() {
     </div>
     <div style="margin-top:28px;display:flex;gap:16px;flex-wrap:wrap;align-items:center;">
       <div style="flex:1;">
-        <div style="font-size:22px;font-weight:800;color:var(--gold);">60 €<span style="font-size:14px;color:var(--text-muted);font-weight:400;">/mes</span></div>
-        <div style="font-size:12px;color:var(--text-dim);margin-top:4px;">Plan NutroVia Personalizado</div>
+        <div style="font-size:22px;font-weight:800;color:var(--gold);">25 €<span style="font-size:14px;color:var(--text-muted);font-weight:400;">/mes</span></div>
+        <div style="font-size:12px;color:var(--text-dim);margin-top:4px;">Plan NutroVia Personalizado · Cancela cuando quieras</div>
       </div>
       ${status !== 'cancelled' && status !== 'expired' ? `
         <button class="btn-cancel" onclick="handleCancel()">Cancelar suscripción</button>
       ` : `
-        <a href="questionnaire.html" class="btn-gold">Volver a suscribirme</a>
+        <a href="questionnaire.html?subscribe=1" class="btn-gold">Volver a suscribirme</a>
       `}
     </div>
   `;
@@ -375,6 +377,58 @@ async function handleCancel() {
   } catch (err) {
     alert('Error de conexión');
   }
+}
+
+// ═══ Check-in semanal ════════════════════════════════════════
+async function checkCheckin() {
+  if (!planData) return; // Solo si tiene plan
+  try {
+    const res = await fetch('/api/checkin/status', {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    const data = await res.json();
+    if (data.due) {
+      document.getElementById('checkinOverlay').style.display = 'flex';
+    }
+  } catch (err) {
+    console.error('Error comprobando check-in:', err);
+  }
+}
+
+async function checkinAllGood() {
+  try {
+    await fetch('/api/checkin/respond', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({ response: 'all_good' })
+    });
+  } catch (err) {
+    console.error(err);
+  }
+  hideCheckinModal();
+}
+
+async function checkinWantChange() {
+  try {
+    await fetch('/api/checkin/respond', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({ response: 'want_change' })
+    });
+  } catch (err) {
+    console.error(err);
+  }
+  window.location.href = 'questionnaire.html?update=1';
+}
+
+function hideCheckinModal() {
+  document.getElementById('checkinOverlay').style.display = 'none';
 }
 
 // ═══ Tabs ════════════════════════════════════════════════════

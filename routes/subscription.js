@@ -5,6 +5,10 @@ const authMiddleware = require('../middleware/auth');
 const stripeService = require('../services/stripeService');
 const emailService = require('../services/emailService');
 
+// Días de prueba gratuita y precio mensual (configurables por entorno)
+const TRIAL_DAYS = parseInt(process.env.TRIAL_DAYS || '7', 10);
+const PLAN_PRICE_EUR = parseFloat(process.env.PLAN_PRICE_EUR || '25');
+
 // ─── POST /api/subscription/setup-intent ────────────────────
 // Crea un SetupIntent de Stripe (el frontend captura la tarjeta sin cobrar)
 router.post('/setup-intent', authMiddleware, async (req, res) => {
@@ -35,10 +39,24 @@ router.post('/start', authMiddleware, async (req, res) => {
     try {
         const userId = req.user.id;
 
-        // Verificar si ya tiene suscripción
-        const existingSub = await db.query('SELECT id FROM subscriptions WHERE user_id = $1', [userId]);
+        // Verificar si ya tiene suscripción (se permite re-suscribirse tras cancelar/expiar)
+        const existingSub = await db.query(
+            'SELECT id, status, stripe_subscription_id FROM subscriptions WHERE user_id = $1',
+            [userId]
+        );
         if (existingSub.rows.length > 0) {
-            return res.status(409).json({ error: 'Ya tienes una suscripción activa' });
+            const prev = existingSub.rows[0];
+            const prevStatus = prev.status;
+            if (prevStatus !== 'cancelled' && prevStatus !== 'expired') {
+                return res.status(409).json({ error: 'Ya tienes una suscripción activa' });
+            }
+            // Si la anterior era real en Stripe (cancelada a fin de período), cancelarla ya
+            // para que no siga cobrando mientras la nueva está en prueba → evita doble cobro.
+            if (prev.stripe_subscription_id && !prev.stripe_subscription_id.startsWith('sub_mock_')) {
+                await stripeService.cancelSubscription(prev.stripe_subscription_id, false);
+            }
+            // Limpiar la suscripción anterior para poder crear una nueva (UNIQUE user_id)
+            await db.query('DELETE FROM subscriptions WHERE user_id = $1', [userId]);
         }
 
         const userResult = await db.query(
@@ -50,20 +68,22 @@ router.post('/start', authMiddleware, async (req, res) => {
         // Vincular método de pago al cliente
         await stripeService.attachPaymentMethod(user.stripe_customer_id, payment_method_id);
 
-        // Calcular fechas
+        // Calcular fechas: 7 días de prueba gratuita. Si no cancela,
+        // al terminar la prueba Stripe cobra 25 €/mes automáticamente.
         const trialStart = new Date();
         const trialEnd = new Date(trialStart);
-        trialEnd.setDate(trialEnd.getDate() + 30);
+        trialEnd.setDate(trialEnd.getDate() + TRIAL_DAYS);
 
+        // La ventana de cancelación coincide con el fin de la prueba:
+        // si no te gusta, cancelas durante la prueba y no se te cobra nada.
         const cancelWindowEnd = new Date(trialEnd);
-        cancelWindowEnd.setDate(cancelWindowEnd.getDate() + 15); // Día 45
 
         const chargeDay = trialStart.getDate(); // Mismo día del mes
 
-        // Crear suscripción en Stripe con trial hasta día 45
+        // Crear suscripción en Stripe con trial hasta el final de la prueba
         const stripeSubscription = await stripeService.createSubscription(
             user.stripe_customer_id,
-            Math.floor(cancelWindowEnd.getTime() / 1000) // Unix timestamp día 45
+            Math.floor(cancelWindowEnd.getTime() / 1000) // Unix timestamp día 7
         );
 
         // Guardar suscripción en DB
@@ -76,10 +96,12 @@ router.post('/start', authMiddleware, async (req, res) => {
             trialStart, trialEnd, cancelWindowEnd, chargeDay]);
 
         // Email de bienvenida
-        await emailService.sendWelcomeEmail(user, trialEnd);
+        await emailService.sendWelcomeEmail(user, trialEnd, TRIAL_DAYS);
 
         res.json({
             message: '¡Prueba gratuita iniciada!',
+            trial_days: TRIAL_DAYS,
+            plan_price_eur: PLAN_PRICE_EUR,
             trial_start: trialStart,
             trial_end: trialEnd,
             cancel_window_end: cancelWindowEnd,
@@ -149,7 +171,7 @@ router.post('/cancel', authMiddleware, async (req, res) => {
             return res.status(409).json({ error: 'Tu suscripción ya está cancelada' });
         }
 
-        // Cancelar en Stripe
+        // Cancelar en Stripe (si está en prueba, cancelación inmediata sin cargo)
         if (sub.stripe_subscription_id) {
             await stripeService.cancelSubscription(sub.stripe_subscription_id, sub.status === 'active');
         }
@@ -158,11 +180,12 @@ router.post('/cancel', authMiddleware, async (req, res) => {
         const now = new Date();
         let effectiveDate;
         if (sub.status === 'trial') {
-            effectiveDate = now; // Cancelación inmediata en trial
+            effectiveDate = now; // Cancelación inmediata en trial: nunca se cobra
         } else {
-            // Si ya está activa, cancela al final del período
-            const nextBilling = new Date(sub.next_billing_date);
-            effectiveDate = nextBilling;
+            // Si ya está activa, cancela al final del período ya pagado
+            effectiveDate = sub.next_billing_date
+                ? new Date(sub.next_billing_date)
+                : new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000); // fallback: +30 días
         }
 
         await db.query(

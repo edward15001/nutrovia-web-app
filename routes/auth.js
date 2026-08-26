@@ -48,6 +48,11 @@ router.post('/register', [
             { expiresIn: '7d' }
         );
 
+        // Avisar al equipo (ADMIN_EMAIL) del nuevo registro — en background
+        emailService.sendNewUserNotificationEmail({ name: user.name, email: user.email }).catch(err => {
+            console.error('Error enviando aviso de nuevo usuario:', err);
+        });
+
         res.status(201).json({
             message: 'Usuario registrado correctamente',
             token,
@@ -56,7 +61,12 @@ router.post('/register', [
 
     } catch (err) {
         console.error('Error en registro:', err);
-        res.status(500).json({ error: 'Error interno del servidor', details: err.message, stack: err.stack });
+        // En producción no exponer detalles internos (stack traces)
+        if (process.env.NODE_ENV === 'production') {
+            res.status(500).json({ error: 'Error interno del servidor' });
+        } else {
+            res.status(500).json({ error: 'Error interno del servidor', details: err.message, stack: err.stack });
+        }
     }
 });
 
@@ -97,7 +107,11 @@ router.post('/login', [
 
     } catch (err) {
         console.error('Error en login:', err);
-        res.status(500).json({ error: 'Error interno del servidor', details: err.message });
+        if (process.env.NODE_ENV === 'production') {
+            res.status(500).json({ error: 'Error interno del servidor' });
+        } else {
+            res.status(500).json({ error: 'Error interno del servidor', details: err.message });
+        }
     }
 });
 

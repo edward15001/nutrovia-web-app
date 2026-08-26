@@ -32,13 +32,21 @@ router.post('/', authMiddleware, [
   try {
     const userId = req.user.id;
 
-    // Guardar respuestas (upsert)
+    // ¿Es la primera vez que el usuario genera su plan?
+    const prevResult = await db.query(
+      'SELECT id FROM questionnaire_answers WHERE user_id = $1',
+      [userId]
+    );
+    const firstTime = prevResult.rows.length === 0;
+
+    // Guardar respuestas (upsert). updated_at registra la última vez que
+    // el usuario registró/actualizó sus valores (para el check-in semanal).
     await db.query(`
       INSERT INTO questionnaire_answers
         (user_id, age, sex, weight_kg, height_cm, target_weight_kg, goal,
          activity_level, dietary_preference, health_conditions,
-         training_experience, training_days_per_week)
-      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
+         training_experience, training_days_per_week, updated_at)
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,NOW())
       ON CONFLICT (user_id) DO UPDATE SET
         age = EXCLUDED.age, sex = EXCLUDED.sex, weight_kg = EXCLUDED.weight_kg,
         height_cm = EXCLUDED.height_cm, target_weight_kg = EXCLUDED.target_weight_kg,
@@ -47,7 +55,7 @@ router.post('/', authMiddleware, [
         health_conditions = EXCLUDED.health_conditions,
         training_experience = EXCLUDED.training_experience,
         training_days_per_week = EXCLUDED.training_days_per_week,
-        created_at = NOW()
+        updated_at = NOW()
     `, [userId, age, sex, weight_kg, height_cm, target_weight_kg, goal,
       activity_level, dietary_preference, health_conditions,
       training_experience, training_days_per_week]);
@@ -77,14 +85,16 @@ router.post('/', authMiddleware, [
       JSON.stringify(plan.weekly_menu), JSON.stringify(plan.training_plan),
       JSON.stringify(plan.supplements)]);
 
-    // Enviar el email al usuario
+    // Enviar el email del plan solo en la primera generación (no en cada actualización)
     // req.user has { id, name, email } from auth middleware
-    emailService.sendNutritionPlanEmail(req.user, plan).catch(err => {
-      console.error('Error al enviar el email del plan en background:', err);
-    });
+    if (firstTime) {
+      emailService.sendNutritionPlanEmail(req.user, plan).catch(err => {
+        console.error('Error al enviar el email del plan en background:', err);
+      });
+    }
 
     res.json({
-      message: 'Plan generado y enviado correctamente',
+      message: firstTime ? 'Plan generado y enviado correctamente' : 'Plan actualizado correctamente',
       plan: {
         resumen: plan.resumen,
         daily_calories: plan.daily_calories,
@@ -101,28 +111,5 @@ router.post('/', authMiddleware, [
     res.status(500).json({ error: 'Error generando el plan' });
   }
 });
-
-// Permitir solo un registro en questionnaire_answers por usuario
-// Añadir UNIQUE constraint si no está en el schema
-(async () => {
-  try {
-    const db2 = require('../db/db');
-    await db2.query(`
-      DO $$ BEGIN
-        IF NOT EXISTS (
-          SELECT 1 FROM pg_constraint WHERE conname = 'questionnaire_answers_user_id_key'
-        ) THEN
-          ALTER TABLE questionnaire_answers ADD CONSTRAINT questionnaire_answers_user_id_key UNIQUE (user_id);
-        END IF;
-        
-        IF NOT EXISTS (
-          SELECT 1 FROM pg_constraint WHERE conname = 'nutrition_plans_user_id_key'
-        ) THEN
-          ALTER TABLE nutrition_plans ADD CONSTRAINT nutrition_plans_user_id_key UNIQUE (user_id);
-        END IF;
-      END $$;
-    `);
-  } catch (e) {/* silenciar en desarrollo */ }
-})();
 
 module.exports = router;
