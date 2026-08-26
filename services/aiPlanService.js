@@ -48,10 +48,11 @@ REGLAS OBLIGATORIAS:
 5. Respeta estrictamente la preferencia dietética: vegano = cero productos animales (ni miel, ni lácteos, ni huevos); vegetariano = sin carne ni pescado; sin gluten = cero trigo/cebada/centeno (avena solo si es certificada sin gluten); sin lactosa = cero lácteos.
 6. Respeta el equipamiento de entrenamiento: "casa" = solo peso corporal, gomas elásticas o mancuernas; "gimnasio" = máquinas y barras; "mixto" = ambos.
 7. Genera exactamente tantas sesiones de entrenamiento como "training_days_per_week" indique el perfil (entre 1 y 6), repartidas por la semana.
-8. Comidas y ejercicios reales, concretos y ejecutables. Nada genérico ni inventado. Ingredientes: entre 3 y 5 por comida, con cantidades aproximadas en gramos coherentes con las calorías de esa comida.
+8. Comidas y ejercicios reales, concretos y ejecutables. Nada genérico ni inventado. Cada comida tiene 3 o 4 ingredientes como máximo (con sus gramos), coherentes con las calorías de esa comida.
 9. Devuelve ÚNICAMENTE un objeto JSON válido. Sin markdown, sin comentarios, sin texto fuera del JSON.
 10. Sé específico y variado: usa nombres descriptivos (nada genérico como "Ensalada mixta"), no repitas el mismo plato dos días seguidos, y da cantidades en gramos coherentes con las calorías de cada comida.
-11. No añadas campos, texto ni explicaciones fuera de la estructura JSON del ejemplo: solo weekly_menu, training_plan, supplements, notas_dieta y consejos_generales.`;
+11. No añadas campos, texto ni explicaciones fuera de la estructura JSON del ejemplo: solo weekly_menu, training_plan, supplements, notas_dieta y consejos_generales.
+12. Genera el JSON COMPACTO: sin espacios extra entre claves ni saltos de línea innecesarios (menos tokens = menos riesgo de cortarse).`;
 
 /**
  * Normaliza el plan devuelto por la IA antes de validarlo:
@@ -239,11 +240,11 @@ ${JSON.stringify(macros, null, 2)}`;
           // proveedores) rechaza con 400 "Failed to validate JSON" prompts
           // anidados como este. El prompt exige JSON estricto y abajo se
           // valida + fallback al motor si algo no cuadra.
-          // max_tokens 6000: el plan completo supera los 2000 tokens y con
-          // menos se truncaba ("Unterminated string"). Con el timeout de 45s
-          // y GPT-OSS 120B (500 tok/s) hay margen de sobra.
+          // max_tokens 10000: el plan completo con formato verboso superaba
+          // los 6000 y se truncaba ("Unterminated string"). Con el timeout de
+          // 45s y GPT-OSS 120B (500 tok/s) 10000 tokens caben en ~20s.
           temperature: 0.8,
-          max_tokens: 6000,
+          max_tokens: 10000,
         }),
         signal: controller.signal,
       });
