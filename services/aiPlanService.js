@@ -15,9 +15,10 @@
  * Variables de entorno (todas opcionales):
  *  - OPENAI_API_KEY   (obligatoria para activar la IA; con Groq por defecto, esta
  *                      variable debe contener la clave de Groq "gsk_...")
- *  - AI_PLAN_MODEL    (por defecto "openai/gpt-oss-120b" de Groq — el reemplazo
- *                      recomendado por Groq para llama-3.3-70b-versatile, retirado
- *                      del free tier el 16/08/2026)
+ *  - AI_PLAN_MODEL    (por defecto "openai/gpt-oss-20b" de Groq — 1000 tok/s,
+ *                      suficiente para generar el plan completo dentro del
+ *                      límite de 10s de Vercel Hobby; "openai/gpt-oss-120b"
+ *                      produce mejor texto pero tarda el doble)
  *  - AI_PLAN_API_URL  (por defecto la de Groq; permite usar OpenAI, DeepInfra,
  *                      Fireworks u otros endpoints compatibles con OpenAI)
  *  - AI_PLAN_TIMEOUT_MS (por defecto 8000 — seguro dentro del límite de 10s de
@@ -27,9 +28,9 @@
  */
 
 // Por defecto se usa Groq (muy rápido, cabe en el límite de 10s de Vercel
-// Hobby; GPT-OSS 120B cuesta ~0,08 céntimos por plan generado). OpenAI y otros
+// Hobby; GPT-OSS 20B cuesta ~0,04 céntimos por plan generado). OpenAI y otros
 // proveedores compatibles se eligen definiendo AI_PLAN_API_URL y AI_PLAN_MODEL.
-const AI_PLAN_MODEL = process.env.AI_PLAN_MODEL || 'openai/gpt-oss-120b';
+const AI_PLAN_MODEL = process.env.AI_PLAN_MODEL || 'openai/gpt-oss-20b';
 const AI_PLAN_API_URL = process.env.AI_PLAN_API_URL || 'https://api.groq.com/openai/v1/chat/completions';
 const AI_PLAN_TIMEOUT_MS = parseInt(process.env.AI_PLAN_TIMEOUT_MS || '8000', 10);
 
