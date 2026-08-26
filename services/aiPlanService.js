@@ -240,11 +240,11 @@ ${JSON.stringify(macros, null, 2)}`;
           // proveedores) rechaza con 400 "Failed to validate JSON" prompts
           // anidados como este. El prompt exige JSON estricto y abajo se
           // valida + fallback al motor si algo no cuadra.
-          // max_tokens 10000: el plan completo con formato verboso superaba
-          // los 6000 y se truncaba ("Unterminated string"). Con el timeout de
-          // 45s y GPT-OSS 120B (500 tok/s) 10000 tokens caben en ~20s.
+          // max_tokens 6000: tope de Groq (por encima rechaza la petición).
+          // El plan cabe con margen gracias al JSON compacto del prompt
+          // (reglas 8 y 12: 3-4 ingredientes, sin espacios extra).
           temperature: 0.8,
-          max_tokens: 10000,
+          max_tokens: 6000,
         }),
         signal: controller.signal,
       });
