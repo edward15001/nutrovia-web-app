@@ -17,13 +17,13 @@
  *  - AI_PLAN_MODEL    (por defecto "gpt-4o-mini")
  *  - AI_PLAN_API_URL  (por defecto la de OpenAI; permite usar Groq, DeepInfra,
  *                      Fireworks u otros endpoints compatibles con OpenAI)
- *  - AI_PLAN_TIMEOUT_MS (por defecto 8500 — ajustado al límite de 10s de Vercel Hobby;
- *                      el AbortController garantiza que nunca se supere)
+ *  - AI_PLAN_TIMEOUT_MS (por defecto 45000 — vercel.json fija maxDuration 60s en
+ *                      Hobby/Fluid; el AbortController garantiza que nunca se supere)
  */
 
 const AI_PLAN_MODEL = process.env.AI_PLAN_MODEL || 'gpt-4o-mini';
 const AI_PLAN_API_URL = process.env.AI_PLAN_API_URL || 'https://api.openai.com/v1/chat/completions';
-const AI_PLAN_TIMEOUT_MS = parseInt(process.env.AI_PLAN_TIMEOUT_MS || '8500', 10);
+const AI_PLAN_TIMEOUT_MS = parseInt(process.env.AI_PLAN_TIMEOUT_MS || '45000', 10);
 
 function isConfigured() {
   return !!process.env.OPENAI_API_KEY;
@@ -42,7 +42,7 @@ REGLAS OBLIGATORIAS:
 7. Genera exactamente tantas sesiones de entrenamiento como "training_days_per_week" indique el perfil (entre 1 y 6), repartidas por la semana.
 8. Comidas y ejercicios reales, concretos y ejecutables. Nada genérico ni inventado. Ingredientes: entre 3 y 5 por comida, con cantidades aproximadas en gramos coherentes con las calorías de esa comida.
 9. Devuelve ÚNICAMENTE un objeto JSON válido. Sin markdown, sin comentarios, sin texto fuera del JSON.
-10. Sé CONCISO para caber en el límite de tokens: nombres de comida de máximo 5 palabras, 3 ingredientes por comida como máximo (con gramos), y ninguna explicación fuera del JSON.`;
+10. Sé específico y variado: usa nombres descriptivos (nada genérico como "Ensalada mixta"), no repitas el mismo plato dos días seguidos, y da cantidades en gramos coherentes con las calorías de cada comida.`;
 
 /**
  * Valida la estructura del plan generado por la IA.
@@ -172,8 +172,8 @@ ${JSON.stringify(macros, null, 2)}`;
             { role: 'user', content: userPrompt },
           ],
           response_format: { type: 'json_object' },
-          temperature: 0.7,
-          max_tokens: 1200,
+          temperature: 0.8,
+          max_tokens: 1600,
         }),
         signal: controller.signal,
       });

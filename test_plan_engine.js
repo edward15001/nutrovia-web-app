@@ -102,5 +102,31 @@ const p7 = generatePersonalizedPlan({
 });
 check('Suelo adolescente 1600 (no 1200)', p7.daily_calories >= 1600, `${p7.daily_calories}`);
 
+// ─── Perfil 8: coherencia título ↔ ingredientes (bug de doble pick) ───
+console.log('\n8) Coherencia título ↔ ingredientes en TODOS los planes');
+function stripGrams(s) {
+  return String(s).replace(/\s*\(.*\)\s*$/, '').trim().toLowerCase();
+}
+function titleHas(plan, day, meal, idx) {
+  const title = plan.weekly_menu[day][meal].nombre.toLowerCase();
+  const ing = stripGrams(plan.weekly_menu[day][meal].ingredientes[idx]);
+  return title.includes(ing);
+}
+let incoherentes = [];
+[p1, p2, p3, p4, p5, p7].forEach((p, pi) => {
+  Object.keys(p.weekly_menu).forEach(day => {
+    const m = p.weekly_menu[day];
+    if (!titleHas(p, day, 'desayuno', 0) || !titleHas(p, day, 'desayuno', 1)) incoherentes.push(`P${pi + 1} ${day} desayuno`);
+    if (!titleHas(p, day, 'almuerzo', 0)) incoherentes.push(`P${pi + 1} ${day} almuerzo`);
+    if (!titleHas(p, day, 'comida', 0) || !titleHas(p, day, 'comida', 1) || !titleHas(p, day, 'comida', 2)) incoherentes.push(`P${pi + 1} ${day} comida`);
+    if (!titleHas(p, day, 'merienda', 0)) incoherentes.push(`P${pi + 1} ${day} merienda`);
+    if (!titleHas(p, day, 'cena', 0) || !titleHas(p, day, 'cena', 1)) incoherentes.push(`P${pi + 1} ${day} cena`);
+    // Desayuno/merienda nunca con aceite en el título
+    if (m.desayuno.nombre.toLowerCase().includes('aceite')) incoherentes.push(`P${pi + 1} ${day} desayuno-aceite`);
+    if (m.merienda.nombre.toLowerCase().includes('aceite')) incoherentes.push(`P${pi + 1} ${day} merienda-aceite`);
+  });
+});
+check('Título e ingredientes coherentes en 6 planes × 7 días', incoherentes.length === 0, incoherentes.slice(0, 10).join(', '));
+
 console.log(failures === 0 ? '\n🎉 TODAS LAS COMPROBACIONES OK' : `\n❌ ${failures} comprobaciones fallidas`);
 process.exit(failures === 0 ? 0 : 1);

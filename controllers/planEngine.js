@@ -238,38 +238,53 @@ function generateWeeklyMenu(answers, macros) {
 
     const menu = {};
     DAYS.forEach(day => {
+        // Cada componente se elige UNA sola vez y se reutiliza en el título y en
+        // los ingredientes, para que nunca se contradigan (bug: antes cada pick()
+        // era independiente y el título podía decir "Salmón" con pollo dentro).
+        // Para desayuno y merienda se evitan los aceites (frutos secos, semillas,
+        // mantequillas de frutos secos y aguacate funcionan mejor con avena/fruta).
+        const solidFats = foods.fats.filter(f => !f.startsWith('Aceite'));
+        const desFat = pick(solidFats.length ? solidFats : foods.fats);
+        const snackProtein = pick(foods.proteins);
+        const lunchProtein = pick(foods.proteins);
+        const lunchCarb = pick(foods.carbs);
+        const lunchVeg = pick(foods.vegs);
+        const snackFat = pick(solidFats.length ? solidFats : foods.fats);
+        const dinnerProtein = pick(foods.proteins);
+        const dinnerVeg = pick(foods.vegs);
+
         menu[day] = {
             desayuno: {
-                nombre: `${breakfastName} con ${pick(foods.fats)} y fruta`,
+                nombre: `${breakfastName} con ${desFat} y fruta`,
                 calorias: Math.round(cals * dist.desayuno),
-                ingredientes: [`${carbForBreakfast} (${scaleGrams(70, factor, 40)}g)`, `${pick(foods.fats)}`, 'Plátano o frutos rojos', 'Leche vegetal o agua'],
+                ingredientes: [`${carbForBreakfast} (${scaleGrams(70, factor, 40)}g)`, `${desFat}`, 'Plátano o frutos rojos', 'Leche vegetal o agua'],
             },
             almuerzo: {
-                nombre: `Snack de ${pick(foods.proteins)}`,
+                nombre: `Snack de ${snackProtein}`,
                 calorias: Math.round(cals * dist.almuerzo),
-                ingredientes: [`${pick(foods.proteins)} (${scaleGrams(30, factor, 20)}g)`, 'Fruta de temporada'],
+                ingredientes: [`${snackProtein} (${scaleGrams(30, factor, 20)}g)`, 'Fruta de temporada'],
             },
             comida: {
-                nombre: `${pick(foods.proteins)} con ${pick(foods.carbs)} y ${pick(foods.vegs)}`,
+                nombre: `${lunchProtein} con ${lunchCarb} y ${lunchVeg}`,
                 calorias: Math.round(cals * dist.comida),
                 ingredientes: [
-                    `${pick(foods.proteins)} (${scaleGrams(150, factor, 100)}g)`,
-                    `${pick(foods.carbs)} (${scaleGrams(100, factor, 60)}g en crudo)`,
-                    `${pick(foods.vegs)} (${scaleGrams(200, factor, 120)}g)`,
+                    `${lunchProtein} (${scaleGrams(150, factor, 100)}g)`,
+                    `${lunchCarb} (${scaleGrams(100, factor, 60)}g en crudo)`,
+                    `${lunchVeg} (${scaleGrams(200, factor, 120)}g)`,
                     'Aceite de oliva (1 cucharada)',
                 ],
             },
             merienda: {
-                nombre: `${pick(foods.fats)} con fruta`,
+                nombre: `${snackFat} con fruta`,
                 calorias: Math.round(cals * dist.merienda),
-                ingredientes: [`${pick(foods.fats)} (${scaleGrams(25, factor, 15)}g)`, 'Manzana o pera'],
+                ingredientes: [`${snackFat} (${scaleGrams(25, factor, 15)}g)`, 'Manzana o pera'],
             },
             cena: {
-                nombre: `${pick(foods.proteins)} con ${pick(foods.vegs)} al horno`,
+                nombre: `${dinnerProtein} con ${dinnerVeg} al horno`,
                 calorias: Math.round(cals * dist.cena),
                 ingredientes: [
-                    `${pick(foods.proteins)} (${scaleGrams(130, factor, 80)}g)`,
-                    `${pick(foods.vegs)} (${scaleGrams(250, factor, 150)}g)`,
+                    `${dinnerProtein} (${scaleGrams(130, factor, 80)}g)`,
+                    `${dinnerVeg} (${scaleGrams(250, factor, 150)}g)`,
                     'Aceite de oliva virgen (1 cucharada)',
                     'Especias al gusto',
                 ],
