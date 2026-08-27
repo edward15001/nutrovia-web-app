@@ -75,11 +75,21 @@ describe('Motor de planes', () => {
     assert.ok(Array.isArray(p.training_plan.progresion) && p.training_plan.progresion.length >= 3);
   });
 
-  test('nunca más sesiones que el pool disponible para el equipamiento', () => {
-    // Gimnasio en perder_peso/intermedio: solo 3 de las 4 sesiones del pool son de gimnasio
+  test('respeta el número de días pedido aunque el pool de plantillas sea menor', () => {
+    // Gimnasio en perder_peso/intermedio: solo 3 de las 4 sesiones del pool son de gimnasio.
+    // Aun así, si el usuario pide 4 días, se cicla el pool repartiendo días distintos.
     const p = generatePersonalizedPlan(makeProfile({ training_days_per_week: 4, training_equipment: 'gimnasio' }));
-    assert.ok(p.training_plan.sesiones.length <= 3, `sesiones ${p.training_plan.sesiones.length}`);
-    assert.ok(p.training_plan.dias_semana <= 4, `dias_semana ${p.training_plan.dias_semana}`);
+    assert.strictEqual(p.training_plan.sesiones.length, 4, 'sesiones');
+    assert.strictEqual(p.training_plan.dias_semana, 4, 'dias_semana');
+    const dias = p.training_plan.sesiones.map(s => s.dia);
+    assert.strictEqual(new Set(dias).size, 4, `días distintos ${JSON.stringify(dias)}`);
+  });
+
+  test('con 6 días se generan 6 sesiones en días distintos', () => {
+    const p = generatePersonalizedPlan(makeProfile({ training_days_per_week: 6, training_equipment: 'mixto' }));
+    assert.strictEqual(p.training_plan.sesiones.length, 6);
+    const dias = p.training_plan.sesiones.map(s => s.dia);
+    assert.strictEqual(new Set(dias).size, 6, `días distintos ${JSON.stringify(dias)}`);
   });
 
   test('entrenar en casa no genera ejercicios de máquina', () => {

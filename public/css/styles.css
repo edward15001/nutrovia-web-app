@@ -1327,39 +1327,72 @@ ul {
   flex-shrink: 0;
 }
 
-/* ─── BENTO GRID CUADRADO Y SIMÉTRICO ─── */
+/* ─── BENTO GRID REDISEÑADO ─────────────────────────────── */
 .nv-bento-grid {
   display: grid;
-  grid-template-columns: 1.2fr 1fr 1fr;
-  grid-auto-rows: minmax(200px, auto);
-  gap: 18px;
-  margin-top: 50px;
+  grid-template-columns: 1.25fr 1fr 1fr;
+  grid-auto-rows: minmax(210px, auto);
+  gap: 20px;
+  margin-top: 56px;
 }
 
 .bento-card {
-  background: var(--bg-cream-card);
+  position: relative;
+  background: linear-gradient(160deg, var(--bg-cream-card) 0%, var(--bg-cream) 100%);
   border: 1px solid var(--border-cream);
-  border-radius: var(--radius);
-  padding: 28px 24px;
+  border-radius: 22px;
+  padding: 26px 24px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  transition: var(--transition);
+  overflow: hidden;
+  transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+}
+
+.bento-card::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, rgba(201, 168, 76, 0.55), transparent);
+  opacity: 0;
+  transition: opacity var(--transition);
 }
 
 .bento-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 40px rgba(100, 80, 40, 0.08);
+  transform: translateY(-5px);
+  border-color: rgba(158, 127, 46, 0.4);
+  box-shadow: 0 24px 48px rgba(100, 80, 40, 0.14), 0 0 0 1px rgba(201, 168, 76, 0.12);
+}
+
+.bento-card:hover::before {
+  opacity: 1;
 }
 
 .bento-card--featured {
   grid-row: span 2;
-  background: linear-gradient(145deg, #eee6d8, #e4dac9);
+  background: linear-gradient(150deg, #efe7d6 0%, #e3d8c2 55%, #dccfa9 100%);
 }
 
 .bento-card--full {
   grid-column: 1 / -1;
-  padding: 26px 30px;
+  padding: 24px 28px;
+}
+
+/* Número de serie (01…06) */
+.bento-num {
+  position: absolute;
+  top: 18px;
+  right: 20px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: rgba(158, 127, 46, 0.55);
+  border: 1px solid rgba(158, 127, 46, 0.25);
+  border-radius: 100px;
+  padding: 3px 9px;
+  background: rgba(255, 255, 255, 0.35);
 }
 
 .bento-label {
@@ -1369,70 +1402,368 @@ ul {
   font-weight: 700;
   letter-spacing: 1.5px;
   color: var(--gold-dark);
-  margin-bottom: 10px;
-}
-
-.bento-card h3 {
-  font-size: 26px;
-  font-weight: 900;
-  color: var(--text-cream-heading);
-  line-height: 1.2;
-  margin-bottom: 10px;
-}
-
-.bento-card h4 {
-  font-size: 18px;
-  font-weight: 800;
-  color: var(--text-cream-heading);
   margin-bottom: 8px;
 }
 
+.bento-card h3 {
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--text-cream-heading);
+  line-height: 1.18;
+  margin-bottom: 8px;
+}
+
+.bento-card h4 {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text-cream-heading);
+  margin-bottom: 6px;
+}
+
 .bento-card p {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--text-cream-body);
   line-height: 1.5;
 }
 
+/* Chip de icono dorado */
 .bento-icon {
-  font-size: 28px;
+  width: 42px;
+  height: 42px;
+  border-radius: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: var(--gold-dark);
-  margin-bottom: 16px;
+  background: linear-gradient(145deg, rgba(201, 168, 76, 0.18), rgba(201, 168, 76, 0.08));
+  border: 1px solid rgba(158, 127, 46, 0.25);
+  margin-bottom: 14px;
 }
 
-.bento-metric {
-  margin-top: 30px;
+.bento-icon svg {
+  width: 20px;
+  height: 20px;
 }
 
-.metric-num {
-  display: block;
+/* ── Visual: anillo de calorías (tarjeta destacada) ── */
+.bento-ring-wrap {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  margin-top: auto;
+  padding-top: 20px;
+}
+
+.bento-ring {
+  position: relative;
+  width: 128px;
+  height: 128px;
+  flex-shrink: 0;
+}
+
+.bento-ring svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.bento-ring circle {
+  fill: none;
+  stroke-width: 11;
+  stroke-linecap: round;
+}
+
+.ring-track {
+  stroke: rgba(158, 127, 46, 0.18);
+}
+
+.ring-fg {
+  stroke: url(#bentoRingGrad);
+  stroke-dasharray: 246 301.6;
+  filter: drop-shadow(0 0 6px rgba(201, 168, 76, 0.35));
+}
+
+.bento-ring-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.bento-ring-center .bento-ring-num {
   font-family: var(--font-mono);
-  font-size: clamp(36px, 4vw, 54px);
+  font-size: 26px;
   font-weight: 800;
-  color: var(--gold-dark);
+  color: var(--text-cream-heading);
   line-height: 1;
 }
 
-.metric-unit {
+.bento-ring-center .bento-ring-unit {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--text-cream-muted);
+  margin-top: 4px;
+}
+
+.bento-ring-macros {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  font-size: 12px;
+  color: var(--text-cream-body);
+}
+
+.bento-ring-macros .m-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+
+.bento-ring-macros .m-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.bento-ring-macros .m-val {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--text-cream-heading);
+}
+
+/* ── Visual: plato de macros (tarjeta alimentación) ── */
+.bento-plate {
+  position: relative;
+  width: 74px;
+  height: 74px;
+  margin: 6px auto 0;
+}
+
+.bento-plate svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.bento-plate circle {
+  fill: none;
+  stroke-width: 9;
+}
+
+.plate-carbs {
+  stroke: #8a6d23;
+  stroke-dasharray: 69.1 138.2;
+}
+
+.plate-protein {
+  stroke: #c9a84c;
+  stroke-dasharray: 48.4 138.2;
+  stroke-dashoffset: -69.1;
+}
+
+.plate-fat {
+  stroke: #e6c878;
+  stroke-dasharray: 20.7 138.2;
+  stroke-dashoffset: -117.5;
+}
+
+.bento-plate-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--text-cream-heading);
+}
+
+/* ── Visual: gauge metabólico (tarjeta ciencia) ── */
+.bento-gauge {
+  position: relative;
+  width: 120px;
+  height: 66px;
+  margin: 8px auto 0;
+}
+
+.bento-gauge svg {
+  width: 100%;
+  height: 100%;
+}
+
+.bento-gauge circle {
+  fill: none;
+  stroke-width: 9;
+  stroke-linecap: round;
+}
+
+.gauge-track {
+  stroke: rgba(158, 127, 46, 0.18);
+  stroke-dasharray: 188.5 251.3;
+  stroke-dashoffset: 62.8;
+}
+
+.gauge-fg {
+  stroke: url(#bentoGaugeGrad);
+  stroke-dasharray: 158 251.3;
+  stroke-dashoffset: 62.8;
+  filter: drop-shadow(0 0 5px rgba(201, 168, 76, 0.3));
+}
+
+.bento-gauge-txt {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  text-align: center;
+}
+
+.bento-gauge-txt .g-num {
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-cream-heading);
+  line-height: 1;
+}
+
+.bento-gauge-txt .g-unit {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--text-cream-muted);
+}
+
+/* ── Visual: sparkline de progreso (tarjeta seguimiento) ── */
+.bento-spark {
+  margin-top: auto;
+  padding-top: 16px;
+}
+
+.bento-spark svg {
+  width: 100%;
+  height: 46px;
+  display: block;
+}
+
+.spark-area {
+  fill: url(#bentoSparkGrad);
+}
+
+.spark-line {
+  fill: none;
+  stroke: var(--gold-dark);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.spark-dot {
+  fill: var(--gold-dark);
+}
+
+.bento-trend {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gold-dark);
+  background: rgba(201, 168, 76, 0.12);
+  border: 1px solid rgba(158, 127, 46, 0.25);
+  border-radius: 100px;
+  padding: 4px 10px;
+}
+
+.bento-trend svg {
+  width: 12px;
+  height: 12px;
+}
+
+/* ── Visual: barras semanales (tarjeta entrenamiento) ── */
+.bento-week {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 46px;
+  margin-top: auto;
+  padding-top: 16px;
+}
+
+.bento-week .w-bar {
+  flex: 1;
+  border-radius: 4px 4px 2px 2px;
+  background: rgba(158, 127, 46, 0.15);
+  transition: background var(--transition-fast), transform var(--transition-fast);
+}
+
+.bento-week .w-bar.on {
+  background: linear-gradient(180deg, var(--gold-light), var(--gold-dark));
+  box-shadow: 0 0 10px rgba(201, 168, 76, 0.3);
+}
+
+.bento-card:hover .bento-week .w-bar.on {
+  transform: scaleY(1.04);
+  transform-origin: bottom;
+}
+
+/* ── Fila de chips del ecosistema (tarjeta full) ── */
+.bento-eco {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.bento-eco-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font-size: 12px;
   font-weight: 700;
-  color: var(--text-cream-muted);
+  color: var(--text-cream-heading);
+  background: rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(158, 127, 46, 0.22);
+  border-radius: 12px;
+  padding: 8px 14px;
+}
+
+.bento-eco-chip svg {
+  width: 15px;
+  height: 15px;
+  color: var(--gold-dark);
 }
 
 .bento-tags {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: 20px;
+  margin-top: 14px;
 }
 
 .b-tag {
   font-size: 11px;
   font-weight: 700;
   padding: 5px 12px;
-  background: rgba(140, 115, 60, 0.1);
-  border: 1px solid var(--border-cream);
+  background: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(158, 127, 46, 0.22);
   border-radius: 100px;
   color: var(--text-cream-heading);
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.bento-card:hover .b-tag {
+  background: rgba(201, 168, 76, 0.1);
+  border-color: rgba(158, 127, 46, 0.35);
 }
 
 /* Bento Card con Imagen de Estilo de Vida */
@@ -3488,4 +3819,1776 @@ ul {
   .option-grid.cols-2 {
     grid-template-columns: 1fr;
   }
+}
+
+/* ════════════════════════════════════════════════════════════
+   16. SISTEMA DE ICONOS SVG (sustituye a los emojis)
+   ════════════════════════════════════════════════════════════ */
+.nv-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--gold);
+}
+
+.nv-icon svg {
+  display: block;
+}
+
+/* Chip dorado para iconos en sidebar */
+.sidebar-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  transition: color var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.sidebar-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.sidebar-link:hover .sidebar-icon {
+  color: var(--gold);
+  background: rgba(201, 168, 76, 0.08);
+  border-color: var(--border-gold);
+}
+
+.sidebar-link.active .sidebar-icon {
+  color: var(--gold);
+  background: rgba(201, 168, 76, 0.12);
+  border-color: var(--border-gold);
+}
+
+/* Icono en opciones del cuestionario */
+.option-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--gold);
+  background: rgba(201, 168, 76, 0.08);
+  border: 1px solid rgba(201, 168, 76, 0.18);
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.option-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.option-btn:hover .option-icon,
+.option-btn.selected .option-icon {
+  background: rgba(201, 168, 76, 0.16);
+  border-color: var(--border-gold);
+}
+
+/* Icono en features de la landing (p-feat) */
+.p-feat-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--gold);
+  background: rgba(201, 168, 76, 0.1);
+  border: 1px solid rgba(201, 168, 76, 0.22);
+}
+
+.p-feat-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Icono de tarjetas de suplementos */
+.supp-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--gold);
+  background: rgba(201, 168, 76, 0.1);
+  border: 1px solid rgba(201, 168, 76, 0.22);
+}
+
+.supp-icon svg {
+  width: 19px;
+  height: 19px;
+}
+
+/* Icono de comprobación en listas */
+.check-icon {
+  color: var(--gold);
+  display: inline-flex;
+  align-items: center;
+}
+
+.check-icon svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Iconos en el mockup de la app (landing) */
+.nv-dash-item-icon svg {
+  width: 11px;
+  height: 11px;
+}
+
+/* Iconos en nombres de macros del dashboard */
+.macro-name .nv-icon {
+  vertical-align: -3px;
+  margin-right: 2px;
+  color: var(--text-muted);
+}
+
+.macro-name .nv-icon svg {
+  width: 13px;
+  height: 13px;
+}
+
+/* Etiquetas con icono en el perfil (dashboard) */
+.profile-row-icon {
+  color: var(--gold);
+  vertical-align: -3px;
+  margin-right: 6px;
+}
+
+.profile-row-icon svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Iconos en los emails / estados de pago */
+.status-icon {
+  vertical-align: -3px;
+  margin-right: 6px;
+}
+
+.status-icon svg {
+  width: 14px;
+  height: 14px;
+}
+
+.status-icon.ok { color: #4caf50; }
+.status-icon.err { color: #e05c4c; }
+.status-icon.warn { color: #d9a441; }
+.status-icon.neutral { color: var(--text-muted); }
+
+/* ════════════════════════════════════════════════════════════
+   17. BOTÓN DE TEMA (claro / oscuro)
+   ════════════════════════════════════════════════════════════ */
+.theme-toggle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  color: var(--text);
+  cursor: pointer;
+  transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
+}
+
+.theme-toggle:hover {
+  background: rgba(201, 168, 76, 0.12);
+  border-color: var(--border-gold);
+  color: var(--gold);
+  transform: rotate(12deg);
+}
+
+.theme-toggle svg {
+  width: 17px;
+  height: 17px;
+  display: block;
+}
+
+/* Botón flotante para páginas centradas (login / questionnaire) */
+.theme-toggle--float {
+  position: fixed;
+  top: 22px;
+  right: 22px;
+  z-index: 1200;
+  background: var(--bg-card);
+  box-shadow: var(--shadow-subtle);
+}
+
+/* ════════════════════════════════════════════════════════════
+   18. MODO CLARO
+   ════════════════════════════════════════════════════════════ */
+html[data-theme='light'] {
+  /* Fondo y superficies */
+  --bg: #f6f3ec;
+  --bg-subtle: #efebe1;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f4f0e7;
+  --bg-darker: #ece7da;
+
+  /* Texto */
+  --text: #211d15;
+  --text-muted: #6e6655;
+  --text-dim: #9a9080;
+
+  /* Bordes y sombras */
+  --border: rgba(33, 29, 21, 0.12);
+  --border-gold: rgba(201, 168, 76, 0.55);
+  --shadow-subtle: 0 10px 30px rgba(80, 65, 30, 0.1);
+  --shadow-layer: 0 -25px 70px rgba(80, 65, 30, 0.14);
+  --shadow-gold: 0 0 35px rgba(201, 168, 76, 0.3);
+}
+
+/* Navbar glass en claro */
+html[data-theme='light'] .navbar {
+  background: rgba(255, 255, 255, 0.6);
+  border-color: rgba(33, 29, 21, 0.12);
+  box-shadow: 0 12px 36px rgba(80, 65, 30, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.6);
+}
+
+html[data-theme='light'] .navbar--scrolled {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(201, 168, 76, 0.4);
+  box-shadow: 0 16px 44px rgba(80, 65, 30, 0.16);
+}
+
+html[data-theme='light'] .nav-logo-icon {
+  filter: none;
+}
+
+html[data-theme='light'] .theme-toggle {
+  background: rgba(33, 29, 21, 0.05);
+}
+
+/* Hero: mantener la foto, fondo de soporte claro */
+html[data-theme='light'] .hero {
+  background: var(--bg);
+}
+
+/* Escenas con variable de fondo ya adaptadas por tokens */
+html[data-theme='light'] .nv-marquee-section {
+  background: var(--bg);
+}
+
+html[data-theme='light'] .nv-marquee-title {
+  color: var(--text);
+}
+
+/* Textos blancos sobre fondos que pasan a claro */
+html[data-theme='light'] .nv-purpose-title,
+html[data-theme='light'] .nv-watch-title {
+  color: var(--text);
+}
+
+html[data-theme='light'] .p-feat strong {
+  color: var(--text);
+}
+
+html[data-theme='light'] .p-feat {
+  background: rgba(33, 29, 21, 0.03);
+  border-color: var(--border);
+}
+
+html[data-theme='light'] .p-feat-icon {
+  background: rgba(201, 168, 76, 0.14);
+  border-color: rgba(201, 168, 76, 0.3);
+}
+
+/* Hovers y chips con blanco semi-transparente → tinta suave */
+html[data-theme='light'] .option-btn:hover {
+  background: rgba(33, 29, 21, 0.03);
+}
+
+html[data-theme='light'] .sidebar-link:hover {
+  background: rgba(33, 29, 21, 0.04);
+}
+
+html[data-theme='light'] .sidebar-icon {
+  background: rgba(33, 29, 21, 0.04);
+}
+
+html[data-theme='light'] .exercise-tag {
+  background: rgba(33, 29, 21, 0.04);
+}
+
+html[data-theme='light'] .tab-btn {
+  background: var(--bg-card);
+}
+
+html[data-theme='light'] .mobile-drawer {
+  background: var(--bg-card);
+}
+
+html[data-theme='light'] .mobile-drawer-backdrop {
+  background: rgba(40, 32, 18, 0.4);
+}
+
+/* Scrollbar en claro */
+html[data-theme='light'] ::-webkit-scrollbar-track {
+  background: var(--bg-darker);
+}
+
+html[data-theme='light'] ::-webkit-scrollbar-thumb {
+  background: var(--gold);
+}
+
+/* Capa crema: en modo claro se funde con el fondo */
+html[data-theme='light'] .nv-layer-cream {
+  background-color: var(--bg);
+}
+
+html[data-theme='light'] .bento-card {
+  background: linear-gradient(160deg, #ffffff 0%, var(--bg-subtle) 100%);
+}
+
+html[data-theme='light'] .bento-card--featured {
+  background: linear-gradient(150deg, #fbf7ec 0%, #f2e9d2 55%, #e8dbb2 100%);
+}
+
+html[data-theme='light'] .bento-num {
+  background: rgba(255, 255, 255, 0.6);
+}
+
+html[data-theme='light'] .bento-eco-chip,
+html[data-theme='light'] .b-tag {
+  background: rgba(255, 255, 255, 0.7);
+}
+
+html[data-theme='light'] .checkin-modal {
+  background: linear-gradient(160deg, #ffffff, var(--bg-subtle));
+  box-shadow: 0 25px 60px rgba(80, 65, 30, 0.18);
+}
+
+/* ── Ajustes finos de iconos en contexto ─────────────────── */
+.status-icon {
+  display: inline-flex;
+  vertical-align: -3px;
+  margin-right: 6px;
+}
+
+.status-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 7px;
+  vertical-align: middle;
+}
+
+.dash-card-label .nv-icon {
+  vertical-align: -2px;
+  margin-right: 7px;
+}
+
+.checkin-emoji .nv-icon {
+  color: var(--gold);
+}
+
+.checkin-emoji .nv-icon svg {
+  width: 40px;
+  height: 40px;
+}
+
+.success-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 18px;
+  color: var(--gold);
+}
+
+.success-icon svg {
+  width: 46px;
+  height: 46px;
+}
+
+.checkbox-label .nv-icon {
+  vertical-align: -3px;
+  margin-right: 7px;
+}
+
+.checkbox-label .check-icon {
+  vertical-align: -2px;
+  margin-right: 7px;
+}
+
+.form-hint .nv-icon,
+.pricing-trial .nv-icon {
+  vertical-align: -2px;
+  margin-right: 6px;
+}
+
+.nv-dash-tip .nv-icon {
+  vertical-align: -2px;
+  margin-right: 5px;
+  color: var(--gold-light);
+}
+
+/* ════════════════════════════════════════════════════════════
+   19. DASHBOARD BENTO (pestaña Resumen)
+   ════════════════════════════════════════════════════════════ */
+.dash-bento {
+  display: grid;
+  grid-template-columns: 1.15fr 0.95fr 0.9fr;
+  gap: 18px;
+  align-items: stretch;
+}
+
+.db-card {
+  position: relative;
+  background: linear-gradient(160deg, var(--bg-card) 0%, var(--bg-subtle) 100%);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 14px;
+  overflow: hidden;
+  transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+}
+
+.db-card:hover {
+  border-color: var(--border-gold);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(201, 168, 76, 0.08);
+  transform: translateY(-2px);
+}
+
+.db-feat {
+  grid-column: span 2;
+  grid-row: span 2;
+  flex-direction: row;
+  align-items: center;
+  gap: 30px;
+  background: radial-gradient(circle at 85% 20%, rgba(201, 168, 76, 0.12) 0%, var(--bg-card) 55%);
+}
+
+.db-feat-txt {
+  flex: 1;
+  min-width: 0;
+}
+
+.db-wide {
+  grid-column: span 2;
+}
+
+.db-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+
+.db-label .nv-icon {
+  color: var(--gold);
+}
+
+.db-title {
+  font-size: clamp(22px, 2.4vw, 30px);
+  font-weight: 900;
+  color: var(--text);
+  margin: 10px 0 8px;
+  line-height: 1.15;
+}
+
+.db-sub {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+
+.db-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.db-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  background: rgba(201, 168, 76, 0.08);
+  border: 1px solid rgba(201, 168, 76, 0.22);
+  border-radius: 100px;
+  padding: 6px 12px;
+}
+
+.db-chip .nv-icon {
+  color: var(--gold);
+}
+
+.db-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.db-mini {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+.db-mini .nv-icon {
+  color: var(--gold);
+}
+
+/* Move ring de calorías */
+.db-ring-box {
+  position: relative;
+  width: 188px;
+  height: 188px;
+  flex-shrink: 0;
+  margin: auto;
+}
+
+.db-ring {
+  width: 100%;
+  height: 100%;
+}
+
+.db-ring-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.db-ring-num {
+  font-family: var(--font-mono);
+  font-size: 30px;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1;
+}
+
+.db-ring-unit {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--text-muted);
+  margin-top: 5px;
+}
+
+/* Consejo de hoy */
+.db-sparkle {
+  background: radial-gradient(circle at 85% 15%, rgba(201, 168, 76, 0.14) 0%, var(--bg-card) 55%);
+  justify-content: flex-start;
+}
+
+.db-sparkle-icon {
+  color: var(--gold);
+  margin-bottom: 4px;
+}
+
+.db-quote {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  font-style: italic;
+}
+
+/* Gráfica de calorías */
+.db-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.db-bignum {
+  font-family: var(--font-mono);
+  font-size: 30px;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1;
+  margin-top: 10px;
+}
+
+.db-unit {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 400;
+  margin-left: 6px;
+  font-family: var(--font);
+}
+
+.db-days {
+  display: flex;
+  gap: 4px;
+}
+
+.db-day {
+  width: 22px;
+  height: 22px;
+  border: 0;
+  padding: 0;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  font-family: inherit;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
+}
+
+.db-day:hover {
+  background: rgba(201, 168, 76, 0.22);
+  color: var(--gold-light);
+}
+
+.db-day.active {
+  color: #000;
+  background: var(--gold);
+}
+
+.db-day.active:hover {
+  color: #000;
+  background: var(--gold);
+  transform: scale(1.08);
+}
+
+.db-chart {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.db-chart svg {
+  width: 100%;
+  height: 118px;
+  display: block;
+}
+
+/* Barras de entreno */
+.db-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  height: 116px;
+  margin-top: 8px;
+}
+
+.db-bar-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  height: 100%;
+}
+
+.db-bar {
+  width: 100%;
+  max-width: 26px;
+  border-radius: 6px 6px 3px 3px;
+  background: rgba(255, 255, 255, 0.06);
+  transition: background var(--transition-fast), transform var(--transition-fast);
+}
+
+.db-bar.on {
+  background: linear-gradient(180deg, var(--gold-light), var(--gold-dark));
+  box-shadow: 0 0 14px rgba(201, 168, 76, 0.35);
+}
+
+.db-bar-day {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-dim);
+}
+
+.db-foot {
+  font-size: 12px;
+  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.db-foot .nv-icon {
+  color: var(--gold);
+}
+
+/* Donut de macros */
+.db-donut {
+  position: relative;
+  width: 118px;
+  height: 118px;
+  margin: 6px auto 10px;
+}
+
+.db-donut svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.db-donut circle {
+  fill: none;
+  stroke-width: 10;
+}
+
+.db-donut-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.db-donut-center span {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-left: 2px;
+}
+
+.db-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.db-legend-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.db-legend-row b {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--text);
+}
+
+.db-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Suplementación */
+.db-sups-row {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+
+.db-sup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 72px;
+}
+
+.db-sup-circle {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold);
+  background: rgba(201, 168, 76, 0.1);
+  border: 1px solid rgba(201, 168, 76, 0.35);
+  box-shadow: 0 0 12px rgba(201, 168, 76, 0.12);
+}
+
+.db-sup-circle .nv-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.db-sup-name {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.3;
+}
+
+/* Responsive del bento del dashboard */
+@media (max-width: 1100px) {
+  .dash-bento {
+    grid-template-columns: 1fr 1fr;
+  }
+  .db-feat,
+  .db-wide {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 720px) {
+  .dash-bento {
+    grid-template-columns: 1fr;
+  }
+  .db-feat,
+  .db-wide {
+    grid-column: span 1;
+    grid-row: auto;
+  }
+  .db-feat {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .db-ring-box {
+    width: 160px;
+    height: 160px;
+  }
+}
+
+/* Modo claro del bento del dashboard */
+html[data-theme='light'] .db-card {
+  background: linear-gradient(160deg, #ffffff 0%, var(--bg-subtle) 100%);
+}
+
+html[data-theme='light'] .db-feat,
+html[data-theme='light'] .db-sparkle {
+  background: radial-gradient(circle at 85% 20%, rgba(201, 168, 76, 0.16) 0%, #ffffff 55%);
+}
+
+html[data-theme='light'] .db-bar {
+  background: rgba(33, 29, 21, 0.07);
+}
+
+html[data-theme='light'] .db-day {
+  background: rgba(33, 29, 21, 0.06);
+}
+
+html[data-theme='light'] .db-ring-box circle[stroke="rgba(255,255,255,0.06)"] {
+  stroke: rgba(33, 29, 21, 0.08);
+}
+
+/* ════════════════════════════════════════════════════════════
+   20. CALENDARIO DE NUTRICIÓN
+   ════════════════════════════════════════════════════════════ */
+.cal-week {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.cal-day {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 14px 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  color: var(--text);
+  cursor: pointer;
+  font-family: var(--font);
+  transition: border-color var(--transition-fast), background var(--transition-fast), transform var(--transition-fast);
+}
+
+.cal-day:hover {
+  border-color: var(--border-gold);
+  transform: translateY(-2px);
+}
+
+.cal-day.active {
+  border-color: var(--gold);
+  background: rgba(201, 168, 76, 0.08);
+  box-shadow: 0 0 0 1px rgba(201, 168, 76, 0.25), 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.cal-day-letter {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--gold);
+}
+
+.cal-day-name {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.cal-day-kcal {
+  font-size: 10px;
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+}
+
+.cal-swap-dot {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 8px rgba(201, 168, 76, 0.6);
+}
+
+.cal-detail {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 24px;
+}
+
+.cal-detail-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.cal-detail-day {
+  font-size: 20px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cal-modified-badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--gold);
+  background: rgba(201, 168, 76, 0.12);
+  border: 1px solid var(--border-gold);
+  border-radius: 100px;
+  padding: 3px 10px;
+}
+
+.cal-detail-kcal {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 4px;
+  font-family: var(--font-mono);
+}
+
+.cal-diff {
+  font-weight: 700;
+}
+
+.cal-diff.up {
+  color: #d9a441;
+}
+
+.cal-diff.down {
+  color: #4caf50;
+}
+
+.cal-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-top: 10px;
+}
+
+.cal-hint .nv-icon {
+  color: var(--gold);
+}
+
+.cal-restore {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  border-radius: 10px;
+  padding: 9px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.cal-restore:hover {
+  color: var(--gold);
+  border-color: var(--border-gold);
+  background: rgba(201, 168, 76, 0.08);
+}
+
+.cal-restore .nv-icon {
+  color: var(--gold);
+}
+
+.cal-meals {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cal-meal {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  transition: border-color var(--transition-fast);
+}
+
+.cal-meal.changed {
+  border-color: var(--border-gold);
+}
+
+.cal-meal.open {
+  border-color: var(--border-gold);
+}
+
+.cal-meal-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: var(--bg-subtle);
+}
+
+.cal-meal-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--gold);
+  background: rgba(201, 168, 76, 0.1);
+  border: 1px solid rgba(201, 168, 76, 0.22);
+}
+
+.cal-meal-icon svg {
+  width: 17px;
+  height: 17px;
+}
+
+.cal-meal-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+}
+
+.cal-meal-name {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.cal-meal-kcal {
+  font-size: 12px;
+  font-family: var(--font-mono);
+  color: var(--gold);
+  font-weight: 700;
+}
+
+.cal-meal-ing {
+  font-size: 11px;
+  color: var(--text-dim);
+  width: 100%;
+}
+
+.cal-swap-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  border-radius: 9px;
+  padding: 8px 13px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--font);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all var(--transition-fast);
+}
+
+.cal-swap-btn:hover {
+  color: var(--gold);
+  border-color: var(--border-gold);
+  background: rgba(201, 168, 76, 0.08);
+}
+
+.cal-swap-btn .nv-icon {
+  color: var(--gold);
+}
+
+.cal-options {
+  border-top: 1px solid var(--border);
+  padding: 14px 16px;
+  background: var(--bg);
+}
+
+.cal-options-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+.cal-options-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 8px;
+}
+
+.cal-opt {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  text-align: left;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+  font-family: var(--font);
+  transition: all var(--transition-fast);
+}
+
+.cal-opt:hover {
+  border-color: var(--gold);
+  background: rgba(201, 168, 76, 0.08);
+  transform: translateY(-1px);
+}
+
+.cal-opt-name {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cal-opt-name .nv-icon {
+  color: var(--gold);
+}
+
+.cal-opt-meta {
+  font-size: 10.5px;
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+}
+
+.cal-opt--original {
+  border-style: dashed;
+}
+
+/* Responsive calendario */
+@media (max-width: 720px) {
+  .cal-week {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .cal-meal-row {
+    flex-wrap: wrap;
+  }
+  .cal-swap-btn {
+    margin-left: auto;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
+   21. TARJETAS ESTILO APPLE (acards) — secciones de la landing
+   ════════════════════════════════════════════════════════════ */
+.acards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.acard {
+  position: relative;
+  border-radius: 24px;
+  padding: 30px 28px;
+  min-height: 320px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 18px;
+  overflow: hidden;
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.acard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.35);
+}
+
+.acard--dark {
+  background: radial-gradient(circle at 82% 12%, rgba(201, 168, 76, 0.12) 0%, #0c0c0c 62%);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.acard--cream {
+  background: linear-gradient(160deg, #f8f4ea 0%, #ece4d3 100%);
+  color: var(--text-cream-heading);
+  border: 1px solid var(--border-cream);
+}
+
+.acard--contour {
+  background-color: #f3eee1;
+  background-image: repeating-radial-gradient(circle at 28% 38%, transparent 0 13px, rgba(158, 127, 46, 0.1) 13px 14px);
+  color: var(--text-cream-heading);
+  border: 1px solid var(--border-cream);
+}
+
+.acard--gold {
+  background: linear-gradient(150deg, #e0be64 0%, #c9a84c 55%, #a8852e 100%);
+  color: #fff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.acard-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  display: block;
+}
+
+.acard-label--gold { color: var(--gold-light); }
+.acard-label--dark { color: var(--gold-dark); }
+.acard-label--light { color: rgba(255, 255, 255, 0.9); }
+
+.acard-title {
+  font-size: clamp(20px, 2.2vw, 27px);
+  font-weight: 900;
+  line-height: 1.15;
+  margin: 12px 0 10px;
+}
+
+.acard-title--gold { color: var(--gold); }
+.acard-title--dark { color: var(--text-cream-heading); }
+.acard-title--white { color: #fff; }
+
+.acard-body {
+  font-size: 14px;
+  line-height: 1.6;
+  max-width: 46ch;
+}
+
+.acard-body--white { color: rgba(255, 255, 255, 0.88); }
+.acard-body--dark { color: var(--text-cream-body); }
+
+.acard-visual {
+  margin-top: auto;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.acard-tags {
+  justify-content: center;
+  margin-top: 30px;
+}
+
+/* Radar (compass) */
+.aradar {
+  position: relative;
+  width: 100%;
+  max-width: 260px;
+}
+
+.aradar svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.radar-ring {
+  fill: none;
+  stroke: rgba(201, 168, 76, 0.35);
+  stroke-width: 1;
+}
+
+.radar-x {
+  stroke: rgba(201, 168, 76, 0.22);
+  stroke-width: 1;
+  fill: none;
+}
+
+.radar-sweep {
+  fill: rgba(201, 168, 76, 0.14);
+}
+
+.radar-marker circle {
+  fill: var(--gold);
+}
+
+.radar-marker text {
+  fill: var(--gold-light);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.radar-dot {
+  fill: var(--gold-light);
+  opacity: 0.8;
+}
+
+.aradar-center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  pointer-events: none;
+}
+
+.aradar-num {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 24px;
+  font-weight: 900;
+  color: #fff;
+  line-height: 1;
+}
+
+.aradar-unit {
+  display: block;
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--gold);
+  margin-top: 4px;
+}
+
+/* Mapa de contornos (topográfico) */
+.acontour {
+  position: relative;
+  width: 100%;
+  max-width: 300px;
+}
+
+.acontour svg {
+  width: 100%;
+  height: 110px;
+  display: block;
+}
+
+.ct-line {
+  fill: none;
+  stroke: rgba(158, 127, 46, 0.25);
+  stroke-width: 1.2;
+}
+
+.ct-trail {
+  fill: none;
+  stroke: var(--gold-dark);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 6px rgba(201, 168, 76, 0.4));
+}
+
+.ct-dot {
+  fill: var(--gold-dark);
+  stroke: #fff;
+  stroke-width: 1.5;
+}
+
+/* Gráfica blanca para tarjeta dorada (alerts) */
+.acard--alerts {
+  justify-content: space-between;
+}
+
+.agold-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.agold-chart {
+  position: relative;
+  width: 46%;
+  min-width: 150px;
+}
+
+.agold-chart svg {
+  width: 100%;
+  height: 88px;
+  display: block;
+}
+
+.garea {
+  fill: rgba(255, 255, 255, 0.22);
+}
+
+.gline {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.gdot {
+  fill: #fff;
+}
+
+.agold-tag {
+  position: absolute;
+  top: -6px;
+  right: 0;
+  background: #fff;
+  color: var(--gold-dark);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  border-radius: 100px;
+  padding: 4px 11px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  white-space: nowrap;
+}
+
+/* Mockup del watch dentro de la feature card (contenido de verdad) */
+.watch-device {
+  position: relative;
+  width: 205px;
+  aspect-ratio: 458 / 796;
+  flex-shrink: 0;
+  filter: drop-shadow(0 30px 60px rgba(0, 0, 0, 0.65)) drop-shadow(0 0 42px rgba(201, 168, 76, 0.16));
+}
+
+.watch-device .nv-screen--watch {
+  border-radius: 38px;
+}
+
+.watch-device .watch-ring-wrapper {
+  width: 102px;
+  height: 102px;
+}
+
+.watch-device .watch-calories-num {
+  font-size: 17px;
+}
+
+.watch-device .watch-tag {
+  font-size: 9px;
+}
+
+.watch-device .w-pill {
+  font-size: 9px;
+  padding: 3px 6px;
+}
+
+/* Feature card de la sección Watch (1 grande + 3 minis) */
+.watch-feature {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 40px;
+  align-items: center;
+  border-radius: 28px;
+  padding: 46px 50px;
+  background: radial-gradient(130% 170% at 88% 0%, rgba(201, 168, 76, 0.16) 0%, #0c0c0c 58%);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.watch-feature-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.wf-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 9px 14px;
+  border-radius: 100px;
+  white-space: nowrap;
+}
+
+.wf-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 8px rgba(201, 168, 76, 0.85);
+}
+
+.watch-feature-visual {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Fila de 3 minis */
+.watch-mini-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.watch-mini-grid .acard {
+  min-height: 300px;
+}
+
+/* Barras de la semana (crema) */
+.wweek {
+  width: 100%;
+  max-width: 300px;
+}
+
+.wweek-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  height: 92px;
+}
+
+.wbar {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.wbar i {
+  display: block;
+  width: 100%;
+  max-width: 20px;
+  height: var(--h);
+  border-radius: 6px 6px 3px 3px;
+  background: linear-gradient(180deg, #d9b963 0%, #a8852e 100%);
+  opacity: 0.3;
+  transition: opacity var(--transition);
+}
+
+.wbar.on i {
+  opacity: 1;
+  box-shadow: 0 0 16px rgba(201, 168, 76, 0.5);
+}
+
+.wbar span {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: var(--gold-dark);
+}
+
+/* Mapa topográfico con elevaciones (contornos) */
+.ct-elev {
+  position: absolute;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: rgba(158, 127, 46, 0.6);
+  pointer-events: none;
+}
+
+/* Anillo de entreno completado (dorada) */
+.aworkout {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin: 4px 0 16px;
+}
+
+.aworkout-ring {
+  position: relative;
+  width: 86px;
+  height: 86px;
+  flex-shrink: 0;
+}
+
+.aworkout-ring > svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.aw-ring-bg {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.3);
+  stroke-width: 7;
+}
+
+.aw-ring-fg {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 7;
+  stroke-linecap: round;
+  stroke-dasharray: 264;
+  stroke-dashoffset: 15;
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.55));
+}
+
+.aworkout-ring .aw-check {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 30px;
+  height: 30px;
+  transform: none;
+}
+
+.aw-check path {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.aworkout-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.aw-title {
+  font-size: 15px;
+  font-weight: 900;
+  color: #fff;
+}
+
+.aw-sub {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.agold-badge {
+  background: #fff;
+  color: var(--gold-dark);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  border-radius: 100px;
+  padding: 4px 11px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  white-space: nowrap;
+}
+
+/* Cabecera y estructura de la sección Watch */
+.nv-watch-inner {
+  max-width: 1240px;
+  width: 100%;
+}
+
+.nv-watch-head {
+  text-align: center;
+  max-width: 720px;
+  margin: 0 auto 48px;
+}
+
+.nv-watch-cta {
+  display: flex;
+  justify-content: center;
+  margin-top: 44px;
+}
+
+.watch-feature {
+  margin-top: 8px;
+}
+
+/* Responsive de la sección Watch */
+@media (max-width: 860px) {
+  .watch-feature {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    padding: 36px 28px;
+  }
+  .watch-mini-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Responsive acards */
+@media (max-width: 860px) {
+  .acards {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Modo claro de las tarjetas */
+html[data-theme='light'] .acard--dark {
+  background: radial-gradient(circle at 82% 12%, rgba(201, 168, 76, 0.16) 0%, #141210 62%);
+}
+
+html[data-theme='light'] .acard--gold {
+  background: linear-gradient(150deg, #dfbe66 0%, #c9a84c 55%, #a8852e 100%);
+}
+
+html[data-theme='light'] .acard--contour {
+  background-color: var(--bg);
+}
+
+html[data-theme='light'] .aradar-num {
+  color: var(--text);
+}
+
+html[data-theme='light'] .aradar-center .aradar-unit {
+  color: var(--gold-dark);
 }

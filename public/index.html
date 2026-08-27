@@ -16,6 +16,9 @@
     href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&family=Space+Mono:wght@400;700&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
+  <script>try{if(localStorage.getItem('nv-theme')==='light'||(!localStorage.getItem('nv-theme')&&matchMedia('(prefers-color-scheme: light)').matches))document.documentElement.setAttribute('data-theme','light')}catch(e){}</script>
+  <script src="js/icons.js"></script>
+  <script src="js/theme.js"></script>
   <script>
     window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
   </script>
@@ -33,6 +36,7 @@
           <span class="nav-logo-text">NUTROVIA<span class="logo-dot">.</span></span>
         </a>
         <div class="nav-actions" id="navActions">
+          <button class="theme-toggle" data-theme-toggle aria-label="Cambiar a modo claro"><span data-theme-icon></span></button>
           <a href="login.html" class="btn-ghost">Iniciar sesión</a>
           <a href="questionnaire.html" class="btn-gold">Comenzar</a>
         </div>
@@ -176,9 +180,9 @@
               Un panel claro y conciso calculado para tus números reales. Sin interpretar tablas complejas ni contar calorías a ciegas.
             </p>
             <ul class="nv-card-checklist">
-              <li><span class="check-icon">✓</span> Plan de nutrición 100% individualizado</li>
-              <li><span class="check-icon">✓</span> Distribución de macronutrientes exactos</li>
-              <li><span class="check-icon">✓</span> Rutinas adaptadas a tus días disponibles</li>
+              <li><span class="check-icon" data-icon="check" data-icon-size="14"></span> Plan de nutrición 100% individualizado</li>
+              <li><span class="check-icon" data-icon="check" data-icon-size="14"></span> Distribución de macronutrientes exactos</li>
+              <li><span class="check-icon" data-icon="check" data-icon-size="14"></span> Rutinas adaptadas a tus días disponibles</li>
             </ul>
           </div>
 
@@ -227,69 +231,125 @@
             </div>
           </div>
 
-          <!-- Bento Grid visual limpio, simétrico y perfectamente cuadrado -->
-          <div class="nv-bento-grid">
-            <!-- Tarjeta 1 (Columna 1, span 2 filas) -->
-            <div class="bento-card bento-card--featured">
-              <div class="bento-top">
-                <span class="bento-label">NUTRICIÓN CON INTENCIÓN</span>
-                <h3>Come con propósito.</h3>
-                <p>Menús calculados que encajan con tu objetivo, tus horarios y tu tipo de dieta.</p>
+          <!-- Gradientes compartidos por los visuales del bento -->
+          <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+            <defs>
+              <linearGradient id="bentoRingGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#e6c878"/>
+                <stop offset="100%" stop-color="#9e7f2e"/>
+              </linearGradient>
+              <linearGradient id="bentoGaugeGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#e6c878"/>
+                <stop offset="100%" stop-color="#9e7f2e"/>
+              </linearGradient>
+              <linearGradient id="bentoSparkGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="rgba(201, 168, 76, 0.35)"/>
+                <stop offset="100%" stop-color="rgba(201, 168, 76, 0)"/>
+              </linearGradient>
+            </defs>
+          </svg>
+
+          <!-- Tarjetas de producto estilo Apple (2×2) -->
+          <div class="acards">
+            <!-- 01 · Oscura: nutrición con intención (radar de macros) -->
+            <div class="acard acard--dark">
+              <div>
+                <span class="acard-label acard-label--gold">Nutrición con intención</span>
+                <h3 class="acard-title acard-title--gold">Come con propósito</h3>
+                <p class="acard-body acard-body--white">Menús calculados que encajan con tu objetivo, tus horarios y tu tipo de dieta.</p>
               </div>
-              <div class="bento-metric">
-                <span class="metric-num">2.450</span>
-                <span class="metric-unit">kcal / día</span>
-              </div>
-            </div>
-
-            <!-- Tarjeta 2 (Columna 2, Fila 1) -->
-            <div class="bento-card">
-              <div class="bento-icon">🥗</div>
-              <span class="bento-label">ALIMENTACIÓN REAL</span>
-              <h4>Comidas que disfrutas</h4>
-              <p>Recetas balanceadas y variadas sin pasar hambre ni renunciar al sabor.</p>
-            </div>
-
-            <!-- Tarjeta 3 (Columna 3, Fila 1) -->
-            <div class="bento-card">
-              <div class="bento-icon">◎</div>
-              <span class="bento-label">CIENCIA METABÓLICA</span>
-              <h4>Metabolismo Real</h4>
-              <p>Tu gasto energético TDEE calculado con precisión como base no negociable.</p>
-            </div>
-
-            <!-- Tarjeta 4 (Columna 2, Fila 2) -->
-            <div class="bento-card">
-              <div class="bento-icon">↗</div>
-              <span class="bento-label">SEGUIMIENTO CLARO</span>
-              <h4>Progreso Visible</h4>
-              <p>Entiende cada ajuste calórico y la evolución semanal de tu composición corporal.</p>
-            </div>
-
-            <!-- Tarjeta 5 (Columna 3, Fila 2) -->
-            <div class="bento-card">
-              <div class="bento-icon">⚡</div>
-              <span class="bento-label">ENTRENAMIENTO GUIADO</span>
-              <h4>Rutinas a tu Medida</h4>
-              <p>Sesiones estructuradas con series y pausas ajustadas a tus días disponibles.</p>
-            </div>
-
-            <!-- Tarjeta 6 (Fila 3, Ancho Completo 3 columnas) -->
-            <div class="bento-card bento-card--full">
-              <div class="bento-top">
-                <span class="bento-label">ECOSISTEMA COMPLETO</span>
-                <h4>Nutrición. Entrenamiento. Constancia.</h4>
-                <p>Todo sincronizado en una sola experiencia digital intuitiva para cualquier estilo de vida.</p>
-              </div>
-              <div class="bento-tags">
-                <span class="b-tag">Sin gluten</span>
-                <span class="b-tag">Vegano</span>
-                <span class="b-tag">Vegetariano</span>
-                <span class="b-tag">Omnívoro</span>
-                <span class="b-tag">Sin lactosa</span>
-                <span class="b-tag">Keto / Low-Carb</span>
+              <div class="acard-visual">
+                <div class="aradar">
+                  <svg viewBox="0 0 200 140" aria-hidden="true">
+                    <circle class="radar-ring" cx="100" cy="70" r="54"/>
+                    <circle class="radar-ring" cx="100" cy="70" r="40"/>
+                    <circle class="radar-ring" cx="100" cy="70" r="26"/>
+                    <path class="radar-x" d="M46 70h108"/>
+                    <path class="radar-x" d="M100 16v108"/>
+                    <path class="radar-x" d="M62 32l76 76"/>
+                    <path class="radar-x" d="M138 32l-76 76"/>
+                    <path class="radar-sweep" d="M100 70 L127 23.2 A54 54 0 0 0 100 16 Z"/>
+                    <g class="radar-marker" transform="translate(147 26)"><circle r="4.5"/><text x="10" y="4">P</text></g>
+                    <g class="radar-marker" transform="translate(153 96)"><circle r="4.5"/><text x="10" y="4">C</text></g>
+                    <g class="radar-marker" transform="translate(42 94)"><circle r="4.5"/><text x="-30" y="4">G</text></g>
+                    <circle class="radar-dot" cx="122" cy="52" r="2.5"/>
+                    <circle class="radar-dot" cx="72" cy="42" r="2.5"/>
+                    <circle class="radar-dot" cx="84" cy="100" r="2.5"/>
+                    <circle class="radar-dot" cx="130" cy="114" r="2.5"/>
+                  </svg>
+                  <div class="aradar-center">
+                    <span class="aradar-num">2.450</span>
+                    <span class="aradar-unit">KCAL / DÍA</span>
+                  </div>
+                </div>
               </div>
             </div>
+
+            <!-- 02 · Crema: alimentación real (plato de macros) -->
+            <div class="acard acard--cream">
+              <div>
+                <span class="acard-label acard-label--dark">Comida real</span>
+                <h3 class="acard-title acard-title--dark">Alimentación que disfrutas</h3>
+                <p class="acard-body acard-body--dark">Recetas balanceadas y variadas sin pasar hambre ni renunciar al sabor.</p>
+              </div>
+              <div class="acard-visual">
+                <div class="bento-plate">
+                  <svg viewBox="0 0 60 60">
+                    <circle class="plate-carbs" cx="30" cy="30" r="22"/>
+                    <circle class="plate-protein" cx="30" cy="30" r="22"/>
+                    <circle class="plate-fat" cx="30" cy="30" r="22"/>
+                  </svg>
+                  <div class="bento-plate-center">P·C·G</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 03 · Contornos: ciencia metabólica (gauge TDEE) -->
+            <div class="acard acard--contour">
+              <div>
+                <span class="acard-label acard-label--dark">Ciencia metabólica</span>
+                <h3 class="acard-title acard-title--dark">Tu metabolismo real</h3>
+                <p class="acard-body acard-body--dark">Tu gasto energético TDEE calculado con precisión como base no negociable.</p>
+              </div>
+              <div class="acard-visual">
+                <div class="bento-gauge">
+                  <svg viewBox="0 0 120 70">
+                    <circle class="gauge-track" cx="60" cy="62" r="40"/>
+                    <circle class="gauge-fg" cx="60" cy="62" r="40"/>
+                  </svg>
+                  <div class="bento-gauge-txt">
+                    <span class="g-num">2.800</span><br>
+                    <span class="g-unit">KCAL TDEE</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 04 · Dorada: seguimiento claro (gráfica blanca) -->
+            <div class="acard acard--gold acard--alerts">
+              <div class="agold-top">
+                <span class="acard-label acard-label--light">Seguimiento claro</span>
+                <div class="agold-chart">
+                  <svg viewBox="0 0 200 90" preserveAspectRatio="none">
+                    <path class="garea" d="M10 70 L45 58 L80 62 L115 40 L150 46 L190 18 L190 90 L10 90 Z"/>
+                    <path class="gline" d="M10 70 L45 58 L80 62 L115 40 L150 46 L190 18"/>
+                    <circle class="gdot" cx="190" cy="18" r="3.5"/>
+                  </svg>
+                  <span class="agold-tag">−3,2 kg</span>
+                </div>
+              </div>
+              <h3 class="acard-title acard-title--white">Entiende cada ajuste calórico y la evolución semanal de tu composición corporal.</h3>
+            </div>
+          </div>
+
+          <!-- Dietas compatibles -->
+          <div class="bento-tags acard-tags">
+            <span class="b-tag">Sin gluten</span>
+            <span class="b-tag">Vegano</span>
+            <span class="b-tag">Vegetariano</span>
+            <span class="b-tag">Omnívoro</span>
+            <span class="b-tag">Sin lactosa</span>
+            <span class="b-tag">Keto / Low-Carb</span>
           </div>
 
         </div>
@@ -449,14 +509,14 @@
             </p>
             <div class="nv-purpose-features">
               <div class="p-feat">
-                <span class="p-feat-icon">🎯</span>
+                <span class="p-feat-icon" data-icon="target" data-icon-size="18"></span>
                 <div>
                   <strong>Objetivos ajustables</strong>
                   <small>Déficit, superávit o mantenimiento cuando tú lo decidas.</small>
                 </div>
               </div>
               <div class="p-feat">
-                <span class="p-feat-icon">🔄</span>
+                <span class="p-feat-icon" data-icon="refresh" data-icon-size="18"></span>
                 <div>
                   <strong>Recálculo continuo</strong>
                   <small>Ajuste de macronutrientes según cambie tu peso y fuerza.</small>
@@ -487,7 +547,7 @@
                     <span class="day-chip">D</span>
                   </div>
                   <div class="nv-dash-item">
-                    <span class="nv-dash-item-icon">🥗</span>
+                    <span class="nv-dash-item-icon" data-icon="nutrition" data-icon-size="11"></span>
                     <div class="nv-dash-item-info">
                       <strong>Comida</strong>
                       <small>Pollo con arroz y verduras al vapor</small>
@@ -495,7 +555,7 @@
                     <b class="nv-dash-item-val">857 kcal</b>
                   </div>
                   <div class="nv-dash-item">
-                    <span class="nv-dash-item-icon">🌙</span>
+                    <span class="nv-dash-item-icon" data-icon="moon" data-icon-size="11"></span>
                     <div class="nv-dash-item-info">
                       <strong>Cena</strong>
                       <small>Salmón con patata asada y espárragos</small>
@@ -503,7 +563,7 @@
                     <b class="nv-dash-item-val">490 kcal</b>
                   </div>
                   <div class="nv-dash-tip">
-                    ✨ Distribución de macros: 35% P · 50% C · 15% G
+                    <span class="nv-icon" data-icon="sparkles" data-icon-size="13"></span> Distribución de macros: 35% P · 50% C · 15% G
                   </div>
                 </div>
               </div>
@@ -520,35 +580,8 @@
           <div class="nv-lifestyle-gradient-mask"></div>
         </div>
 
-        <div class="container nv-watch-container">
-          
-          <div class="nv-watch-device-col">
-            <div class="nv-watch-wrapper" id="nvWatchMockup">
-              <img src="mockups/apple-watch.svg" alt="NutroVia en Apple Watch" class="nv-watch-frame">
-              <div class="nv-screen nv-screen--watch">
-                <div class="watch-ui-container">
-                  <span class="watch-tag">HOY</span>
-                  <div class="watch-ring-wrapper">
-                    <svg viewBox="0 0 100 100" class="watch-ring-svg">
-                      <circle cx="50" cy="50" r="42" class="ring-bg"></circle>
-                      <circle cx="50" cy="50" r="42" class="ring-fg"></circle>
-                    </svg>
-                    <div class="watch-ring-center">
-                      <span class="watch-calories-num">2.450</span>
-                      <span class="watch-calories-unit">kcal</span>
-                    </div>
-                  </div>
-                  <div class="watch-macros-pills">
-                    <div class="w-pill"><span class="p-p">P</span> 168</div>
-                    <div class="w-pill"><span class="p-c">C</span> 240</div>
-                    <div class="w-pill"><span class="p-g">G</span> 72</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="nv-watch-text-col">
+        <div class="container nv-watch-inner">
+          <div class="nv-watch-head">
             <span class="nv-card-num">03 · NUTROVIA EN TU MUÑECA</span>
             <h2 class="nv-watch-title">
               Lo esencial,<br>
@@ -557,36 +590,123 @@
             <p class="nv-watch-desc">
               Calorías restantes, desglose de macronutrientes en vivo y alertas de entrenamiento sin necesidad de sacar el teléfono del bolsillo. La constancia vive en tu muñeca.
             </p>
-            <div class="nv-watch-features">
-              <div class="p-feat">
-                <span class="p-feat-icon">⚡</span>
-                <div>
-                  <strong>Sincronización instantánea</strong>
-                  <small>Tus datos en tiempo real directo en la muñeca.</small>
-                </div>
-              </div>
-              <div class="p-feat">
-                <span class="p-feat-icon">📊</span>
-                <div>
-                  <strong>Anillo de calorías diario</strong>
-                  <small>Visualiza tu progreso de un solo vistazo.</small>
-                </div>
-              </div>
-              <div class="p-feat">
-                <span class="p-feat-icon">🏃</span>
-                <div>
-                  <strong>Recordatorio de sesiones</strong>
-                  <small>Nunca olvides tu entreno programado del día.</small>
-                </div>
+          </div>
+
+          <!-- Feature card: tu día de un vistazo (mockup real del watch, contenido) -->
+          <div class="watch-feature">
+            <div class="watch-feature-text nv-watch-text-col">
+              <span class="acard-label acard-label--gold">En la muñeca</span>
+              <h3 class="acard-title acard-title--gold">Tu día de un vistazo</h3>
+              <p class="acard-body acard-body--white">Calorías restantes, macros y próximo entreno sin sacar el móvil del bolsillo.</p>
+              <div class="watch-feature-chips">
+                <span class="wf-chip"><span class="wf-dot"></span>2.450 kcal restantes</span>
+                <span class="wf-chip"><span class="wf-dot"></span>P 168 · C 240 · G 72</span>
+                <span class="wf-chip"><span class="wf-dot"></span>Próximo entreno: Fuerza A</span>
               </div>
             </div>
-            <div class="nv-watch-cta" style="margin-top: 36px;">
-              <a href="questionnaire.html" class="btn-gold-large">
-                Crear mi plan ahora →
-              </a>
+            <div class="watch-feature-visual">
+              <div class="watch-device" id="nvWatchMockup">
+                <img src="mockups/apple-watch.svg" alt="NutroVia en Apple Watch" class="nv-watch-frame">
+                <div class="nv-screen nv-screen--watch">
+                  <div class="watch-ui-container">
+                    <span class="watch-tag">HOY</span>
+                    <div class="watch-ring-wrapper">
+                      <svg viewBox="0 0 100 100" class="watch-ring-svg">
+                        <circle cx="50" cy="50" r="42" class="ring-bg"></circle>
+                        <circle cx="50" cy="50" r="42" class="ring-fg"></circle>
+                      </svg>
+                      <div class="watch-ring-center">
+                        <span class="watch-calories-num">2.450</span>
+                        <span class="watch-calories-unit">kcal</span>
+                      </div>
+                    </div>
+                    <div class="watch-macros-pills">
+                      <div class="w-pill"><span class="p-p">P</span> 168</div>
+                      <div class="w-pill"><span class="p-c">C</span> 240</div>
+                      <div class="w-pill"><span class="p-g">G</span> 72</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
+          <!-- 3 minis: semana, rutas, entreno -->
+          <div class="watch-mini-grid">
+            <!-- Crema: tu semana trazada (barras diarias) -->
+            <div class="acard acard--cream">
+              <div>
+                <span class="acard-label acard-label--dark">Sincronización</span>
+                <h3 class="acard-title acard-title--dark">Tu semana trazada</h3>
+                <p class="acard-body acard-body--dark">Tus datos en tiempo real, directos en la muñeca, sin tocar nada.</p>
+              </div>
+              <div class="acard-visual">
+                <div class="wweek">
+                  <div class="wweek-bars">
+                    <div class="wbar" style="--h:55%"><i></i><span>L</span></div>
+                    <div class="wbar" style="--h:80%"><i></i><span>M</span></div>
+                    <div class="wbar" style="--h:62%"><i></i><span>X</span></div>
+                    <div class="wbar on" style="--h:95%"><i></i><span>J</span></div>
+                    <div class="wbar" style="--h:70%"><i></i><span>V</span></div>
+                    <div class="wbar" style="--h:45%"><i></i><span>S</span></div>
+                    <div class="wbar" style="--h:38%"><i></i><span>D</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Contornos: rutas y elevación (mapa topográfico) -->
+            <div class="acard acard--contour">
+              <div>
+                <span class="acard-label acard-label--dark">Rutas y elevación</span>
+                <h3 class="acard-title acard-title--dark">Tu ruta, trazada</h3>
+                <p class="acard-body acard-body--dark">Mapas topográficos con tu recorrido y altitud, al instante en la muñeca.</p>
+              </div>
+              <div class="acard-visual">
+                <div class="acontour">
+                  <span class="ct-elev" style="top:4%; left:6%">5.800</span>
+                  <span class="ct-elev" style="top:38%; right:6%">5.600</span>
+                  <span class="ct-elev" style="bottom:8%; left:36%">5.400</span>
+                  <svg viewBox="0 0 260 120" preserveAspectRatio="none">
+                    <path class="ct-line" d="M-10 44 Q 60 10 130 38 T 270 26"/>
+                    <path class="ct-line" d="M-10 62 Q 60 28 130 56 T 270 44"/>
+                    <path class="ct-line" d="M-10 80 Q 60 46 130 74 T 270 62"/>
+                    <path class="ct-line" d="M-10 98 Q 60 64 130 92 T 270 80"/>
+                    <path class="ct-trail" d="M0 106 Q 55 46 125 68 T 262 28"/>
+                    <circle class="ct-dot" cx="262" cy="28" r="4"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <!-- Dorada: alertas de entreno (anillo de completado) -->
+            <div class="acard acard--gold acard--alerts">
+              <div class="agold-top">
+                <span class="acard-label acard-label--light">Alertas de entreno</span>
+                <span class="agold-badge">HOY · 18:00</span>
+              </div>
+              <div class="aworkout">
+                <div class="aworkout-ring">
+                  <svg viewBox="0 0 100 100">
+                    <circle class="aw-ring-bg" cx="50" cy="50" r="42"/>
+                    <circle class="aw-ring-fg" cx="50" cy="50" r="42"/>
+                  </svg>
+                  <svg class="aw-check" viewBox="0 0 24 24"><path d="M4.5 12.5l5 5L19.5 7"/></svg>
+                </div>
+                <div class="aworkout-meta">
+                  <span class="aw-title">¡Entreno completado!</span>
+                  <span class="aw-sub">42 min · 320 kcal · Fuerza A</span>
+                </div>
+              </div>
+              <h3 class="acard-title acard-title--white">Te avisamos cuando toca entrenar y cuándo has alcanzado tu objetivo del día.</h3>
+            </div>
+          </div>
+
+          <div class="nv-watch-cta">
+            <a href="questionnaire.html" class="btn-gold-large">
+              Crear mi plan ahora →
+            </a>
+          </div>
         </div>
       </section>
 

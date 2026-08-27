@@ -466,7 +466,7 @@ if (loggedIn) {
         formData.name = storedUser.name || '';
         formData.email = storedUser.email || '';
 
-        document.getElementById('submitBtn').textContent = updateMode ? 'Actualizar mi plan ✔' : 'Continuar al pago ✔';
+        document.getElementById('submitBtn').textContent = updateMode ? 'Actualizar mi plan' : 'Continuar al pago';
         document.getElementById('step-1').style.display = 'none';
         currentStep = 2;
         document.getElementById('step-2').style.display = 'block';

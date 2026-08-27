@@ -31,9 +31,26 @@ router.post('/setup-intent', authMiddleware, async (req, res) => {
 // ─── POST /api/subscription/start ───────────────────────────
 // Activa la prueba gratuita después de guardar el método de pago
 router.post('/start', authMiddleware, async (req, res) => {
-    const { payment_method_id } = req.body;
-    if (!payment_method_id) {
+    // Web: payment_method_id (de confirmCardSetup). Móvil: setup_intent_id
+    // (PaymentSheet no expone el payment method; se recupera del SetupIntent).
+    const { payment_method_id, setup_intent_id } = req.body;
+    if (!payment_method_id && !setup_intent_id) {
         return res.status(400).json({ error: 'Método de pago requerido' });
+    }
+
+    // Resolver el payment method (web → directo; móvil → desde el SetupIntent)
+    let resolvedPaymentMethodId = payment_method_id;
+    if (!resolvedPaymentMethodId && setup_intent_id) {
+        try {
+            const setupIntent = await stripeService.retrieveSetupIntent(setup_intent_id);
+            resolvedPaymentMethodId = setupIntent.payment_method;
+        } catch (err) {
+            console.error('Error recuperando SetupIntent:', err);
+            return res.status(400).json({ error: 'SetupIntent inválido o no encontrado' });
+        }
+        if (!resolvedPaymentMethodId) {
+            return res.status(400).json({ error: 'El SetupIntent no tiene método de pago asociado' });
+        }
     }
 
     try {
@@ -66,7 +83,7 @@ router.post('/start', authMiddleware, async (req, res) => {
         const user = userResult.rows[0];
 
         // Vincular método de pago al cliente
-        await stripeService.attachPaymentMethod(user.stripe_customer_id, payment_method_id);
+        await stripeService.attachPaymentMethod(user.stripe_customer_id, resolvedPaymentMethodId);
 
         // Calcular fechas: 7 días de prueba gratuita. Si no cancela,
         // al terminar la prueba Stripe cobra 25 €/mes automáticamente.
@@ -92,7 +109,7 @@ router.post('/start', authMiddleware, async (req, res) => {
         (user_id, stripe_customer_id, stripe_subscription_id, stripe_payment_method_id,
          trial_start, trial_end, cancel_window_end, charge_day, status)
       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,'trial')
-    `, [userId, user.stripe_customer_id, stripeSubscription.id, payment_method_id,
+    `, [userId, user.stripe_customer_id, stripeSubscription.id, resolvedPaymentMethodId,
             trialStart, trialEnd, cancelWindowEnd, chargeDay]);
 
         // Email de bienvenida

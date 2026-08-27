@@ -1,5 +1,8 @@
 // ─── NutroVia — dashboard.js ─────────────────────────────────
 
+// Helper de iconos SVG (definido en js/icons.js)
+const ICON = (n, s) => (window.NV && NV.icon) ? `<span class="nv-icon">${NV.icon(n, s || 14)}</span>` : '';
+
 const token = localStorage.getItem('nutrovia_token');
 const user = JSON.parse(localStorage.getItem('nutrovia_user') || '{}');
 
@@ -9,7 +12,6 @@ if (!token) window.location.href = 'login.html';
 let planData = null;
 let subData = null;
 let paymentHistory = [];
-let currentDay = 'Lunes';
 
 // ═══ Init ════════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', async () => {
@@ -152,124 +154,363 @@ function renderStatusBanner() {
   }
 }
 
-// ─── Overview Tab ────────────────────────────────────────────
+// ─── Overview Tab (Bento Grid estilo dashboard premium) ──────
+
+// Día seleccionado en el gráfico de calorías (null = media semanal)
+let weekSelDay = null;
+
+function selectWeekDay(i) {
+  weekSelDay = (weekSelDay === i) ? null : i;
+  renderOverview();
+}
+
 function renderOverview() {
   const { daily_calories, protein_g, carbs_g, fat_g, profile } = planData;
+  const kcalBase = daily_calories || 1;
   const totalMacroG = protein_g + carbs_g + fat_g;
-
-  // Macro cards
-  document.getElementById('macroCards').innerHTML = `
-    <div class="dash-card">
-      <div class="dash-card-label">Calorías diarias</div>
-      <div><span class="dash-card-value">${daily_calories}</span><span class="dash-card-unit">kcal</span></div>
-      <div class="dash-card-sub">Tu objetivo calórico personalizado</div>
-    </div>
-    <div class="dash-card">
-      <div class="dash-card-label">Proteína</div>
-      <div><span class="dash-card-value">${protein_g}</span><span class="dash-card-unit">g/día</span></div>
-      <div class="dash-card-sub">${Math.round((protein_g * 4 / daily_calories) * 100)}% de las calorías</div>
-    </div>
-    <div class="dash-card">
-      <div class="dash-card-label">Carbohidratos</div>
-      <div><span class="dash-card-value">${carbs_g}</span><span class="dash-card-unit">g/día</span></div>
-      <div class="dash-card-sub">${Math.round((carbs_g * 4 / daily_calories) * 100)}% de las calorías</div>
-    </div>
-  `;
-
-  // Macro bars
-  document.getElementById('macroBars').innerHTML = `
-    <div class="macro-bar-item">
-      <div class="macro-head"><span class="macro-name">💧 Proteína</span><span class="macro-val">${protein_g}g</span></div>
-      <div class="macro-bar-bg"><div class="macro-bar-fill protein" style="width:${Math.round(protein_g / totalMacroG * 100)}%"></div></div>
-    </div>
-    <div class="macro-bar-item">
-      <div class="macro-head"><span class="macro-name">⚡ Carbohidratos</span><span class="macro-val">${carbs_g}g</span></div>
-      <div class="macro-bar-bg"><div class="macro-bar-fill carbs" style="width:${Math.round(carbs_g / totalMacroG * 100)}%"></div></div>
-    </div>
-    <div class="macro-bar-item">
-      <div class="macro-head"><span class="macro-name">🥑 Grasas</span><span class="macro-val">${fat_g}g</span></div>
-      <div class="macro-bar-bg"><div class="macro-bar-fill fat" style="width:${Math.round(fat_g / totalMacroG * 100)}%"></div></div>
-    </div>
-  `;
-
-  // Profile info
-  const goalLabels = {
-    perder_peso: '🔥 Perder peso', ganar_masa: '💪 Ganar masa', mantener: '⚖️ Mantener', mejorar_salud: '❤️ Mejorar salud'
-  };
+  const goalLabels = { perder_peso: 'Perder peso', ganar_masa: 'Ganar masa', mantener: 'Mantener', mejorar_salud: 'Mejorar salud' };
   const actLabels = { sedentario: 'Sedentario', ligero: 'Ligero', moderado: 'Moderado', activo: 'Activo', muy_activo: 'Muy activo' };
-  const dietLabels = { omnivoro: 'Omnívoro', vegetariano: 'Vegetariano', vegano: 'Vegano', sin_gluten: 'Sin gluten', sin_lactosa: 'Sin lactosa' };
   const eqLabels = { casa: 'En casa', gimnasio: 'Gimnasio', mixto: 'Mixto' };
-  document.getElementById('profileInfo').innerHTML = `
-    <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--text-muted);">
-      <div>🎯 <strong>Objetivo:</strong> ${goalLabels[profile.goal] || profile.goal}</div>
-      <div>⚡ <strong>Actividad:</strong> ${actLabels[profile.activity_level] || profile.activity_level}</div>
-      <div>🥗 <strong>Dieta:</strong> ${dietLabels[profile.dietary_preference] || profile.dietary_preference || '—'}</div>
-      <div>🏋️ <strong>Entreno:</strong> ${eqLabels[profile.training_equipment] || profile.training_equipment || '—'} · ${profile.training_days_per_week || 3} días/sem</div>
-      <div>⚖️ <strong>Peso:</strong> ${profile.weight_kg} kg${profile.target_weight_kg ? ` → ${profile.target_weight_kg} kg` : ''}</div>
-      <div>📏 <strong>Altura:</strong> ${profile.height_cm} cm</div>
-      <div>🎂 <strong>Edad:</strong> ${profile.age} años</div>
-    </div>
-  `;
-
-  // Tips
+  const goal = goalLabels[profile.goal] || profile.goal;
   const tips = planData.consejos_generales || [];
-  document.getElementById('tipsCard').innerHTML = `
-    <div class="dash-card-label">💡 Consejos generales</div>
-    <div style="margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-      ${tips.map(t => `<div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:13px;color:var(--text-muted);">${t}</div>`).join('')}
+  const days = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+  const dayLetters = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
+
+  // kcal por día (desde el menú real de la semana)
+  const weekKcal = days.map(d => {
+    const menu = planData?.weekly_menu?.[d] || {};
+    return Object.values(menu).reduce((sum, m) => sum + (m && m.calorias ? m.calorias : 0), 0);
+  });
+  const weekAvg = Math.round(weekKcal.reduce((a, b) => a + b, 0) / 7);
+  const maxKcal = Math.max.apply(null, weekKcal.concat([kcalBase, 1]));
+
+  // Día seleccionado: muestra las kcal de ese día en vez de la media
+  const selIdx = weekSelDay;
+  const dispKcal = selIdx === null ? weekAvg : weekKcal[selIdx];
+
+  // Gráfico de línea (viewBox 0 0 120 48)
+  const W = 120, H = 48, PAD = 6;
+  const chartPts = weekKcal.map((k, i) => [
+    PAD + (i * (W - PAD * 2)) / 6,
+    H - PAD - (k / maxKcal) * (H - PAD * 2)
+  ]);
+  const linePath = chartPts.map((p, i) => (i === 0 ? 'M' : 'L') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' ');
+  const last = chartPts[chartPts.length - 1];
+  const areaPath = linePath + ' L' + last[0].toFixed(1) + ' 48 L' + chartPts[0][0].toFixed(1) + ' 48 Z';
+  const goalY = (H - PAD - (kcalBase / maxKcal) * (H - PAD * 2)).toFixed(1);
+
+  // Move ring: 3 aros concéntricos P / C / G
+  const circ = r => 2 * Math.PI * r;
+  const pFrac = (protein_g * 4) / kcalBase;
+  const cFrac = (carbs_g * 4) / kcalBase;
+  const gFrac = (fat_g * 9) / kcalBase;
+  const ringArc = (r, frac, color, offset) =>
+    `<circle cx="60" cy="60" r="${r}" fill="none" stroke="${color}" stroke-width="7" stroke-linecap="round" stroke-dasharray="${(frac * circ(r)).toFixed(1)} ${circ(r).toFixed(1)}" stroke-dashoffset="${offset || 0}" transform="rotate(-90 60 60)"/>`;
+
+  // Días de entreno: sesiones reales del plan, rellenadas hasta los días que
+  // el usuario pidió en su perfil (para que el panel reaccione a sus cambios).
+  const trainDays = (planData?.training_plan?.sesiones || []).map(s => s.dia);
+  const reqDays = Math.min(7, Math.max(1, Number(profile.training_days_per_week) || trainDays.length || 3));
+  const activeIdx = [];
+  trainDays.forEach(d => { const i = days.indexOf(d); if (i !== -1 && !activeIdx.includes(i)) activeIdx.push(i); });
+  for (let fill = 0; activeIdx.length < reqDays && fill < 7; fill++) {
+    const candidate = Math.round((fill * 6) / (reqDays - 1 || 1));
+    if (!activeIdx.includes(candidate)) activeIdx.push(candidate);
+  }
+  const activeSet = new Set(activeIdx);
+
+  // Suplementos (top 4)
+  const supps = (planData?.supplements || []).slice(0, 4);
+  const supIcons = ['supplement', 'leaf', 'zap', 'flask', 'droplet', 'seedling', 'shield'];
+  const pct = g => Math.round((g * 4 / kcalBase) * 100);
+
+  document.getElementById('dashBento').innerHTML = `
+    <!-- 01 · Tu objetivo + move ring -->
+    <div class="db-card db-feat">
+      <div class="db-feat-txt">
+        <span class="db-label">${ICON('target', 13)} Tu objetivo</span>
+        <h3 class="db-title">${goal}</h3>
+        <p class="db-sub">${tips[0] || 'Tu plan se ajusta cada semana a tu progreso real.'}</p>
+        <div class="db-chips">
+          <span class="db-chip">${ICON('scale', 13)} ${profile.weight_kg} kg${profile.target_weight_kg ? ' → ' + profile.target_weight_kg + ' kg' : ''}</span>
+          <span class="db-chip">${ICON('training', 13)} ${profile.training_days_per_week || 3} días/sem</span>
+          <span class="db-chip">${ICON('zap', 13)} ${actLabels[profile.activity_level] || profile.activity_level}</span>
+        </div>
+        <div class="db-chip-row">
+          <span class="db-mini">${ICON('nutrition', 12)} ${eqLabels[profile.training_equipment] || 'Mixto'}</span>
+          <span class="db-mini">${ICON('ruler', 12)} ${profile.height_cm} cm</span>
+          <span class="db-mini">${ICON('calendar', 12)} ${profile.age} años</span>
+        </div>
+      </div>
+      <div class="db-ring-box">
+        <svg viewBox="0 0 120 120" class="db-ring">
+          <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="7"/>
+          ${ringArc(50, pFrac, '#f0d58c')}
+          ${ringArc(40, cFrac, '#c9a84c', (-circ(40) * pFrac).toFixed(1))}
+          ${ringArc(30, gFrac, '#9e7f2e', (-circ(30) * (pFrac + cFrac)).toFixed(1))}
+        </svg>
+        <div class="db-ring-center">
+          <span class="db-ring-num">${kcalBase}</span>
+          <span class="db-ring-unit">KCAL / DÍA</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 02 · Consejo de hoy -->
+    <div class="db-card db-sparkle">
+      <span class="db-sparkle-icon">${ICON('sparkles', 22)}</span>
+      <span class="db-label">Consejo de hoy</span>
+      <p class="db-quote">${tips[1] || tips[0] || ''}</p>
+    </div>
+
+    <!-- 03 · Calorías de la semana -->
+    <div class="db-card db-wide">
+      <div class="db-head">
+        <div>
+          <span class="db-label">Calorías de la semana</span>
+          <div class="db-bignum">${dispKcal.toLocaleString('es-ES')}<span class="db-unit">${selIdx === null ? 'kcal media / día' : 'kcal · ' + days[selIdx]}</span></div>
+        </div>
+        <div class="db-days">${dayLetters.map((l, i) => `<button type="button" class="db-day${i === (selIdx === null ? (new Date().getDay() + 6) % 7 : selIdx) ? ' active' : ''}" onclick="selectWeekDay(${i})" aria-label="${days[i]}">${l}</button>`).join('')}</div>
+      </div>
+      <div class="db-chart">
+        <svg viewBox="0 0 120 48" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="dbChartGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="rgba(201,168,76,0.4)"/>
+              <stop offset="100%" stop-color="rgba(201,168,76,0)"/>
+            </linearGradient>
+          </defs>
+          <path d="${areaPath}" fill="url(#dbChartGrad)"/>
+          <path d="${linePath}" fill="none" stroke="#c9a84c" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <line x1="${PAD}" y1="${goalY}" x2="${W - PAD}" y2="${goalY}" stroke="rgba(201,168,76,0.45)" stroke-width="0.7" stroke-dasharray="2 2"/>
+          ${selIdx !== null ? `<line x1="${chartPts[selIdx][0].toFixed(1)}" y1="${PAD}" x2="${chartPts[selIdx][0].toFixed(1)}" y2="${H - PAD}" stroke="rgba(240,213,140,0.45)" stroke-width="0.8" stroke-dasharray="2 2"/>` : ''}
+          <circle cx="${last[0].toFixed(1)}" cy="${last[1].toFixed(1)}" r="2.4" fill="#f0d58c"/>
+          ${selIdx !== null ? `<circle cx="${chartPts[selIdx][0].toFixed(1)}" cy="${chartPts[selIdx][1].toFixed(1)}" r="2.8" fill="#f0d58c"/>` : ''}
+        </svg>
+      </div>
+    </div>
+
+    <!-- 04 · Entrenamiento de la semana -->
+    <div class="db-card">
+      <span class="db-label">${ICON('training', 13)} Entrenamiento</span>
+      <div class="db-bars">
+        ${days.map((d, i) => {
+    const on = activeSet.has(i);
+    return `
+          <div class="db-bar-col">
+            <div class="db-bar${on ? ' on' : ''}" style="height:${on ? 68 + (i % 3) * 10 : 16 + (i % 3) * 7}%"></div>
+            <span class="db-bar-day">${dayLetters[i]}</span>
+          </div>`;
+  }).join('')}
+      </div>
+      <div class="db-foot">${ICON('trophy', 12)} Nivel ${capitalizeFirst(planData?.training_plan?.nivel || '')} · ${reqDays} sesiones/semana</div>
+    </div>
+
+    <!-- 05 · Distribución de macros -->
+    <div class="db-card">
+      <span class="db-label">${ICON('chart', 13)} Distribución</span>
+      <div class="db-donut">
+        <svg viewBox="0 0 60 60">
+          <circle cx="30" cy="30" r="22" stroke="#8a6d23" stroke-dasharray="${(cFrac * 138.2).toFixed(1)} 138.2"/>
+          <circle cx="30" cy="30" r="22" stroke="#c9a84c" stroke-dasharray="${(pFrac * 138.2).toFixed(1)} 138.2" stroke-dashoffset="${(-cFrac * 138.2).toFixed(1)}"/>
+          <circle cx="30" cy="30" r="22" stroke="#e6c878" stroke-dasharray="${(gFrac * 138.2).toFixed(1)} 138.2" stroke-dashoffset="${(-(cFrac + pFrac) * 138.2).toFixed(1)}"/>
+        </svg>
+        <div class="db-donut-center">${totalMacroG}<span>g</span></div>
+      </div>
+      <div class="db-legend">
+        <div class="db-legend-row"><span class="db-dot" style="background:#c9a84c"></span> Proteína <b>${protein_g}g · ${pct(protein_g)}%</b></div>
+        <div class="db-legend-row"><span class="db-dot" style="background:#8a6d23"></span> Carbohidratos <b>${carbs_g}g · ${pct(carbs_g)}%</b></div>
+        <div class="db-legend-row"><span class="db-dot" style="background:#e6c878"></span> Grasas <b>${fat_g}g · ${pct(fat_g)}%</b></div>
+      </div>
+    </div>
+
+    <!-- 06 · Tu suplementación -->
+    <div class="db-card db-sups">
+      <span class="db-label">${ICON('supplement', 13)} Suplementación</span>
+      ${supps.length ? `
+        <div class="db-sups-row">
+          ${supps.map((s, i) => `
+            <div class="db-sup" title="${s.nombre} — ${s.dosis}">
+              <span class="db-sup-circle">${ICON(supIcons[i % supIcons.length], 18)}</span>
+              <span class="db-sup-name">${s.nombre}</span>
+            </div>`).join('')}
+        </div>` : '<p class="db-sub">Sin suplementos en tu plan.</p>'}
     </div>
   `;
 }
 
-// ─── Nutrition Tab ───────────────────────────────────────────
+// ─── Nutrition Tab: Calendario semanal con opciones ─────────
+const CAL_DAYS = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+const CAL_LETTERS = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
+const CAL_MEALS = [
+  { key: 'desayuno', label: 'Desayuno', icon: 'sunrise' },
+  { key: 'almuerzo', label: 'Almuerzo', icon: 'coffee' },
+  { key: 'comida', label: 'Comida', icon: 'utensils' },
+  { key: 'merienda', label: 'Merienda', icon: 'apple' },
+  { key: 'cena', label: 'Cena', icon: 'moon' },
+];
+
+let calMenu = null;      // copia de trabajo del weekly_menu
+let calOriginal = null;  // copia pristina (para restaurar)
+let calSelectedDay = null;
+let calOpenMeal = null;
+
 function renderNutritionTab() {
-  renderDayMenu('Lunes');
+  calMenu = JSON.parse(JSON.stringify(planData.weekly_menu || {}));
+  calOriginal = JSON.parse(JSON.stringify(calMenu));
+  const today = CAL_DAYS[(new Date().getDay() + 6) % 7];
+  calSelectedDay = calMenu[today] ? today : (calMenu['Lunes'] ? 'Lunes' : (Object.keys(calMenu)[0] || ''));
+  calOpenMeal = null;
+  renderCalWeek();
+  renderCalDetail();
 }
 
-function switchDayTab(btn, day) {
-  document.querySelectorAll('#tab-nutrition .tab-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  currentDay = day;
-  renderDayMenu(day);
+function calDayKcal(day, source) {
+  const menu = source ? source[day] : calMenu[day];
+  if (!menu) return 0;
+  return CAL_MEALS.reduce((sum, m) => sum + (menu[m.key]?.calorias || 0), 0);
 }
 
-function renderDayMenu(day) {
-  const menu = planData?.weekly_menu?.[day];
+function calDaySwapped(day) {
+  const a = calMenu[day] || {};
+  const b = calOriginal[day] || {};
+  return CAL_MEALS.some(m => a[m.key]?.nombre !== b[m.key]?.nombre);
+}
+
+function calMealSwapped(day, key) {
+  return (calMenu?.[day]?.[key]?.nombre || '') !== (calOriginal?.[day]?.[key]?.nombre || '');
+}
+
+function renderCalWeek() {
+  const el = document.getElementById('calWeek');
+  el.innerHTML = CAL_DAYS.map((d, i) => {
+    const kcal = calDayKcal(d);
+    const swapped = calDaySwapped(d);
+    return `
+      <button class="cal-day${d === calSelectedDay ? ' active' : ''}${swapped ? ' swapped' : ''}" onclick="selectCalDay('${d}')">
+        <span class="cal-day-letter">${CAL_LETTERS[i]}</span>
+        <span class="cal-day-name">${d}</span>
+        <span class="cal-day-kcal">${kcal ? kcal.toLocaleString('es-ES') + ' kcal' : '—'}</span>
+        ${swapped ? '<span class="cal-swap-dot" title="Menú modificado"></span>' : ''}
+      </button>`;
+  }).join('');
+}
+
+function selectCalDay(day) {
+  calSelectedDay = day;
+  calOpenMeal = null;
+  renderCalWeek();
+  renderCalDetail();
+}
+
+function toggleCalOptions(key) {
+  calOpenMeal = calOpenMeal === key ? null : key;
+  renderCalDetail();
+}
+
+function renderCalDetail() {
+  const day = calSelectedDay;
+  const menu = calMenu[day];
+  const detail = document.getElementById('calDetail');
   if (!menu) {
-    document.getElementById('dayMenuContent').innerHTML = '<p style="color:var(--text-muted);padding:20px">No hay menú disponible para este día.</p>';
+    detail.innerHTML = '<p style="color:var(--text-muted);padding:24px">No hay menú disponible para este día.</p>';
     return;
   }
+  const kcal = calDayKcal(day);
+  const origKcal = calDayKcal(day, calOriginal);
+  const kcalDiff = kcal - origKcal;
+  const swapped = calDaySwapped(day);
 
-  const meals = [
-    { key: 'desayuno', label: '🌅 Desayuno' },
-    { key: 'almuerzo', label: '☕ Almuerzo' },
-    { key: 'comida', label: '🍽️ Comida' },
-    { key: 'merienda', label: '🍎 Merienda' },
-    { key: 'cena', label: '🌙 Cena' },
-  ];
-
-  const dietNotes = planData?.notas_dieta || [];
-  const notesHtml = dietNotes.length
-    ? `<div style="background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.35);border-radius:8px;padding:12px 14px;font-size:13px;color:var(--text-muted);margin-bottom:20px;line-height:1.6;">${dietNotes.join('<br>')}</div>`
-    : '';
-
-  document.getElementById('dayMenuContent').innerHTML = `
-    ${notesHtml}
-    <div class="dash-card-label" style="margin-bottom:20px;">${day} — ${planData.daily_calories} kcal totales</div>
-    ${meals.map(meal => {
-    const m = menu[meal.key];
-    if (!m) return '';
+  detail.innerHTML = `
+    <div class="cal-detail-head">
+      <div>
+        <div class="cal-detail-day">${day}${swapped ? ' <span class="cal-modified-badge">Modificado</span>' : ''}</div>
+        <div class="cal-detail-kcal">${kcal.toLocaleString('es-ES')} kcal${kcalDiff ? ` <span class="cal-diff${kcalDiff > 0 ? ' up' : ' down'}">${kcalDiff > 0 ? '+' : ''}${kcalDiff} kcal</span>` : ''}</div>
+        <div class="cal-hint">${ICON('refresh', 12)} Pulsa «Cambiar» en una comida para elegir otra opción de la semana.</div>
+      </div>
+      ${swapped ? `<button class="cal-restore" onclick="restoreCalDay()">${ICON('rotateLeft', 13)} Restaurar día</button>` : ''}
+    </div>
+    <div class="cal-meals">
+      ${CAL_MEALS.map(m => {
+    const meal = menu[m.key];
+    if (!meal) return '';
+    const open = calOpenMeal === m.key;
+    const mealSwapped = calMealSwapped(day, m.key);
+    const opts = CAL_DAYS.filter(o => o !== day && calMenu[o]?.[m.key]).map(o => ({ day: o, meal: calMenu[o][m.key] }));
     return `
-        <div style="border-bottom:1px solid var(--border);padding:16px 0;display:grid;grid-template-columns:120px 1fr;gap:20px;align-items:start;">
-          <div style="font-size:13px;color:var(--gold);font-weight:700;">${meal.label}<br><span style="color:var(--text-dim);font-weight:400;">${m.calorias} kcal</span></div>
-          <div>
-            <div style="font-size:15px;font-weight:700;margin-bottom:6px;">${m.nombre}</div>
-            <div style="font-size:12px;color:var(--text-muted);">${Array.isArray(m.ingredientes) ? m.ingredientes.join(' · ') : ''}</div>
+        <div class="cal-meal${open ? ' open' : ''}${mealSwapped ? ' changed' : ''}">
+          <div class="cal-meal-row">
+            <span class="cal-meal-icon">${ICON(m.icon, 15)}</span>
+            <div class="cal-meal-info">
+              <span class="cal-meal-name">${meal.nombre}</span>
+              <span class="cal-meal-kcal">${meal.calorias} kcal</span>
+              ${Array.isArray(meal.ingredientes) && meal.ingredientes.length ? `<span class="cal-meal-ing">${meal.ingredientes.join(' · ')}</span>` : ''}
+            </div>
+            <button class="cal-swap-btn" onclick="toggleCalOptions('${m.key}')">${ICON('refresh', 12)} Cambiar</button>
           </div>
-        </div>
-      `;
+          ${open ? `
+          <div class="cal-options">
+            <div class="cal-options-title">Elige otra opción para el ${m.label.toLowerCase()}:</div>
+            <div class="cal-options-grid">
+              ${opts.map(o => `
+                <button class="cal-opt" onclick="applyCalSwap('${m.key}', '${o.day}')">
+                  <span class="cal-opt-name">${o.meal.nombre}</span>
+                  <span class="cal-opt-meta">${o.day.slice(0, 3)} · ${o.meal.calorias} kcal</span>
+                </button>`).join('')}
+              ${mealSwapped ? `
+                <button class="cal-opt cal-opt--original" onclick="applyCalSwap('${m.key}', null)">
+                  <span class="cal-opt-name">${ICON('rotateLeft', 12)} Volver a la original</span>
+                  <span class="cal-opt-meta">${calOriginal[day]?.[m.key]?.nombre || ''}</span>
+                </button>` : ''}
+            </div>
+          </div>` : ''}
+        </div>`;
   }).join('')}
+    </div>
   `;
+}
+
+async function applyCalSwap(mealKey, sourceDay) {
+  const day = calSelectedDay;
+  if (!calMenu[day]) return;
+  const replacement = sourceDay
+    ? calMenu[sourceDay]?.[mealKey]
+    : calOriginal[day]?.[mealKey];
+  if (!replacement) return;
+
+  // Optimista: actualiza la vista al momento
+  calMenu[day][mealKey] = JSON.parse(JSON.stringify(replacement));
+  calOpenMeal = null;
+  renderCalWeek();
+  renderCalDetail();
+
+  try {
+    const res = await fetch('/api/plan/swap', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ day, meal_key: mealKey, replacement })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Error al guardar');
+    if (data.menu) {
+      calMenu = data.menu;
+      renderCalWeek();
+      renderCalDetail();
+    }
+  } catch (err) {
+    alert('No se pudo guardar el cambio: ' + (err.message || 'error de red'));
+    renderNutritionTab();
+  }
+}
+
+async function restoreCalDay() {
+  const day = calSelectedDay;
+  const changed = CAL_MEALS.filter(m => calMealSwapped(day, m.key)).map(m => m.key);
+  for (const key of changed) {
+    await applyCalSwap(key, null);
+  }
+  renderCalWeek();
+  renderCalDetail();
 }
 
 // ─── Training Tab ────────────────────────────────────────────
@@ -308,7 +549,7 @@ function renderTrainingTab() {
 
   const notes = tp.notas || [];
   document.getElementById('trainingNotes').innerHTML = `
-    <div class="dash-card-label">📌 Notas importantes</div>
+    <div class="dash-card-label">${ICON('pin', 14)} Notas importantes</div>
     <div style="margin-top:14px;display:flex;flex-direction:column;gap:8px;">
       ${notes.map(n => `<div style="font-size:13px;color:var(--text-muted);padding:10px 14px;background:var(--bg);border-radius:8px;border-left:3px solid var(--gold);">${n}</div>`).join('')}
     </div>
@@ -317,7 +558,7 @@ function renderTrainingTab() {
   const progression = tp.progresion || [];
   if (progression.length) {
     document.getElementById('trainingProgression').innerHTML = `
-      <div class="dash-card-label">📈 Progresión semana a semana</div>
+      <div class="dash-card-label">${ICON('chart', 14)} Progresión semana a semana</div>
       <div style="margin-top:14px;display:flex;flex-direction:column;gap:8px;">
         ${progression.map(n => `<div style="font-size:13px;color:var(--text-muted);padding:10px 14px;background:var(--bg);border-radius:8px;border-left:3px solid #4caf50;">${n}</div>`).join('')}
       </div>
@@ -334,13 +575,13 @@ function equipmentLabel(eq) {
 // ─── Supplements Tab ─────────────────────────────────────────
 function renderSupplementsTab() {
   const supps = planData?.supplements || [];
-  const icons = ['💊', '🌿', '⚡', '🥤', '💉', '🌱', '🔬'];
+  const icons = ['supplement', 'leaf', 'zap', 'flask', 'droplet', 'seedling', 'shield'];
   document.getElementById('suppsGrid').innerHTML = supps.map((s, i) => `
     <div class="supp-card">
-      <div class="supp-icon">${icons[i % icons.length]}</div>
+      <div class="supp-icon">${ICON(icons[i % icons.length], 19)}</div>
       <div>
         <div class="supp-name">${s.nombre}</div>
-        <div class="supp-dosis">📏 ${s.dosis}</div>
+        <div class="supp-dosis">${ICON('ruler', 12)} ${s.dosis}</div>
         <div class="supp-motivo">${s.motivo}</div>
       </div>
     </div>
@@ -353,7 +594,7 @@ function renderSubscriptionTab() {
     document.getElementById('subDetail').innerHTML = `
       <div class="dash-card-label">Estado de suscripción</div>
       <p style="color:var(--text-muted);margin-top:12px;font-size:14px;">No tienes ninguna suscripción activa.</p>
-      <a href="questionnaire.html" class="btn-gold" style="display:inline-flex;margin-top:16px;">Activar plan</a>
+      <a href="questionnaire.html?subscribe=1" class="btn-gold" style="display:inline-flex;margin-top:16px;">Activar plan</a>
     `;
     return;
   }
@@ -364,17 +605,21 @@ function renderSubscriptionTab() {
   } = subData;
 
   const statusLabels = {
-    trial: '🟡 Período de prueba',
-    active: '🟢 Activa',
-    cancelled: '🔴 Cancelada',
-    expired: '⚫ Expirada',
-    past_due: '🟠 Pago pendiente',
+    trial: 'Período de prueba',
+    active: 'Activa',
+    cancelled: 'Cancelada',
+    expired: 'Expirada',
+    past_due: 'Pago pendiente',
+  };
+
+  const statusDot = {
+    trial: '#d9a441', active: '#4caf50', cancelled: '#e05c4c', expired: '#8a8a8a', past_due: '#e07b39'
   };
 
   document.getElementById('subDetail').innerHTML = `
     <div class="dash-card-label">Detalles de suscripción</div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:20px;">
-      <div class="date-badge"><span class="date-label">Estado</span><span class="date-val" style="font-size:13px;">${statusLabels[status] || status}</span></div>
+      <div class="date-badge"><span class="date-label">Estado</span><span class="date-val" style="font-size:13px;">${statusDot[status] ? '<span class="status-dot" style="background:' + statusDot[status] + '"></span>' : ''}${statusLabels[status] || status}</span></div>
       ${trial_start ? `<div class="date-badge"><span class="date-label">Inicio prueba</span><span class="date-val">${fmt(trial_start)}</span></div>` : ''}
       ${trial_end ? `<div class="date-badge"><span class="date-label">Fin prueba</span><span class="date-val">${fmt(trial_end)}</span></div>` : ''}
       ${cancel_window_end ? `<div class="date-badge"><span class="date-label">Cancela antes del</span><span class="date-val">${fmt(cancel_window_end)}</span></div>` : ''}
@@ -402,7 +647,13 @@ function renderSubscriptionTab() {
 function renderPaymentHistory() {
   if (!paymentHistory.length) return '';
 
-  const statusLabels = { paid: '✅ Pagado', failed: '❌ Fallido', pending: '⏳ Pendiente', refunded: '↩️ Reembolsado' };
+  const statusLabels = { paid: 'Pagado', failed: 'Fallido', pending: 'Pendiente', refunded: 'Reembolsado' };
+  const statusIcons = {
+    paid: '<span class="status-icon ok">' + (window.NV && NV.icon ? NV.icon('checkCircle', 14) : '') + '</span>',
+    failed: '<span class="status-icon err">' + (window.NV && NV.icon ? NV.icon('xCircle', 14) : '') + '</span>',
+    pending: '<span class="status-icon warn">' + (window.NV && NV.icon ? NV.icon('clock', 14) : '') + '</span>',
+    refunded: '<span class="status-icon neutral">' + (window.NV && NV.icon ? NV.icon('rotateLeft', 14) : '') + '</span>'
+  };
   const rows = paymentHistory.map(p => `
     <div style="display:flex;align-items:center;gap:16px;padding:14px 0;border-bottom:1px solid var(--border);flex-wrap:wrap;">
       <div style="flex:1;min-width:140px;">
@@ -410,7 +661,7 @@ function renderPaymentHistory() {
         <div style="font-size:12px;color:var(--text-dim);">${p.stripe_invoice_id ? 'Factura ' + p.stripe_invoice_id.slice(0, 8) + '…' : 'Pago'}</div>
       </div>
       <div style="font-size:12px;color:var(--text-muted);min-width:130px;">${p.paid_at ? fmt(p.paid_at) : '—'}</div>
-      <span style="font-size:12px;font-weight:600;">${statusLabels[p.status] || p.status}</span>
+      <span style="font-size:12px;font-weight:600;">${statusIcons[p.status] || ''}${statusLabels[p.status] || p.status}</span>
     </div>
   `).join('');
 
@@ -529,7 +780,7 @@ function showNoPlanMessage() {
   const main = document.querySelector('.dashboard-main');
   main.innerHTML = `
     <div style="text-align:center;padding:80px 24px;">
-      <div style="font-size:48px;margin-bottom:20px;">📋</div>
+      <div style="font-size:48px;margin-bottom:20px;color:var(--gold);display:flex;justify-content:center;">${ICON('clipboard', 44)}</div>
       <h2 style="font-size:24px;font-weight:800;margin-bottom:10px;">Aún no tienes un plan</h2>
       <p style="color:var(--text-muted);margin-bottom:28px;">Completa el cuestionario para recibir tu plan personalizado</p>
       <a href="questionnaire.html" class="btn-gold-large">Crear mi plan →</a>

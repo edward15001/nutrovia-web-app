@@ -40,6 +40,22 @@ async function createSetupIntent(customerId) {
 }
 
 /**
+ * Recupera un SetupIntent de Stripe (usado desde la app móvil, donde
+ * PaymentSheet no devuelve el payment_method directamente: el cliente
+ * envía el setup_intent_id y aquí se resuelve su payment_method).
+ */
+async function retrieveSetupIntent(setupIntentId) {
+    if (!stripe) {
+        // Modo mock (sin STRIPE_SECRET_KEY): simular un payment method
+        if (setupIntentId && setupIntentId.startsWith('seti_mock_')) {
+            return { id: setupIntentId, payment_method: `pm_mock_${Date.now()}` };
+        }
+        return { id: setupIntentId, payment_method: null };
+    }
+    return stripe.setupIntents.retrieve(setupIntentId);
+}
+
+/**
  * Confirma el método de pago como predeterminado en el cliente
  */
 async function attachPaymentMethod(customerId, paymentMethodId) {
@@ -152,6 +168,7 @@ function constructWebhookEvent(payload, signature) {
 module.exports = {
     createCustomer,
     createSetupIntent,
+    retrieveSetupIntent,
     attachPaymentMethod,
     createSubscription,
     cancelSubscription,

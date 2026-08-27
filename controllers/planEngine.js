@@ -482,17 +482,29 @@ function generateTrainingPlan(answers) {
     }
     if (pool.length === 0) pool = allSessions;
 
-    // Distribuir los días de forma equilibrada a lo largo de la semana
-    const days = Math.min(training_days_per_week || 3, pool.length);
+    // Distribuir los días de forma equilibrada a lo largo de la semana.
+    // Se respeta SIEMPRE el número de días solicitado por el usuario: si el pool
+    // de plantillas es menor (ej. 4 plantillas y 6 días), las sesiones se repiten
+    // en ciclo, como en los splits reales de 5-6 días.
+    const requested = Math.max(1, training_days_per_week || 3);
+    const weekDays = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
     const selected = [];
-    if (days === 1) {
+    if (requested === 1) {
         selected.push(pool[0]);
-    } else {
-        for (let i = 0; i < days; i++) {
-            const idx = Math.round((i * (pool.length - 1)) / (days - 1));
+    } else if (requested <= pool.length) {
+        for (let i = 0; i < requested; i++) {
+            const idx = Math.round((i * (pool.length - 1)) / (requested - 1));
             if (!selected.includes(pool[idx])) selected.push(pool[idx]);
         }
+    } else {
+        // Ciclar el pool, asignando cada repetición a un día distinto de la semana
+        for (let i = 0; i < requested; i++) {
+            const slot = Math.round((i * 6) / (requested - 1));
+            const base = pool[i % pool.length];
+            selected.push({ ...base, dia: weekDays[slot] });
+        }
     }
+    const days = selected.length;
 
     const sesiones = selected.map(s => ({
         dia: s.dia,

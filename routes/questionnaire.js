@@ -86,7 +86,14 @@ router.post('/', authMiddleware, [
 
       if (aiPlan) {
         if (aiPlan.weekly_menu) plan.weekly_menu = aiPlan.weekly_menu;
-        if (aiPlan.training_plan) plan.training_plan = aiPlan.training_plan;
+        // El training_plan de la IA solo se adopta si respeta el número de días
+        // de entrenamiento del usuario; si no, se conserva el del motor, que
+        // siempre genera exactamente training_days_per_week sesiones.
+        const requestedDays = Number(training_days_per_week) || 3;
+        if (aiPlan.training_plan && Array.isArray(aiPlan.training_plan.sesiones) &&
+            aiPlan.training_plan.sesiones.length === requestedDays) {
+          plan.training_plan = aiPlan.training_plan;
+        }
         if (Array.isArray(aiPlan.supplements) && aiPlan.supplements.length > 0) {
           plan.supplements = aiPlan.supplements;
         }

@@ -12,6 +12,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
+    <script>try{if(localStorage.getItem('nv-theme')==='light'||(!localStorage.getItem('nv-theme')&&matchMedia('(prefers-color-scheme: light)').matches))document.documentElement.setAttribute('data-theme','light')}catch(e){}</script>
+    <script src="js/icons.js"></script>
+    <script src="js/theme.js"></script>
     <script>
         window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
     </script>
@@ -61,6 +64,8 @@
         <div class="spinner"></div>
         <p class="loading-text">Iniciando sesión...</p>
     </div>
+
+    <button class="theme-toggle theme-toggle--float" data-theme-toggle aria-label="Cambiar a modo claro"><span data-theme-icon></span></button>
 
     <script src="js/login.js"></script>
 </body>

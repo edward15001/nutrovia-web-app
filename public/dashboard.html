@@ -11,7 +11,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css?v=2">
+    <link rel="stylesheet" href="css/styles.css?v=3">
+    <script>try{if(localStorage.getItem('nv-theme')==='light'||(!localStorage.getItem('nv-theme')&&matchMedia('(prefers-color-scheme: light)').matches))document.documentElement.setAttribute('data-theme','light')}catch(e){}</script>
+    <script src="js/icons.js"></script>
+    <script src="js/theme.js"></script>
     <script>
         window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
     </script>
@@ -30,19 +33,19 @@
             </div>
             <nav class="sidebar-nav">
                 <a href="#overview" class="sidebar-link active" onclick="showTab('overview', this)">
-                    <span class="sidebar-icon">🏠</span> Resumen
+                    <span class="sidebar-icon" data-icon="home" data-icon-size="16"></span> Resumen
                 </a>
                 <a href="#nutrition" class="sidebar-link" onclick="showTab('nutrition', this)">
-                    <span class="sidebar-icon">🥗</span> Mi Nutrición
+                    <span class="sidebar-icon" data-icon="nutrition" data-icon-size="16"></span> Mi Nutrición
                 </a>
                 <a href="#training" class="sidebar-link" onclick="showTab('training', this)">
-                    <span class="sidebar-icon">💪</span> Mi Entrenamiento
+                    <span class="sidebar-icon" data-icon="training" data-icon-size="16"></span> Mi Entrenamiento
                 </a>
                 <a href="#supplements" class="sidebar-link" onclick="showTab('supplements', this)">
-                    <span class="sidebar-icon">💊</span> Suplementación
+                    <span class="sidebar-icon" data-icon="supplement" data-icon-size="16"></span> Suplementación
                 </a>
                 <a href="#subscription" class="sidebar-link" onclick="showTab('subscription', this)">
-                    <span class="sidebar-icon">⭐</span> Mi Suscripción
+                    <span class="sidebar-icon" data-icon="subscription" data-icon-size="16"></span> Mi Suscripción
                 </a>
             </nav>
             <div class="sidebar-footer">
@@ -71,14 +74,15 @@
                     <p id="dashDate"></p>
                 </div>
                 <div style="display:flex;gap:10px;align-items:center;">
+                    <button class="theme-toggle" data-theme-toggle aria-label="Cambiar a modo claro"><span data-theme-icon></span></button>
                     <button onclick="window.location.href='questionnaire.html?update=1'"
                         style="background:var(--bg);border:1px solid var(--border-gold);color:var(--gold);padding:10px 16px;border-radius:8px;font-size:13px;font-weight:600;font-family:var(--font);cursor:pointer;transition:var(--transition);"
                         onmouseover="this.style.background='rgba(201,168,76,0.08)'" onmouseout="this.style.background='var(--bg)'">
-                        ✏️ Actualizar mis datos
+                        <span class="nv-icon" data-icon="pencil" data-icon-size="14"></span> Actualizar mis datos
                     </button>
                     <button onclick="document.getElementById('sidebar').classList.toggle('open')"
                         style="display:none;background:transparent;border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:8px;font-size:18px;"
-                        id="mobileMenuBtn">☰</button>
+                        id="mobileMenuBtn"><span data-icon="menu" data-icon-size="18"></span></button>
                 </div>
             </div>
 
@@ -92,34 +96,15 @@
                 <div class="banner-action" id="bannerAction"></div>
             </div>
 
-            <!-- ═══ TAB: RESUMEN ═══ -->
+            <!-- ═══ TAB: RESUMEN (BENTO GRID) ═══ -->
             <div id="tab-overview">
-                <div class="dashboard-grid" id="macroCards"></div>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;" id="overviewGridBottom">
-                    <div class="dash-card">
-                        <div class="dash-card-label">Distribución de macros</div>
-                        <div class="macro-bars" id="macroBars"></div>
-                    </div>
-                    <div class="dash-card">
-                        <div class="dash-card-label">Tu perfil</div>
-                        <div id="profileInfo" style="margin-top:12px;"></div>
-                    </div>
-                </div>
-                <div class="dash-card" style="margin-top:20px;" id="tipsCard"></div>
+                <div class="dash-bento" id="dashBento"></div>
             </div>
 
-            <!-- ═══ TAB: NUTRICIÓN ═══ -->
+            <!-- ═══ TAB: NUTRICIÓN (CALENDARIO SEMANAL) ═══ -->
             <div id="tab-nutrition" style="display:none">
-                <div class="tabs">
-                    <button class="tab-btn active" onclick="switchDayTab(this, 'Lunes')">Lun</button>
-                    <button class="tab-btn" onclick="switchDayTab(this, 'Martes')">Mar</button>
-                    <button class="tab-btn" onclick="switchDayTab(this, 'Miércoles')">Mié</button>
-                    <button class="tab-btn" onclick="switchDayTab(this, 'Jueves')">Jue</button>
-                    <button class="tab-btn" onclick="switchDayTab(this, 'Viernes')">Vie</button>
-                    <button class="tab-btn" onclick="switchDayTab(this, 'Sábado')">Sáb</button>
-                    <button class="tab-btn" onclick="switchDayTab(this, 'Domingo')">Dom</button>
-                </div>
-                <div id="dayMenuContent" class="dash-card"></div>
+                <div class="cal-week" id="calWeek"></div>
+                <div class="cal-detail" id="calDetail"></div>
             </div>
 
             <!-- ═══ TAB: ENTRENAMIENTO ═══ -->
@@ -135,7 +120,7 @@
                 <div style="margin-bottom:20px;">
                     <div
                         style="background:rgba(201,168,76,0.06);border:1px solid var(--border-gold);border-radius:12px;padding:16px 20px;font-size:13px;color:var(--text-muted);">
-                        ⚠️ Las recomendaciones de suplementación son orientativas. Consulta siempre con un profesional
+                        <span class="nv-icon" data-icon="warning" data-icon-size="15"></span> Las recomendaciones de suplementación son orientativas. Consulta siempre con un profesional
                         de la salud antes de tomar suplementos.
                     </div>
                 </div>
@@ -153,13 +138,13 @@
     <!-- ═══ Check-in semanal: ¿Cómo va ese progreso? ═══ -->
     <div class="checkin-overlay" id="checkinOverlay" style="display:none">
         <div class="checkin-modal">
-            <div class="checkin-emoji">🌱</div>
+            <div class="checkin-emoji"><span class="nv-icon" data-icon="seedling" data-icon-size="40"></span></div>
             <h3 class="checkin-title">¿Cómo va ese progreso?</h3>
             <p class="checkin-text">Llevas un tiempo sin actualizar tus datos. ¿Quieres contarnos cómo va todo?
                 Si algo ha cambiado, podemos ajustar tu plan al momento.</p>
             <div class="checkin-actions">
-                <button class="btn-gold" onclick="checkinAllGood()">Todo va bien 💪</button>
-                <button class="btn-cancel" onclick="checkinWantChange()">Quiero cambiar algo ✏️</button>
+                <button class="btn-gold" onclick="checkinAllGood()"><span class="nv-icon" data-icon="training" data-icon-size="15"></span> Todo va bien</button>
+                <button class="btn-cancel" onclick="checkinWantChange()"><span class="nv-icon" data-icon="pencil" data-icon-size="15"></span> Quiero cambiar algo</button>
             </div>
         </div>
     </div>
