@@ -8,12 +8,13 @@ if (!token) window.location.href = 'login.html';
 
 let planData = null;
 let subData = null;
+let paymentHistory = [];
 let currentDay = 'Lunes';
 
 // ═══ Init ════════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', async () => {
   initTopbar();
-  await Promise.all([loadPlan(), loadSubscription()]);
+  await Promise.all([loadPlan(), loadSubscription(), loadPaymentHistory()]);
   renderDashboard();
   hideLoading();
   // Check-in semanal: preguntar si lleva 7+ días sin actividad
@@ -71,6 +72,20 @@ async function loadSubscription() {
     subData = await res.json();
   } catch (err) {
     console.error('Error cargando suscripción:', err);
+  }
+}
+
+// ═══ Cargar historial de pagos ═══════════════════════════════
+async function loadPaymentHistory() {
+  try {
+    const res = await fetch('/api/subscription/history', {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (!res.ok) return;
+    const data = await res.json();
+    paymentHistory = data.payments || [];
+  } catch (err) {
+    console.error('Error cargando historial de pagos:', err);
   }
 }
 
@@ -182,11 +197,15 @@ function renderOverview() {
     perder_peso: '🔥 Perder peso', ganar_masa: '💪 Ganar masa', mantener: '⚖️ Mantener', mejorar_salud: '❤️ Mejorar salud'
   };
   const actLabels = { sedentario: 'Sedentario', ligero: 'Ligero', moderado: 'Moderado', activo: 'Activo', muy_activo: 'Muy activo' };
+  const dietLabels = { omnivoro: 'Omnívoro', vegetariano: 'Vegetariano', vegano: 'Vegano', sin_gluten: 'Sin gluten', sin_lactosa: 'Sin lactosa' };
+  const eqLabels = { casa: 'En casa', gimnasio: 'Gimnasio', mixto: 'Mixto' };
   document.getElementById('profileInfo').innerHTML = `
     <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--text-muted);">
       <div>🎯 <strong>Objetivo:</strong> ${goalLabels[profile.goal] || profile.goal}</div>
       <div>⚡ <strong>Actividad:</strong> ${actLabels[profile.activity_level] || profile.activity_level}</div>
-      <div>⚖️ <strong>Peso:</strong> ${profile.weight_kg} kg</div>
+      <div>🥗 <strong>Dieta:</strong> ${dietLabels[profile.dietary_preference] || profile.dietary_preference || '—'}</div>
+      <div>🏋️ <strong>Entreno:</strong> ${eqLabels[profile.training_equipment] || profile.training_equipment || '—'} · ${profile.training_days_per_week || 3} días/sem</div>
+      <div>⚖️ <strong>Peso:</strong> ${profile.weight_kg} kg${profile.target_weight_kg ? ` → ${profile.target_weight_kg} kg` : ''}</div>
       <div>📏 <strong>Altura:</strong> ${profile.height_cm} cm</div>
       <div>🎂 <strong>Edad:</strong> ${profile.age} años</div>
     </div>
@@ -373,6 +392,32 @@ function renderSubscriptionTab() {
       ` : `
         <a href="questionnaire.html?subscribe=1" class="btn-gold">Volver a suscribirme</a>
       `}
+    </div>
+
+    ${renderPaymentHistory()}
+  `;
+}
+
+// ─── Historial de pagos ──────────────────────────────────────
+function renderPaymentHistory() {
+  if (!paymentHistory.length) return '';
+
+  const statusLabels = { paid: '✅ Pagado', failed: '❌ Fallido', pending: '⏳ Pendiente', refunded: '↩️ Reembolsado' };
+  const rows = paymentHistory.map(p => `
+    <div style="display:flex;align-items:center;gap:16px;padding:14px 0;border-bottom:1px solid var(--border);flex-wrap:wrap;">
+      <div style="flex:1;min-width:140px;">
+        <div style="font-size:14px;font-weight:700;">${p.amount_eur} €</div>
+        <div style="font-size:12px;color:var(--text-dim);">${p.stripe_invoice_id ? 'Factura ' + p.stripe_invoice_id.slice(0, 8) + '…' : 'Pago'}</div>
+      </div>
+      <div style="font-size:12px;color:var(--text-muted);min-width:130px;">${p.paid_at ? fmt(p.paid_at) : '—'}</div>
+      <span style="font-size:12px;font-weight:600;">${statusLabels[p.status] || p.status}</span>
+    </div>
+  `).join('');
+
+  return `
+    <div style="margin-top:32px;">
+      <div class="dash-card-label">Historial de pagos</div>
+      <div style="margin-top:12px;">${rows}</div>
     </div>
   `;
 }

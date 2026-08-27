@@ -154,6 +154,25 @@ router.get('/status', authMiddleware, async (req, res) => {
     }
 });
 
+// ─── GET /api/subscription/history ──────────────────────────
+// Historial de pagos del usuario (facturas de Stripe registradas por el webhook)
+router.get('/history', authMiddleware, async (req, res) => {
+    try {
+        const result = await db.query(
+            `SELECT stripe_invoice_id, amount_eur, status,
+              billing_period_start, billing_period_end, paid_at
+       FROM payment_history
+       WHERE user_id = $1
+       ORDER BY COALESCE(paid_at, created_at) DESC`,
+            [req.user.id]
+        );
+        res.json({ payments: result.rows });
+    } catch (err) {
+        console.error('Error obteniendo historial de pagos:', err);
+        res.status(500).json({ error: 'Error al obtener el historial de pagos' });
+    }
+});
+
 // ─── POST /api/subscription/cancel ──────────────────────────
 router.post('/cancel', authMiddleware, async (req, res) => {
     try {

@@ -54,7 +54,7 @@ function emailWrapper(content) {
         </div>
         <div style="background:#111;padding:20px;text-align:center;border-top:1px solid #222;">
           <p style="color:#555;font-size:11px;margin:0;">
-            © 2024 NutroVia. Todos los derechos reservados.<br>
+            © ${new Date().getFullYear()} NutroVia. Todos los derechos reservados.<br>
             <a href="${process.env.APP_URL}" style="color:${GOLD};text-decoration:none;">${process.env.APP_URL}</a>
           </p>
         </div>
@@ -149,6 +149,26 @@ async function sendTrialEndingEmail(user, chargeDate) {
     </div>
     <div style="text-align:center;margin-top:25px;">
       <a href="${process.env.APP_URL}/dashboard.html" style="background:#1a1a1a;color:${GOLD};padding:12px 28px;text-decoration:none;border-radius:6px;font-weight:bold;font-size:14px;border:1px solid ${GOLD};display:inline-block;margin-right:10px;">Gestionar suscripción</a>
+    </div>
+    `
+  );
+}
+
+/** 2b. Aviso de fin de prueba (enviado por el webhook de Stripe, ~3 días antes) */
+async function sendTrialWillEndEmail(user, trialEndDate) {
+  const fecha = new Date(trialEndDate).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+  return sendEmail(
+    user.email,
+    `Tu prueba gratuita de NutroVia termina el ${fecha}`,
+    `
+    <h2 style="color:${GOLD};margin-top:0;">Tu prueba termina pronto, ${user.name}</h2>
+    <p style="line-height:1.7;color:#ccc;">Tu prueba gratuita de NutroVia finaliza el <strong style="color:#fff;">${fecha}</strong>. A partir de ese día se activará tu suscripción de <strong style="color:#fff;">${PLAN_PRICE_EUR} € / mes</strong>.</p>
+    <div style="background:#1a1a2a;border:1px solid #c9a84c44;padding:20px;border-radius:8px;margin:20px 0;">
+      <p style="margin:0;color:${GOLD};font-weight:bold;">⏰ SI NO QUIERES SEGUIR, CANCELA ANTES DEL ${fecha}</p>
+      <p style="margin:10px 0 0;color:#ccc;font-size:14px;">Si cancelas durante la prueba, no se te cobrará nada. Si decides continuar, disfrutarás de tu plan personalizado por ${PLAN_PRICE_EUR} € / mes.</p>
+    </div>
+    <div style="text-align:center;margin-top:25px;">
+      <a href="${process.env.APP_URL}/dashboard.html" style="background:#1a1a1a;color:${GOLD};padding:12px 28px;text-decoration:none;border-radius:6px;font-weight:bold;font-size:14px;border:1px solid ${GOLD};display:inline-block;">Gestionar suscripción</a>
     </div>
     `
   );
@@ -256,6 +276,7 @@ module.exports = {
   sendNewUserNotificationEmail,
   sendWelcomeEmail,
   sendTrialEndingEmail,
+  sendTrialWillEndEmail,
   sendChargeWarningEmail,
   sendPaymentConfirmedEmail,
   sendCancellationEmail,

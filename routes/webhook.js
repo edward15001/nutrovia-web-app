@@ -116,8 +116,28 @@ router.post(['/', '/stripe'], express.raw({ type: 'application/json' }), async (
 
             // ─── Trial terminando (notificación de Stripe) ─────────
             case 'customer.subscription.trial_will_end': {
-                // Manejado por nuestros cron jobs, pero registramos el evento
-                console.log('ℹ️  Trial ending soon para customer:', event.data.object.customer);
+                // Stripe avisa ~3 días antes del fin del trial. En producción los
+                // cron jobs no corren (solo en local), así que este webhook es el
+                // encargado de avisar al usuario por email.
+                const sub = event.data.object;
+                const userResult = await db.query(
+                    'SELECT id, name, email FROM users WHERE stripe_customer_id = $1',
+                    [sub.customer]
+                );
+                if (userResult.rows.length > 0) {
+                    const user = userResult.rows[0];
+                    const trialEnd = new Date(sub.current_period_end * 1000);
+                    await emailService.sendTrialWillEndEmail(user, trialEnd);
+                    // Marcar como notificado para que el cron local no duplique
+                    await db.query(
+                        `UPDATE subscriptions SET trial_end_notified = TRUE
+               WHERE user_id = $1`,
+                        [user.id]
+                    );
+                    console.log(`ℹ️  Trial ending soon enviado a ${user.email} (fin: ${trialEnd.toISOString()})`);
+                } else {
+                    console.log('ℹ️  Trial ending soon para customer desconocido:', sub.customer);
+                }
                 break;
             }
 
