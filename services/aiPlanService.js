@@ -23,6 +23,13 @@
  *  - AI_PLAN_TIMEOUT_MS (por defecto 45000 — requiere Default Max Duration >= 45s
  *                      en Vercel → Settings → Functions; el AbortController
  *                      garantiza que nunca se supere el timeout propio)
+ *  - AI_PLAN_MAX_RETRIES (por defecto 2 — reintentos tras 429/5xx/timeout;
+ *                      el free tier de Groq limita peticiones/minuto y el
+ *                      reintento con backoff absorbe ráfagas)
+ *  - AI_PLAN_RETRY_BASE_DELAY_MS (por defecto 2000 — espera inicial del backoff;
+ *                      crece exponencialmente con cada reintento)
+ *  - AI_PLAN_RETRY_MAX_DELAY_MS (por defecto 10000 — tope de espera por reintento,
+ *                      también aplica al header Retry-After de Groq)
  */
 
 // Por defecto se usa Groq con GPT-OSS 120B (mejor calidad). Requiere que la
@@ -32,9 +39,82 @@
 const AI_PLAN_MODEL = process.env.AI_PLAN_MODEL || 'openai/gpt-oss-120b';
 const AI_PLAN_API_URL = process.env.AI_PLAN_API_URL || 'https://api.groq.com/openai/v1/chat/completions';
 const AI_PLAN_TIMEOUT_MS = parseInt(process.env.AI_PLAN_TIMEOUT_MS || '45000', 10);
+const AI_PLAN_MAX_RETRIES = parseInt(process.env.AI_PLAN_MAX_RETRIES || '2', 10);
+const AI_PLAN_RETRY_BASE_DELAY_MS = parseInt(process.env.AI_PLAN_RETRY_BASE_DELAY_MS || '2000', 10);
+const AI_PLAN_RETRY_MAX_DELAY_MS = parseInt(process.env.AI_PLAN_RETRY_MAX_DELAY_MS || '10000', 10);
 
 function isConfigured() {
   return !!process.env.OPENAI_API_KEY;
+}
+
+// ─── Reintentos con backoff (mitiga 429 / 5xx / timeouts) ──
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// Solo se reintentan errores transitorios. Los 4xx permanentes
+// (400, 401, 404...) se devuelven tal cual al llamador.
+function isRetryableStatus(status) {
+  return status === 429 || status >= 500;
+}
+
+/**
+ * Espera a calcular para un reintento: respeta el header Retry-After de Groq
+ * (en segundos) si viene, con tope de seguridad; si no, backoff exponencial
+ * (base * 2^intento) con jitter para no golpear el rate limit a la vez.
+ */
+function computeRetryDelay(retryAfterSeconds, attempt) {
+  if (retryAfterSeconds && retryAfterSeconds > 0) {
+    return Math.min(retryAfterSeconds * 1000, AI_PLAN_RETRY_MAX_DELAY_MS);
+  }
+  const exponential = AI_PLAN_RETRY_BASE_DELAY_MS * 2 ** attempt;
+  const jitter = Math.floor(Math.random() * 500);
+  return Math.min(exponential + jitter, AI_PLAN_RETRY_MAX_DELAY_MS);
+}
+
+/**
+ * Fetch con reintentos automáticos para errores transitorios.
+ * - 429 / 5xx: reintenta hasta AI_PLAN_MAX_RETRIES respetando Retry-After.
+ * - Timeout (AbortError) o error de red: también reintenta (puede ser pasajero).
+ * - 4xx permanentes: se devuelve la respuesta sin reintentar.
+ * Cada intento tiene su propio timeout de AI_PLAN_TIMEOUT_MS.
+ */
+async function fetchWithRetry(url, options) {
+  let attempt = 0;
+  for (;;) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), AI_PLAN_TIMEOUT_MS);
+    let res;
+    try {
+      res = await fetch(url, { ...options, signal: controller.signal });
+    } catch (err) {
+      clearTimeout(timeout);
+      const isTimeout = err.name === 'AbortError';
+      if (attempt < AI_PLAN_MAX_RETRIES && (isTimeout || err.cause || err.type === 'system')) {
+        const delay = computeRetryDelay(null, attempt);
+        console.log(`IA: ${isTimeout ? 'timeout' : 'error de red'} (${err.message}) — reintento ${attempt + 1}/${AI_PLAN_MAX_RETRIES} en ${delay}ms`);
+        attempt++;
+        await sleep(delay);
+        continue;
+      }
+      throw err;
+    }
+    clearTimeout(timeout);
+
+    if (isRetryableStatus(res.status) && attempt < AI_PLAN_MAX_RETRIES) {
+      let retryAfter;
+      try {
+        retryAfter = parseInt(res.headers?.get?.('retry-after'), 10);
+      } catch (_) { /* header no legible */ }
+      const delay = computeRetryDelay(retryAfter, attempt);
+      console.log(`IA: HTTP ${res.status} — reintento ${attempt + 1}/${AI_PLAN_MAX_RETRIES} en ${delay}ms`);
+      attempt++;
+      await sleep(delay);
+      continue;
+    }
+
+    return res;
+  }
 }
 
 // ─── Prompt del sistema: reglas de seguridad innegociables ──
@@ -219,38 +299,31 @@ MACROS DIARIOS (úsalos tal cual):
 ${JSON.stringify(macros, null, 2)}`;
 
   try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), AI_PLAN_TIMEOUT_MS);
-
-    let res;
-    try {
-      res = await fetch(AI_PLAN_API_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
-        },
-        body: JSON.stringify({
-          model: AI_PLAN_MODEL,
-          messages: [
-            { role: 'system', content: SYSTEM_PROMPT },
-            { role: 'user', content: userPrompt },
-          ],
-          // Sin response_format json_object: el modo JSON de Groq (y otros
-          // proveedores) rechaza con 400 "Failed to validate JSON" prompts
-          // anidados como este. El prompt exige JSON estricto y abajo se
-          // valida + fallback al motor si algo no cuadra.
-          // max_tokens 6000: tope de Groq (por encima rechaza la petición).
-          // El plan cabe con margen gracias al JSON compacto del prompt
-          // (reglas 8 y 12: 3-4 ingredientes, sin espacios extra).
-          temperature: 0.8,
-          max_tokens: 6000,
-        }),
-        signal: controller.signal,
-      });
-    } finally {
-      clearTimeout(timeout);
-    }
+    // fetchWithRetry reintenta automáticamente 429/5xx/timeout con backoff;
+    // el fallback al motor solo ocurre si se agotan los reintentos.
+    const res = await fetchWithRetry(AI_PLAN_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: AI_PLAN_MODEL,
+        messages: [
+          { role: 'system', content: SYSTEM_PROMPT },
+          { role: 'user', content: userPrompt },
+        ],
+        // Sin response_format json_object: el modo JSON de Groq (y otros
+        // proveedores) rechaza con 400 "Failed to validate JSON" prompts
+        // anidados como este. El prompt exige JSON estricto y abajo se
+        // valida + fallback al motor si algo no cuadra.
+        // max_tokens 6000: tope de Groq (por encima rechaza la petición).
+        // El plan cabe con margen gracias al JSON compacto del prompt
+        // (reglas 8 y 12: 3-4 ingredientes, sin espacios extra).
+        temperature: 0.8,
+        max_tokens: 6000,
+      }),
+    });
 
     if (!res.ok) {
       // Intentar leer el detalle del error (tipo: insufficient_quota, rate_limit_exceeded...)
