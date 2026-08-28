@@ -3099,6 +3099,139 @@ ul {
   font-size: 14px;
 }
 
+/* ─── Modal: Actualizar a Pro ───────────────────────────────── */
+.upgrade-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 10, 10, 0.82);
+  backdrop-filter: blur(10px);
+  z-index: 2200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.upgrade-modal {
+  background: linear-gradient(160deg, #1a1a1a, #101010);
+  border: 1px solid var(--border-gold);
+  border-radius: 16px;
+  max-width: 440px;
+  width: 100%;
+  padding: 34px 30px;
+  position: relative;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+  animation: fadeUp 0.35s ease;
+}
+
+.upgrade-close {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.upgrade-close:hover {
+  color: var(--text);
+}
+
+.upgrade-head {
+  text-align: center;
+  padding-right: 24px;
+}
+
+.upgrade-head .nv-icon {
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+
+.upgrade-head h3 {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0 0 8px;
+}
+
+.upgrade-head p {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.upgrade-perks {
+  list-style: none;
+  margin: 22px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.upgrade-perks li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.upgrade-perks .nv-icon {
+  color: var(--gold);
+  flex-shrink: 0;
+}
+
+.upgrade-card-element {
+  margin-top: 24px;
+}
+
+.upgrade-card-element .StripeElement {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 13px 14px;
+  transition: border-color var(--transition-fast);
+}
+
+.upgrade-card-element .StripeElement--focus {
+  border-color: var(--border-gold);
+}
+
+.upgrade-card-error {
+  color: #e55b5b;
+  font-size: 12px;
+  margin-top: 8px;
+  line-height: 1.5;
+}
+
+#upgradeSubmitBtn {
+  width: 100%;
+  margin-top: 18px;
+  justify-content: center;
+}
+
+#upgradeSubmitBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.upgrade-note {
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--text-dim);
+  margin: 16px 0 0;
+}
+
+html[data-theme='light'] .upgrade-modal {
+  background: linear-gradient(160deg, #ffffff, var(--bg-subtle));
+  box-shadow: 0 25px 60px rgba(80, 65, 30, 0.18);
+}
+
 .spinner {
   width: 44px;
   height: 44px;
@@ -4649,6 +4782,62 @@ html[data-theme='light'] .checkin-modal {
   color: var(--text-muted);
   text-align: center;
   line-height: 1.3;
+}
+
+/* Paywalls / bloqueos Pro */
+.db-lock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--text-muted);
+  font-size: 13px;
+  text-align: center;
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  padding: 18px;
+  min-height: 100px;
+}
+
+.db-lock .nv-icon {
+  color: var(--gold);
+}
+
+.db-lock-link {
+  color: var(--gold);
+  font-weight: 700;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.4);
+}
+
+.db-lock-link:hover {
+  border-bottom-color: var(--gold);
+}
+
+.db-upgrade-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  grid-column: 1 / -1;
+  background: linear-gradient(135deg, rgba(201, 168, 76, 0.14), rgba(201, 168, 76, 0.05));
+  border: 1px solid var(--border-gold);
+  border-radius: 12px;
+  padding: 16px 20px;
+  color: var(--text);
+  font-size: 14px;
+  text-decoration: none;
+  transition: var(--transition-fast);
+}
+
+.db-upgrade-card:hover {
+  background: linear-gradient(135deg, rgba(201, 168, 76, 0.22), rgba(201, 168, 76, 0.08));
+  transform: translateY(-1px);
+}
+
+.db-upgrade-card .nv-icon {
+  color: var(--gold);
 }
 
 /* Responsive del bento del dashboard */

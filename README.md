@@ -2,7 +2,7 @@
 
 ![Node.js](https://img.shields.io/badge/Node.js-18+-green) ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue) ![Stripe](https://img.shields.io/badge/Stripe-Integrado-purple)
 
-Aplicación web profesional de nutrición y entrenamiento personalizado con planes generados por motor científico (Harris-Benedict), suscripción de 25 €/mes con 7 días de prueba gratuita y cancelación sin cargo. Los valores del usuario se pueden volver a registrar cuando quiera (el plan se recalcula al momento) y un check-in semanal automático pregunta "¿Cómo va ese progreso?" si no hay cambios en 7 días.
+Aplicación web profesional de nutrición y entrenamiento personalizado con planes generados por motor científico (Harris-Benedict). Modelo free/pro: el plan FREE es de por vida (funciones restringidas) y el plan Pro (14 €/mes con 7 días de prueba gratuita y cancelación sin cargo) desbloquea el menú detallado, la suplementación, la IA y los check-ins. El usuario puede volver a registrar sus valores cuando quiera (el plan se recalcula al momento) y un check-in semanal automático pregunta "¿Cómo va ese progreso?" si no hay cambios en 7 días.
 
 ---
 
@@ -196,6 +196,8 @@ DATABASE_URL=postgresql://user:pass@host:5432/nutrovia_db
 | GET | `/api/auth/me` | Perfil del usuario | ✅ |
 | POST | `/api/questionnaire` | Enviar cuestionario | ✅ |
 | GET | `/api/plan` | Obtener plan personalizado | ✅ |
+| POST | `/api/plan/swap` | Intercambiar una comida (Pro) | ✅ |
+| GET | `/api/access` | Nivel de acceso (free/pro) y funciones | ✅ |
 | POST | `/api/subscription/setup-intent` | Crear SetupIntent Stripe | ✅ |
 | POST | `/api/subscription/start` | Activar prueba gratuita (7 días) | ✅ |
 | GET | `/api/subscription/status` | Estado de suscripción | ✅ |
@@ -209,15 +211,20 @@ DATABASE_URL=postgresql://user:pass@host:5432/nutrovia_db
 ## 📊 Flujo de suscripción
 
 ```
-Día 0   → Usuario se registra + guarda tarjeta (sin cobro) + plan generado
+Registro → Se genera el plan FREE (de por vida, sin pedir tarjeta). El usuario ve el menú
+"a oscuras" (solo kcal por día) y sin suplementos ni IA.
+
+Upgrade  → El free puede actualizar a Pro (14 €/mes) guardando tarjeta: se activa una prueba
+gratuita de 7 días y el plan se regenera con IA, suplementos y menú detallado.
 Día 7   → Email: "Último día de prueba, cancela o se activa tu suscripción"
-Día 8   → Si no cancela → suscripción activa → Stripe cobra 25 €
-Mensual → Cobro recurrente de 25 € el día del mes de inscripción
+Día 8   → Si no cancela → suscripción activa → Stripe cobra 14 €
+Mensual → Cobro recurrente de 14 € el día del mes de inscripción
 
-Cancelación → En la prueba: inmediata y sin cargo. Activa: al final del período ya pagado.
+Cancela  → En la prueba: inmediata y sin cargo. Activa: al final del período ya pagado.
 
-Re-registro → El usuario puede actualizar sus valores cuando quiera (cuestionario con datos
-precargados). El plan se recalcula al momento y el check-in semanal se reinicia.
+Re-registro → El free tiene 1 regeneración de plan; el Pro, ilimitadas. El usuario puede
+actualizar sus valores cuando quiera (cuestionario con datos precargados), el plan se
+recalcula al momento y el check-in semanal se reinicia.
 
 Check-in  → Si no hay cambios ni check-ins en 7 días, la app pregunta "¿Cómo va ese
 progreso?" (modal en el dashboard + email semanal). "Todo va bien" lo pausa otros 7 días;

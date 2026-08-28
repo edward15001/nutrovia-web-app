@@ -13,6 +13,7 @@
         rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css?v=3">
     <script>try{if(localStorage.getItem('nv-theme')==='light'||(!localStorage.getItem('nv-theme')&&matchMedia('(prefers-color-scheme: light)').matches))document.documentElement.setAttribute('data-theme','light')}catch(e){}</script>
+    <script src="https://js.stripe.com/v3/"></script>
     <script src="js/icons.js"></script>
     <script src="js/theme.js"></script>
     <script>
@@ -153,6 +154,32 @@
     <div class="loading-overlay" id="loadingOverlay">
         <div class="spinner"></div>
         <p class="loading-text">Cargando tu plan...</p>
+    </div>
+
+    <!-- ═══ Modal: Actualizar a Pro ═══ -->
+    <div class="upgrade-overlay" id="upgradeOverlay" style="display:none" onclick="if(event.target===this)closeUpgrade()">
+        <div class="upgrade-modal">
+            <button class="upgrade-close" onclick="closeUpgrade()" aria-label="Cerrar">&times;</button>
+            <div class="upgrade-head">
+                <span class="nv-icon" data-icon="sparkles" data-icon-size="26"></span>
+                <h3>Desbloquea el plan completo</h3>
+                <p>Coge el <b>Pro · 14 €/mes</b> con 7 días de prueba gratuita. Sin permanencia: cancela cuando quieras.</p>
+            </div>
+            <ul class="upgrade-perks">
+                <li><span class="nv-icon" data-icon="checkCircle" data-icon-size="15"></span> Menú semanal con detalle de comidas</li>
+                <li><span class="nv-icon" data-icon="checkCircle" data-icon-size="15"></span> Suplementación personalizada</li>
+                <li><span class="nv-icon" data-icon="checkCircle" data-icon-size="15"></span> Plan generado con inteligencia artificial</li>
+                <li><span class="nv-icon" data-icon="checkCircle" data-icon-size="15"></span> Check-ins de progreso y regeneraciones ilimitadas</li>
+            </ul>
+            <div class="upgrade-card-element">
+                <div id="upgradeCardElement"></div>
+                <div id="upgradeCardErrors" class="upgrade-card-error" style="display:none"></div>
+            </div>
+            <button class="btn-gold-large" id="upgradeSubmitBtn" onclick="startProUpgrade()">
+                Empezar prueba gratuita de 7 días
+            </button>
+            <p class="upgrade-note">Pago seguro cifrado por Stripe. No se te cobra durante la prueba; solo guardamos tu tarjeta. Si no cancelas antes del día 7, se te cobrarán 14 €/mes automáticamente.</p>
+        </div>
     </div>
 
     <script src="js/dashboard.js"></script>

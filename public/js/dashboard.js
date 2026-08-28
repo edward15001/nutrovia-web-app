@@ -238,7 +238,7 @@ function renderOverview() {
     ? (supps.length
       ? `<div class="db-sups-row">${supps.map((s, i) => `<div class="db-sup" title="${s.nombre} — ${s.dosis}"><span class="db-sup-circle">${ICON(supIcons[i % supIcons.length], 18)}</span><span class="db-sup-name">${s.nombre}</span></div>`).join('')}</div>`
       : '<p class="db-sub">Sin suplementos en tu plan.</p>')
-    : `<div class="db-lock">${ICON('lock', 16)} La suplementación está disponible en <b>Pro</b>.<br><a href="dashboard.html#upgrade" class="db-lock-link">Desbloquear a Pro →</a></div>`;
+    : `<div class="db-lock">${ICON('lock', 16)} La suplementación está disponible en <b>Pro</b>.<br><a href="#" class="db-lock-link" onclick="openUpgrade();return false;">Desbloquear a Pro →</a></div>`;
 
   document.getElementById('dashBento').innerHTML = `
     <!-- 01 · Tu objetivo + move ring -->
@@ -347,7 +347,7 @@ function renderOverview() {
     </div>
 
     <!-- 07 · Actualizar a Pro (free) -->
-    ${pro ? '' : `<a href="dashboard.html#upgrade" class="db-upgrade-card">${ICON('sparkles', 16)} Actualiza a <b>Pro · 14 €/mes</b> para desbloquear todo el plan →</a>`}
+    ${pro ? '' : `<a href="#" onclick="openUpgrade();return false;" class="db-upgrade-card">${ICON('sparkles', 16)} Actualiza a <b>Pro · 14 €/mes</b> para desbloquear todo el plan →</a>`}
   `;
 }
 
@@ -377,7 +377,7 @@ function renderNutritionTab() {
         ${ICON('lock', 24)}
         <div style="font-size:18px;font-weight:800;margin:12px 0 4px;">Nutrición detallada solo en Pro</div>
         <div style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">Actualiza a <b>Pro · 14 €/mes</b> para ver y personalizar el menú completo de cada día.</div>
-        <a href="dashboard.html#upgrade" class="btn-gold">Desbloquear a Pro →</a>
+        <a href="#" onclick="openUpgrade();return false;" class="btn-gold">Desbloquear a Pro →</a>
       </div>`;
     return;
   }
@@ -606,7 +606,7 @@ function renderSupplementsTab() {
         ${ICON('lock', 24)}
         <div style="font-size:18px;font-weight:800;margin:12px 0 4px;">Suplementación solo en Pro</div>
         <div style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">Descubre qué suplementos encajan con tu plan actualizando a <b>Pro · 14 €/mes</b>.</div>
-        <a href="dashboard.html#upgrade" class="btn-gold">Desbloquear a Pro →</a>
+        <a href="#" onclick="openUpgrade();return false;" class="btn-gold">Desbloquear a Pro →</a>
       </div>`;
     return;
   }
@@ -630,7 +630,7 @@ function renderSubscriptionTab() {
     document.getElementById('subDetail').innerHTML = `
       <div class="dash-card-label">Estado de suscripción</div>
       <p style="color:var(--text-muted);margin-top:12px;font-size:14px;">No tienes ninguna suscripción activa.</p>
-      <a href="questionnaire.html?subscribe=1" class="btn-gold" style="display:inline-flex;margin-top:16px;">Activar plan</a>
+      <a href="#" onclick="openUpgrade();return false;" class="btn-gold" style="display:inline-flex;margin-top:16px;">Activar plan</a>
     `;
     return;
   }
@@ -671,7 +671,7 @@ function renderSubscriptionTab() {
       ${status !== 'cancelled' && status !== 'expired' ? `
         <button class="btn-cancel" onclick="handleCancel()">Cancelar suscripción</button>
       ` : `
-        <a href="questionnaire.html?subscribe=1" class="btn-gold">Volver a suscribirme</a>
+        <a href="#" onclick="openUpgrade();return false;" class="btn-gold">Volver a suscribirme</a>
       `}
     </div>
 
@@ -828,4 +828,137 @@ function logout() {
   localStorage.removeItem('nutrovia_token');
   localStorage.removeItem('nutrovia_user');
   window.location.href = 'index.html';
+}
+
+// ═══ Upgrade a Pro (Stripe) ═══════════════════════════════════
+let upgradeStripe = null;
+let upgradeCardElement = null;
+let upgradeSetupSecret = null;
+let upgradeInitialized = false;
+
+// Abre el modal de pago para pasar de free a Pro. Si Stripe aún no está
+// cargado o el modal no está listo, se inicializa bajo demanda.
+function openUpgrade() {
+  const overlay = document.getElementById('upgradeOverlay');
+  if (!overlay) return;
+  overlay.style.display = 'flex';
+  initUpgradeCheckout();
+}
+
+function closeUpgrade() {
+  document.getElementById('upgradeOverlay').style.display = 'none';
+}
+
+async function initUpgradeCheckout() {
+  if (upgradeInitialized) return;
+  if (typeof Stripe === 'undefined') {
+    const errEl = document.getElementById('upgradeCardErrors');
+    errEl.textContent = 'El sistema de pago seguro no se cargó. Recarga la página e inténtalo de nuevo.';
+    errEl.style.display = 'block';
+    return;
+  }
+  try {
+    document.getElementById('upgradeSubmitBtn').disabled = true;
+    const res = await fetch('/api/subscription/setup-intent', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      const errEl = document.getElementById('upgradeCardErrors');
+      errEl.textContent = data.error || 'No se pudo preparar el pago. Inténtalo en unos minutos.';
+      errEl.style.display = 'block';
+      return;
+    }
+
+    upgradeSetupSecret = data.client_secret;
+    upgradeStripe = Stripe(data.publishable_key);
+    upgradeCardElement = upgradeStripe.elements().create('card', {
+      style: {
+        base: {
+          color: '#e8e0d0',
+          fontFamily: "'Outfit', sans-serif",
+          fontSize: '16px',
+          '::placeholder': { color: '#888880' },
+        },
+        invalid: { color: '#e55b5b' },
+      },
+    });
+    upgradeCardElement.mount('#upgradeCardElement');
+    upgradeCardElement.on('change', (e) => {
+      const errEl = document.getElementById('upgradeCardErrors');
+      if (e.error) {
+        errEl.textContent = e.error.message;
+        errEl.style.display = 'block';
+      } else {
+        errEl.style.display = 'none';
+      }
+    });
+    upgradeInitialized = true;
+    document.getElementById('upgradeSubmitBtn').disabled = false;
+  } catch (err) {
+    console.error('Error iniciando checkout de upgrade:', err);
+    document.getElementById('upgradeSubmitBtn').disabled = false;
+  }
+}
+
+async function startProUpgrade() {
+  const errEl = document.getElementById('upgradeCardErrors');
+  const btn = document.getElementById('upgradeSubmitBtn');
+  errEl.style.display = 'none';
+
+  if (!upgradeStripe || !upgradeCardElement || !upgradeSetupSecret) {
+    errEl.textContent = 'El formulario de pago aún no está listo. Inténtalo de nuevo.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Guardando tu tarjeta...';
+
+  try {
+    const { error, setupIntent } = await upgradeStripe.confirmCardSetup(upgradeSetupSecret, {
+      payment_method: {
+        card: upgradeCardElement,
+        billing_details: { name: user.name || '', email: user.email || '' },
+      },
+    });
+
+    if (error) {
+      errEl.textContent = error.message;
+      errEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Empezar prueba gratuita de 7 días';
+      return;
+    }
+
+    const res = await fetch('/api/subscription/start', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ payment_method_id: setupIntent.payment_method }),
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      // Reintentar dejar el modal listo para un segundo intento
+      errEl.textContent = data.error || 'Error al activar la prueba gratuita.';
+      errEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Empezar prueba gratuita de 7 días';
+      return;
+    }
+
+    // Reactivar: recargar para que el backend re-exponga el plan completo
+    btn.textContent = '¡Pro activado!';
+    window.location.reload();
+  } catch (err) {
+    console.error('Error en startProUpgrade:', err);
+    errEl.textContent = 'Hubo un error de conexión. Inténtalo de nuevo.';
+    errEl.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'Empezar prueba gratuita de 7 días';
+  }
 }

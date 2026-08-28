@@ -4,6 +4,7 @@ const db = require('../db/db');
 const authMiddleware = require('../middleware/auth');
 const stripeService = require('../services/stripeService');
 const emailService = require('../services/emailService');
+const { generateAndSavePlan } = require('../services/planGenerationService');
 
 // Días de prueba gratuita de Pro y precio mensual (configurables por entorno)
 const TRIAL_DAYS = parseInt(process.env.TRIAL_DAYS || '7', 10);
@@ -86,7 +87,7 @@ router.post('/start', authMiddleware, async (req, res) => {
         await stripeService.attachPaymentMethod(user.stripe_customer_id, resolvedPaymentMethodId);
 
         // Calcular fechas: 7 días de prueba gratuita. Si no cancela,
-        // al terminar la prueba Stripe cobra 25 €/mes automáticamente.
+        // al terminar la prueba Stripe cobra 14 €/mes automáticamente.
         const trialStart = new Date();
         const trialEnd = new Date(trialStart);
         trialEnd.setDate(trialEnd.getDate() + TRIAL_DAYS);
@@ -115,6 +116,16 @@ router.post('/start', authMiddleware, async (req, res) => {
         // Email de bienvenida
         await emailService.sendWelcomeEmail(user, trialEnd, TRIAL_DAYS);
 
+        // Regenerar el plan ahora como Pro: si el usuario tenía un plan FREE
+        // (guardado sin IA ni suplementos), al activar Pro se recalcula con la
+        // mejora IA y la suplementación. Se espera para que la página recargada
+        // ya muestre el plan completo; si falla, no bloquea la activación.
+        try {
+            await regenerateProPlan(userId);
+        } catch (err) {
+            console.error('Error regenerando plan tras activar Pro:', err);
+        }
+
         res.json({
             message: '¡Prueba gratuita iniciada!',
             trial_days: TRIAL_DAYS,
@@ -131,6 +142,21 @@ router.post('/start', authMiddleware, async (req, res) => {
         res.status(500).json({ error: 'Error al iniciar la prueba gratuita' });
     }
 });
+
+// Vuelve a generar el plan del usuario con las capacidades de Pro (IA +
+// suplementos). Se usa tras activar la suscripción para completar el plan.
+async function regenerateProPlan(userId) {
+    const answersResult = await db.query(
+        `SELECT age, sex, weight_kg, height_cm, target_weight_kg, goal, activity_level,
+                dietary_preference, health_conditions, training_experience,
+                training_days_per_week, training_equipment
+         FROM questionnaire_answers WHERE user_id = $1`,
+        [userId]
+    );
+    if (answersResult.rows.length === 0) return;
+
+    await generateAndSavePlan(userId, answersResult.rows[0], { isPro: true });
+}
 
 // ─── GET /api/subscription/status ───────────────────────────
 router.get('/status', authMiddleware, async (req, res) => {
