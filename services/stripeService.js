@@ -3,8 +3,8 @@ if (process.env.STRIPE_SECRET_KEY) {
     stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 }
 
-// Precio del plan mensual (configurable). Por defecto 25 €.
-const PLAN_PRICE_EUR = parseFloat(process.env.PLAN_PRICE_EUR || '25');
+// Precio del plan Pro mensual (configurable). Por defecto 14 €.
+const PLAN_PRICE_EUR = parseFloat(process.env.PLAN_PRICE_EUR || '14');
 const PLAN_PRICE_CENTS = Math.round(PLAN_PRICE_EUR * 100);
 
 /**
@@ -90,7 +90,8 @@ async function getOrCreatePrice() {
 
     const price = await stripe.prices.create({
         currency: 'eur',
-        unit_amount: PLAN_PRICE_CENTS, // 25.00 EUR en céntimos por defecto
+        unit_amount: PLAN_PRICE_CENTS,    // Precio del plan en céntimos
+    // Nota: al cambiar el precio se busca/crea un Price nuevo (no reusa el antiguo).
         recurring: { interval: 'month' },
         product_data: { name: 'NutroVia Plan Personalizado' },
     });

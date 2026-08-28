@@ -24,6 +24,9 @@ const isEditFlow = updateMode || resubMode;
 const TOTAL_STEPS = updateMode ? 6 : (resubMode ? 7 : 8);
 let authToken = null;
 
+// Nivel de acceso devuelto por el backend (free/pro) tras generar el plan
+let lastAccess = null;
+
 // ═══ Estado del pago (Stripe) ═══════════════════════════════
 let stripe = null;
 let cardElement = null;
@@ -42,8 +45,46 @@ function goToStep(targetStep) {
     currentStep = targetStep;
     document.getElementById(`step-${currentStep}`).style.display = 'block';
     updateProgress();
+    if (targetStep === 8) renderSuccess();
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Renderiza la pantalla de éxito (paso 8) según el nivel de acceso:
+// - FREE: plan gratuito con CTA de actualizar a Pro (opcional).
+// - PRO / edición: plan completo (o actualización confirmada).
+function renderSuccess() {
+    const isEdit = updateMode;
+    const textEl = document.getElementById('successText');
+    const btnEl = document.getElementById('successBtn');
+
+    if (isEdit) {
+        textEl.innerHTML =
+            'Hemos <strong>actualizado tu plan</strong> con tus nuevos datos. Tu menú semanal, tu rutina y tu suplementación ya se han recalculado.';
+        btnEl.textContent = 'Ir a Mi Panel →';
+        btnEl.href = 'dashboard.html';
+        btnEl.insertAdjacentHTML('afterend', '');
+        return;
+    }
+
+    const isPro = lastAccess && lastAccess.isPro;
+    if (isPro) {
+        textEl.innerHTML =
+            'Tu <strong>prueba gratuita de Pro está activa</strong>. Disfruta del plan completo (menú detallado, suplementación, IA y check-ins) durante 7 días. Todo lo hemos enviado también a tu email.';
+        btnEl.textContent = 'Ir a Mi Panel →';
+        btnEl.href = 'dashboard.html';
+        btnEl.insertAdjacentHTML('afterend', '');
+    } else {
+        // Plan FREE
+        textEl.innerHTML =
+            'Tu <strong>plan gratuito</strong> ya está listo. Actualiza a <strong>Pro (14 €/mes)</strong> para desbloquear el menú detallado, la suplementación, la IA y los check-ins de progreso.';
+        btnEl.textContent = 'Ir a Mi Panel';
+        btnEl.href = 'dashboard.html';
+        if (!document.getElementById('upgradeBtn')) {
+            btnEl.insertAdjacentHTML('afterend',
+                `<a href="dashboard.html#upgrade" class="btn-gold-large" id="upgradeBtn" style="background:linear-gradient(135deg,#e0be64,#c9a84c);margin-top:10px;">Actualizar a Pro →</a>`);
+        }
+    }
 }
 
 function updateProgress() {
@@ -282,12 +323,12 @@ async function registerUser() {
         localStorage.setItem('nutrovia_token', data.token);
         localStorage.setItem('nutrovia_user', JSON.stringify(data.user));
 
-        // Guardar cuestionario
-        await submitQuestionnaire();
-
-        // Ir a la pantalla de pago (guardar tarjeta + activar prueba gratuita)
-        goToStep(7);
-        initPayment();
+        // Guardar cuestionario y obtener el plan. Por defecto el usuario queda
+        // en el plan FREE (sin pago obligatorio). Se llama a goToStep(8), que
+        // muestra la pantalla de éxito y ofrece actualizar a Pro como opción.
+        const qRes = await submitQuestionnaire();
+        lastAccess = qRes && qRes.access ? qRes.access : null;
+        goToStep(8);
     } catch (err) {
         console.error(err);
         const alertEl = document.getElementById('alert-6') || document.getElementById('alert-5');
@@ -329,6 +370,7 @@ async function submitQuestionnaire() {
             const data = await res.json();
             throw new Error(JSON.stringify(data));
         }
+        return await res.json();
     } catch (err) {
         console.error('Error enviando cuestionario:', err);
         throw err;

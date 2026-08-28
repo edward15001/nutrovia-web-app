@@ -15,6 +15,8 @@ CREATE TABLE IF NOT EXISTS users (
     -- Check-ins de progreso ("¿Cómo va ese progreso?")
     last_checkin_at      TIMESTAMPTZ,
     last_checkin_email_at TIMESTAMPTZ,
+    -- Veces que el usuario ha regenerado su plan (restringido al tier free)
+    plan_regeneration_count INTEGER NOT NULL DEFAULT 0,
     created_at    TIMESTAMPTZ DEFAULT NOW(),
     updated_at    TIMESTAMPTZ DEFAULT NOW()
 );

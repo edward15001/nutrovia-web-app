@@ -6,6 +6,7 @@ const authMiddleware = require('../middleware/auth');
 const { generatePersonalizedPlan } = require('../controllers/planEngine');
 const emailService = require('../services/emailService');
 const aiPlanService = require('../services/aiPlanService');
+const accessService = require('../services/accessService');
 
 // ─── POST /api/questionnaire ─────────────────────────────────
 // Guarda respuestas y genera plan personalizado
@@ -41,6 +42,19 @@ router.post('/', authMiddleware, [
     );
     const firstTime = prevResult.rows.length === 0;
 
+    // Nivel de acceso: free (funciones restringidas) o pro (completo por 14 €/mes)
+    const access = await accessService.getUserAccess(userId);
+
+    // El plan free está limitado a N regeneraciones: editar y regenerar tras agotarlo
+    // bloquea (el pro es ilimitado). La primera generación está permitida siempre.
+    if (!firstTime && !access.canRegenerate) {
+      return res.status(403).json({
+        error: 'Alcanzaste el límite de planes gratuitos. Actualiza a Pro para cambiar tu plan cuando quieras.',
+        code: 'REGENERATION_LIMIT',
+        access,
+      });
+    }
+
     // Guardar respuestas (upsert). updated_at registra la última vez que
     // el usuario registró/actualizó sus valores (para el check-in semanal).
     await db.query(`
@@ -71,12 +85,13 @@ router.post('/', authMiddleware, [
     };
     let plan = generatePersonalizedPlan(answers);
 
-    // ─── Mejora con IA (opcional) ─────────────────────────────
+    // ─── Mejora con IA (opcional y SOLO para Pro) ──────────────
     // Si hay OPENAI_API_KEY configurada, la IA genera el contenido
     // (menú, entrenamiento, suplementos) a partir del perfil. Los macros
     // y las notas de seguridad SIEMPRE provienen del motor determinista.
     // Si la IA falla o tarda demasiado, se usa el plan del motor tal cual.
-    if (aiPlanService.isConfigured()) {
+    // El tier free se queda con el plan del motor determinista (sin IA).
+    if (aiPlanService.isConfigured() && access.isPro) {
       const aiPlan = await aiPlanService.generatePersonalizedPlanWithAI(answers, {
         daily_calories: plan.daily_calories,
         protein_g: plan.protein_g,
@@ -112,6 +127,12 @@ router.post('/', authMiddleware, [
       }
     }
 
+    // La suplementación es exclusiva de Pro: el free no guarda suplementos
+    // (aunque el motor los haya generado) y no los verá en el dashboard.
+    if (!access.isPro) {
+      plan.supplements = [];
+    }
+
     // Guardar plan (upsert)
     await db.query(`
       INSERT INTO nutrition_plans (user_id, daily_calories, protein_g, carbs_g, fat_g, weekly_menu, training_plan, supplements, notas_dieta, consejos_generales)
@@ -140,8 +161,15 @@ router.post('/', authMiddleware, [
       });
     }
 
+    // Registrar la regeneración (al editar el cuestionario). Solo importa para
+    // el free, que tiene límite de planes; el pro es ilimitado.
+    if (!firstTime) {
+      accesServiceSafeIncrement(userId);
+    }
+
     res.json({
       message: firstTime ? 'Plan generado y enviado correctamente' : 'Plan actualizado correctamente',
+      access,
       plan: {
         resumen: plan.resumen,
         daily_calories: plan.daily_calories,
@@ -159,5 +187,14 @@ router.post('/', authMiddleware, [
     res.status(500).json({ error: 'Error generando el plan' });
   }
 });
+
+// Incrementa el contador de regeneraciones de forma segura (no rompe el flujo)
+async function accesServiceSafeIncrement(userId) {
+  try {
+    await accessService.incrementRegeneration(userId);
+  } catch (err) {
+    console.error('Error incrementando regeneraciones:', err);
+  }
+}
 
 module.exports = router;

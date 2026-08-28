@@ -5,9 +5,9 @@ const authMiddleware = require('../middleware/auth');
 const stripeService = require('../services/stripeService');
 const emailService = require('../services/emailService');
 
-// Días de prueba gratuita y precio mensual (configurables por entorno)
+// Días de prueba gratuita de Pro y precio mensual (configurables por entorno)
 const TRIAL_DAYS = parseInt(process.env.TRIAL_DAYS || '7', 10);
-const PLAN_PRICE_EUR = parseFloat(process.env.PLAN_PRICE_EUR || '25');
+const PLAN_PRICE_EUR = parseFloat(process.env.PLAN_PRICE_EUR || '14');
 
 // ─── POST /api/subscription/setup-intent ────────────────────
 // Crea un SetupIntent de Stripe (el frontend captura la tarjeta sin cobrar)

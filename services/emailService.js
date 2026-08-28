@@ -35,7 +35,7 @@ const BASE_STYLE = `
 const GOLD = '#c9a84c';
 
 // Precio mensual del plan y días de prueba (para los textos de los emails)
-const PLAN_PRICE_EUR = process.env.PLAN_PRICE_EUR || '25';
+const PLAN_PRICE_EUR = process.env.PLAN_PRICE_EUR || '14';
 const TRIAL_DAYS = process.env.TRIAL_DAYS || '7';
 
 function emailWrapper(content) {

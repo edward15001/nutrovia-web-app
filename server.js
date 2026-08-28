@@ -30,6 +30,7 @@ app.use('/api/questionnaire', require('./routes/questionnaire'));
 app.use('/api/subscription', require('./routes/subscription'));
 app.use('/api/plan', require('./routes/plans'));
 app.use('/api/checkin', require('./routes/checkin'));
+app.use('/api/access', require('./routes/access'));
 
 // ─── Ruta catch-all: sirve index.html para SPA ───────────────
 app.get('*', (req, res) => {

@@ -3,6 +3,7 @@ const router = express.Router();
 const db = require('../db/db');
 const authMiddleware = require('../middleware/auth');
 const { applySwap } = require('../controllers/planSwap');
+const accessService = require('../services/accessService');
 
 // ─── GET /api/plan ───────────────────────────────────────────
 // Retorna el plan personalizado del usuario autenticado
@@ -27,14 +28,40 @@ router.get('/', authMiddleware, async (req, res) => {
         }
 
         const row = result.rows[0];
+
+        // Nivel de acceso: define qué parte del plan se expone.
+        // El free ve macros/calorías y consejos, pero NO el detalle de comidas
+        // (modo "a oscuras") ni los suplementos.
+        const access = await accessService.getUserAccess(req.user.id);
+
+        let weeklyMenu = row.weekly_menu;
+        let supplements = row.supplements;
+        if (!access.isPro) {
+            // Modo "a oscuras": solo las kcal totales por día, sin comidas
+            const dimmed = {};
+            const dayNames = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+            for (const d of dayNames) {
+                const menu = row.weekly_menu && row.weekly_menu[d];
+                if (!menu) continue;
+                const kcal = Object.keys(menu).reduce((sum, k) => {
+                    const m = menu[k];
+                    return sum + (m && m.calorias ? Number(m.calorias) : 0);
+                }, 0);
+                dimmed[d] = { _kcal: kcal };
+            }
+            weeklyMenu = dimmed;
+            supplements = [];
+        }
+
         res.json({
+            access,
             daily_calories: row.daily_calories,
             protein_g: row.protein_g,
             carbs_g: row.carbs_g,
             fat_g: row.fat_g,
-            weekly_menu: row.weekly_menu,
+            weekly_menu: weeklyMenu,
             training_plan: row.training_plan,
-            supplements: row.supplements,
+            supplements,
             notas_dieta: row.notas_dieta,
             consejos_generales: row.consejos_generales,
             profile: {
@@ -65,6 +92,13 @@ router.get('/', authMiddleware, async (req, res) => {
 // body: { day, meal_key, replacement: { nombre, calorias, ingredientes? } }
 router.post('/swap', authMiddleware, async (req, res) => {
     try {
+        // El intercambio de comidas es exclusivo de Pro: el free "a oscuras"
+        // no ve el detalle y por tanto tampoco puede modificarlo.
+        const access = await accessService.getUserAccess(req.user.id);
+        if (!access.isPro) {
+            return res.status(403).json({ error: 'Personalizar comidas es una función de Pro.', code: 'PRO_ONLY' });
+        }
+
         const { day, meal_key, replacement } = req.body || {};
         const result = await db.query(
             'SELECT weekly_menu FROM nutrition_plans WHERE user_id = $1',

@@ -13,6 +13,14 @@ let planData = null;
 let subData = null;
 let paymentHistory = [];
 
+// ¿El usuario tiene acceso PRO? Proviene del campo access de /api/plan;
+// para planes antiguos sin acceso, se deriva del estado de la suscripción.
+function isProUser() {
+  if (planData && planData.access) return planData.access.isPro;
+  const s = subData;
+  return !!s && ['trial', 'active', 'past_due'].includes(s.status);
+}
+
 // ═══ Init ════════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', async () => {
   initTopbar();
@@ -130,14 +138,14 @@ function renderStatusBanner() {
       banner.className = 'status-banner warning';
       badge.textContent = 'PRUEBA TERMINADA';
       title.textContent = 'Tu prueba gratuita ha terminado';
-      subtitle.textContent = 'Si no cancelas, tu suscripción de 25 €/mes queda activa. Cancela cuando quieras.';
+      subtitle.textContent = 'Si no cancelas, tu suscripción de 14 €/mes queda activa. Cancela cuando quieras.';
       action.innerHTML = `<button class="btn-cancel" onclick="handleCancel()">Cancelar ahora</button>`;
     }
   } else if (subData.status === 'active') {
     banner.className = 'status-banner active';
     badge.textContent = 'SUSCRIPCIÓN ACTIVA';
     title.textContent = `Próximo cobro: ${fmt(subData.next_billing_date)}`;
-    subtitle.textContent = '25 € · Pago mensual automático. Cancela cuando quieras.';
+    subtitle.textContent = '14 € · Pago mensual automático. Cancela cuando quieras.';
     action.innerHTML = `<button class="btn-cancel" onclick="showTab('subscription', null)">Ver detalles</button>`;
   } else if (subData.status === 'cancelled') {
     banner.className = 'status-banner cancelled';
@@ -176,9 +184,11 @@ function renderOverview() {
   const days = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
   const dayLetters = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
 
-  // kcal por día (desde el menú real de la semana)
+  // kcal por día (desde el menú real de la semana). En modo free el backend
+  // envía solo { _kcal } por día ("a oscuras", sin detalle de comidas).
   const weekKcal = days.map(d => {
     const menu = planData?.weekly_menu?.[d] || {};
+    if (typeof menu._kcal === 'number') return menu._kcal;
     return Object.values(menu).reduce((sum, m) => sum + (m && m.calorias ? m.calorias : 0), 0);
   });
   const weekAvg = Math.round(weekKcal.reduce((a, b) => a + b, 0) / 7);
@@ -219,10 +229,16 @@ function renderOverview() {
   }
   const activeSet = new Set(activeIdx);
 
-  // Suplementos (top 4)
+  // Suplementos (top 4) — solo Pro; en free mostramos bloqueo
   const supps = (planData?.supplements || []).slice(0, 4);
   const supIcons = ['supplement', 'leaf', 'zap', 'flask', 'droplet', 'seedling', 'shield'];
   const pct = g => Math.round((g * 4 / kcalBase) * 100);
+  const pro = isProUser();
+  const supsCard = pro
+    ? (supps.length
+      ? `<div class="db-sups-row">${supps.map((s, i) => `<div class="db-sup" title="${s.nombre} — ${s.dosis}"><span class="db-sup-circle">${ICON(supIcons[i % supIcons.length], 18)}</span><span class="db-sup-name">${s.nombre}</span></div>`).join('')}</div>`
+      : '<p class="db-sub">Sin suplementos en tu plan.</p>')
+    : `<div class="db-lock">${ICON('lock', 16)} La suplementación está disponible en <b>Pro</b>.<br><a href="dashboard.html#upgrade" class="db-lock-link">Desbloquear a Pro →</a></div>`;
 
   document.getElementById('dashBento').innerHTML = `
     <!-- 01 · Tu objetivo + move ring -->
@@ -327,15 +343,11 @@ function renderOverview() {
     <!-- 06 · Tu suplementación -->
     <div class="db-card db-sups">
       <span class="db-label">${ICON('supplement', 13)} Suplementación</span>
-      ${supps.length ? `
-        <div class="db-sups-row">
-          ${supps.map((s, i) => `
-            <div class="db-sup" title="${s.nombre} — ${s.dosis}">
-              <span class="db-sup-circle">${ICON(supIcons[i % supIcons.length], 18)}</span>
-              <span class="db-sup-name">${s.nombre}</span>
-            </div>`).join('')}
-        </div>` : '<p class="db-sub">Sin suplementos en tu plan.</p>'}
+      ${supsCard}
     </div>
+
+    <!-- 07 · Actualizar a Pro (free) -->
+    ${pro ? '' : `<a href="dashboard.html#upgrade" class="db-upgrade-card">${ICON('sparkles', 16)} Actualiza a <b>Pro · 14 €/mes</b> para desbloquear todo el plan →</a>`}
   `;
 }
 
@@ -356,6 +368,19 @@ let calSelectedDay = null;
 let calOpenMeal = null;
 
 function renderNutritionTab() {
+  // El calendario detallado de comidas es exclusivo de Pro. En free mostramos
+  // el bloqueo ("a oscuras": ve kcal del día pero no el detalle de comidas).
+  if (!isProUser()) {
+    document.getElementById('calWeek').innerHTML = '';
+    document.getElementById('calDetail').innerHTML = `
+      <div class="db-lock" style="padding:44px 24px;text-align:center;">
+        ${ICON('lock', 24)}
+        <div style="font-size:18px;font-weight:800;margin:12px 0 4px;">Nutrición detallada solo en Pro</div>
+        <div style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">Actualiza a <b>Pro · 14 €/mes</b> para ver y personalizar el menú completo de cada día.</div>
+        <a href="dashboard.html#upgrade" class="btn-gold">Desbloquear a Pro →</a>
+      </div>`;
+    return;
+  }
   calMenu = JSON.parse(JSON.stringify(planData.weekly_menu || {}));
   calOriginal = JSON.parse(JSON.stringify(calMenu));
   const today = CAL_DAYS[(new Date().getDay() + 6) % 7];
@@ -574,6 +599,17 @@ function equipmentLabel(eq) {
 
 // ─── Supplements Tab ─────────────────────────────────────────
 function renderSupplementsTab() {
+  // La suplementación es exclusiva de Pro
+  if (!isProUser()) {
+    document.getElementById('suppsGrid').innerHTML = `
+      <div class="db-lock" style="padding:40px 24px;text-align:center;grid-column:1/-1;">
+        ${ICON('lock', 24)}
+        <div style="font-size:18px;font-weight:800;margin:12px 0 4px;">Suplementación solo en Pro</div>
+        <div style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">Descubre qué suplementos encajan con tu plan actualizando a <b>Pro · 14 €/mes</b>.</div>
+        <a href="dashboard.html#upgrade" class="btn-gold">Desbloquear a Pro →</a>
+      </div>`;
+    return;
+  }
   const supps = planData?.supplements || [];
   const icons = ['supplement', 'leaf', 'zap', 'flask', 'droplet', 'seedling', 'shield'];
   document.getElementById('suppsGrid').innerHTML = supps.map((s, i) => `
@@ -629,8 +665,8 @@ function renderSubscriptionTab() {
     </div>
     <div style="margin-top:28px;display:flex;gap:16px;flex-wrap:wrap;align-items:center;">
       <div style="flex:1;">
-        <div style="font-size:22px;font-weight:800;color:var(--gold);">25 €<span style="font-size:14px;color:var(--text-muted);font-weight:400;">/mes</span></div>
-        <div style="font-size:12px;color:var(--text-dim);margin-top:4px;">Plan NutroVia Personalizado · Cancela cuando quieras</div>
+        <div style="font-size:22px;font-weight:800;color:var(--gold);">14 €<span style="font-size:14px;color:var(--text-muted);font-weight:400;">/mes</span></div>
+        <div style="font-size:12px;color:var(--text-dim);margin-top:4px;">Plan NutroVia Pro · Cancela cuando quieras</div>
       </div>
       ${status !== 'cancelled' && status !== 'expired' ? `
         <button class="btn-cancel" onclick="handleCancel()">Cancelar suscripción</button>

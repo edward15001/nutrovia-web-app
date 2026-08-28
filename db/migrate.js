@@ -22,6 +22,9 @@ const MIGRATIONS = [
   `ALTER TABLE nutrition_plans ADD COLUMN IF NOT EXISTS notas_dieta JSONB NOT NULL DEFAULT '[]'`,
   `ALTER TABLE nutrition_plans ADD COLUMN IF NOT EXISTS consejos_generales JSONB NOT NULL DEFAULT '[]'`,
 
+  // Contador de veces que el usuario ha regenerado su plan (restringe al tier free)
+  `ALTER TABLE users ADD COLUMN IF NOT EXISTS plan_regeneration_count INTEGER NOT NULL DEFAULT 0`,
+
   // Sólo un registro de cuestionario y un plan por usuario (para el upsert ON CONFLICT).
   // PostgreSQL no soporta ADD CONSTRAINT IF NOT EXISTS, así que comprobamos pg_constraint.
   `DO $$ BEGIN

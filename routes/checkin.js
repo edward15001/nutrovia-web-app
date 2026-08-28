@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db/db');
 const authMiddleware = require('../middleware/auth');
+const accessService = require('../services/accessService');
 
 // Días sin actividad (registrar valores o responder al check-in) antes de preguntar
 const CHECKIN_INTERVAL_DAYS = parseInt(process.env.CHECKIN_INTERVAL_DAYS || '7', 10);
@@ -10,9 +11,14 @@ const MS_PER_DAY = 24 * 60 * 60 * 1000;
 /**
  * Calcula si el usuario tiene pendiente el check-in semanal de progreso.
  * Se considera "actividad" actualizar los valores del cuestionario o
- * responder al check-in anterior.
+ * responder al check-in anterior. El check-in es exclusivo de Pro.
  */
 async function getCheckinState(userId) {
+    const access = await accessService.getUserAccess(userId);
+    if (!access.isPro) {
+        return { has_plan: false, due: false, pro_only: true };
+    }
+
     const result = await db.query(`
         SELECT qa.updated_at, qa.created_at, u.last_checkin_at
         FROM questionnaire_answers qa
@@ -56,6 +62,12 @@ router.get('/status', authMiddleware, async (req, res) => {
 //  - all_good:    todo va bien → no se vuelve a preguntar durante 7 días
 //  - want_change: quiere actualizar sus valores → se le lleva al cuestionario
 router.post('/respond', authMiddleware, async (req, res) => {
+    // El check-in semanal es exclusivo de Pro
+    const access = await accessService.getUserAccess(req.user.id);
+    if (!access.isPro) {
+        return res.status(403).json({ error: 'El check-in semanal es una función de Pro.', code: 'PRO_ONLY' });
+    }
+
     const { response } = req.body;
     if (!['all_good', 'want_change'].includes(response)) {
         return res.status(400).json({ error: 'Respuesta de check-in inválida' });
