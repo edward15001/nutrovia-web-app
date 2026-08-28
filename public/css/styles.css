@@ -4840,6 +4840,61 @@ html[data-theme='light'] .checkin-modal {
   color: var(--gold);
 }
 
+.subscription-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--border);
+}
+
+.subscription-title {
+  margin: 8px 0 6px;
+  font-size: 26px;
+  line-height: 1.1;
+}
+
+.subscription-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.plan-comparison {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 22px;
+}
+
+.plan-option {
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--bg);
+}
+
+.plan-option--current { border-color: var(--border-gold); }
+.plan-option--pro { background: linear-gradient(145deg, rgba(201,168,76,.14), var(--bg)); }
+.plan-option-top { display:flex; justify-content:space-between; align-items:center; gap:10px; }
+.plan-name { font-size: 17px; font-weight: 800; }
+.plan-current { color: var(--gold); font: 700 10px var(--font-mono); letter-spacing: 1px; }
+.plan-price { margin-top: 14px; color: var(--gold); font-size: 26px; font-weight: 900; }
+.plan-price span { color: var(--text-muted); font-size: 12px; font-weight: 400; }
+.plan-features { display:flex; flex-direction:column; gap:9px; margin:18px 0 0; padding:0; list-style:none; color:var(--text); font-size:13px; }
+.plan-features li::before { content:'✓'; color:var(--gold); margin-right:8px; font-weight:800; }
+.plan-features li.muted { color:var(--text-dim); }
+.plan-features li.muted::before { content:'—'; color:var(--text-dim); }
+.subscription-details { margin-top: 22px; padding-top: 20px; border-top: 1px solid var(--border); }
+.subscription-details-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px 24px; margin-top:14px; }
+.subscription-detail-row { display:flex; justify-content:space-between; gap:12px; padding:10px 0; border-bottom:1px solid var(--border); font-size:12px; }
+.subscription-detail-row span { color:var(--text-muted); }
+.subscription-detail-row strong { text-align:right; }
+
 /* Responsive del bento del dashboard */
 @media (max-width: 1100px) {
   .dash-bento {
@@ -4852,6 +4907,9 @@ html[data-theme='light'] .checkin-modal {
 }
 
 @media (max-width: 720px) {
+  .subscription-head { flex-direction: column; }
+  .plan-comparison { grid-template-columns: 1fr; }
+  .subscription-details-grid { grid-template-columns: 1fr; }
   .dash-bento {
     grid-template-columns: 1fr;
   }

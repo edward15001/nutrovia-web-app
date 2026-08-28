@@ -678,29 +678,51 @@ function renderSubscriptionTab() {
     trial: '#d9a441', active: '#4caf50', cancelled: '#e05c4c', expired: '#8a8a8a', past_due: '#e07b39'
   };
 
+  const isFree = status === 'cancelled' || status === 'expired';
+  const detailRows = [
+    trial_start && ['Inicio de prueba', fmt(trial_start)],
+    trial_end && ['Fin de prueba', fmt(trial_end)],
+    cancel_window_end && ['Puedes cancelar hasta', fmt(cancel_window_end)],
+    next_billing_date && ['Próximo cobro', fmt(next_billing_date)],
+    charge_day && ['Día de cobro', `Día ${charge_day}`],
+    cancelled_at && ['Cancelada el', fmt(cancelled_at)],
+  ].filter(Boolean);
+
   document.getElementById('subDetail').innerHTML = `
-    <div class="dash-card-label">Detalles de suscripción</div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:20px;">
-      <div class="date-badge"><span class="date-label">Estado</span><span class="date-val" style="font-size:13px;">${statusDot[status] ? '<span class="status-dot" style="background:' + statusDot[status] + '"></span>' : ''}${statusLabels[status] || status}</span></div>
-      ${trial_start ? `<div class="date-badge"><span class="date-label">Inicio prueba</span><span class="date-val">${fmt(trial_start)}</span></div>` : ''}
-      ${trial_end ? `<div class="date-badge"><span class="date-label">Fin prueba</span><span class="date-val">${fmt(trial_end)}</span></div>` : ''}
-      ${cancel_window_end ? `<div class="date-badge"><span class="date-label">Cancela antes del</span><span class="date-val">${fmt(cancel_window_end)}</span></div>` : ''}
-      ${next_billing_date ? `<div class="date-badge"><span class="date-label">Próximo cobro</span><span class="date-val">${fmt(next_billing_date)}</span></div>` : ''}
-      ${charge_day ? `<div class="date-badge"><span class="date-label">Día de cobro mensual</span><span class="date-val">Día ${charge_day}</span></div>` : ''}
-      ${cancelled_at ? `<div class="date-badge"><span class="date-label">Cancelada el</span><span class="date-val">${fmt(cancelled_at)}</span></div>` : ''}
-    </div>
-    <div style="margin-top:28px;display:flex;gap:16px;flex-wrap:wrap;align-items:center;">
-      <div style="flex:1;">
-        <div style="font-size:22px;font-weight:800;color:var(--gold);">14 €<span style="font-size:14px;color:var(--text-muted);font-weight:400;">/mes</span></div>
-        <div style="font-size:12px;color:var(--text-dim);margin-top:4px;">Plan NutroVia Pro · Cancela cuando quieras</div>
+    <div class="subscription-head">
+      <div>
+        <span class="dash-card-label">Mi suscripción</span>
+        <h2 class="subscription-title">${isFree ? 'Plan gratuito' : 'NutroVia Pro'}</h2>
+        <p class="subscription-status"><span class="status-dot" style="background:${statusDot[status] || '#8a8a8a'}"></span>${statusLabels[status] || status}</p>
       </div>
-      ${status !== 'cancelled' && status !== 'expired' ? `
-        <button class="btn-cancel" onclick="handleCancel()">Cancelar suscripción</button>
-      ` : `
-        <a href="#" onclick="openUpgrade();return false;" class="btn-gold">Volver a suscribirme</a>
-      `}
+      ${!isFree ? `<button class="btn-cancel" onclick="handleCancel()">Cancelar suscripción</button>` : ''}
     </div>
 
+    <div class="plan-comparison">
+      <div class="plan-option ${isFree ? 'plan-option--current' : ''}">
+        <div class="plan-option-top"><span class="plan-name">Free</span>${isFree ? '<span class="plan-current">ACTUAL</span>' : ''}</div>
+        <div class="plan-price">0 €<span>/ siempre</span></div>
+        <ul class="plan-features">
+          <li>Plan personalizado</li>
+          <li>Calorías y macros</li>
+          <li>Regeneraciones limitadas</li>
+          <li class="muted">Menú detallado y suplementos</li>
+        </ul>
+      </div>
+      <div class="plan-option plan-option--pro ${!isFree ? 'plan-option--current' : ''}">
+        <div class="plan-option-top"><span class="plan-name">Pro</span><span class="plan-current">14 €/MES</span></div>
+        <div class="plan-price">14 €<span>/ mes</span></div>
+        <ul class="plan-features">
+          <li>Menú semanal detallado</li>
+          <li>IA y suplementación</li>
+          <li>Check-ins de progreso</li>
+          <li>Regeneraciones ilimitadas</li>
+        </ul>
+        ${isFree ? '<button class="btn-gold" onclick="openUpgrade()">Actualizar a Pro →</button>' : ''}
+      </div>
+    </div>
+
+    ${detailRows.length ? `<div class="subscription-details"><span class="dash-card-label">Detalles</span><div class="subscription-details-grid">${detailRows.map(([label, value]) => `<div class="subscription-detail-row"><span>${label}</span><strong>${value}</strong></div>`).join('')}</div></div>` : ''}
     ${renderPaymentHistory()}
   `;
 }
