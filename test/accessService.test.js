@@ -47,7 +47,7 @@ describe('accessService', () => {
       assert.strictEqual(access.hasSupplements, false);
       assert.strictEqual(access.hasCheckins, false);
       assert.strictEqual(access.hasMealDetail, false);
-      assert.strictEqual(access.maxRegenerations, 1);
+      assert.strictEqual(access.maxRegenerations, 5);
     });
 
     test('suscripción active → tier pro con todo desbloqueado', async () => {
@@ -83,7 +83,7 @@ describe('accessService', () => {
     });
 
     test('free ha agotado el límite → no puede regenerar', async () => {
-      const db = makeDb({ subscriptions: [], users: [{ plan_regeneration_count: 1 }] });
+      const db = makeDb({ subscriptions: [], users: [{ plan_regeneration_count: 5 }] });
       const access = await loadAccess(db).getUserAccess('u1');
       assert.strictEqual(access.canRegenerate, false);
     });

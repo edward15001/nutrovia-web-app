@@ -11,7 +11,8 @@ const ACCESS = {
   free: {
     label: 'Free',
     // Máximo de veces que puede regenerar su plan al cambiar el cuestionario
-    maxRegenerations: 1,
+    // (generoso para no frustrar el cambio de plan; el Pro es ilimitado)
+    maxRegenerations: 5,
     // Generación de menú/entrenamiento/suplementos por IA (solo motor determinista)
     hasIA: false,
     // Lista de suplementación (Pro only)

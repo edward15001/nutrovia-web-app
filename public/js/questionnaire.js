@@ -267,9 +267,13 @@ async function registerUser() {
             authToken = localStorage.getItem('nutrovia_token');
             await submitQuestionnaire();
             if (updateMode) {
+                lastAccess = null;
                 document.getElementById('successText').innerHTML =
                     'Hemos actualizado tu plan con tus nuevos datos. Tu menú semanal, tu rutina de entrenamiento y tu suplementación ya se han recalculado.';
-                goToStep(8);
+                document.querySelectorAll('.quiz-card').forEach(card => { card.style.display = 'none'; });
+                currentStep = 8;
+                document.getElementById('step-8').style.display = 'block';
+                updateProgress();
             } else {
                 // Re-suscripción: ir a guardar tarjeta
                 goToStep(7);
@@ -279,7 +283,17 @@ async function registerUser() {
             console.error(err);
             const alertEl = document.getElementById('alert-6');
             if (alertEl) {
-                alertEl.textContent = 'Hubo un error actualizando tus datos. Inténtalo de nuevo.';
+                // Mostrar el error real del backend si existe (p.ej. límite de
+                // regeneraciones o validación), en vez de un mensaje genérico.
+                let msg = 'Hubo un error actualizando tus datos. Inténtalo de nuevo.';
+                try {
+                    const parsed = JSON.parse(err.message);
+                    if (parsed && parsed.error) msg = parsed.error;
+                    else if (parsed && parsed.errors && parsed.errors.length) {
+                        msg = parsed.errors.map(e => e.msg).join(' · ');
+                    }
+                } catch (_) { /* el mensaje no es JSON: se usa el genérico */ }
+                alertEl.textContent = msg;
                 alertEl.style.display = 'block';
             }
         } finally {
