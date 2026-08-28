@@ -1,4 +1,4 @@
-// Servidor estático local + proxy de /api/* a producción (nutrovia.vercel.app)
+// Servidor estático local + proxy de /api/* a producción (nutrovia.es)
 // Uso: node _static_server.js  → http://localhost:8123
 const http = require('http');
 const https = require('https');
@@ -7,7 +7,7 @@ const path = require('path');
 
 const PORT = process.env.PORT || 8123;
 const ROOT = path.join(__dirname, 'public');
-const API_HOST = 'nutrovia.vercel.app';
+const API_HOST = 'nutrovia.es';
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
