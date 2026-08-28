@@ -12,10 +12,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css?v=3">
-    <script>try{if(localStorage.getItem('nv-theme')==='light'||(!localStorage.getItem('nv-theme')&&matchMedia('(prefers-color-scheme: light)').matches))document.documentElement.setAttribute('data-theme','light')}catch(e){}</script>
+    <script>document.documentElement.setAttribute('data-theme','dark')</script>
     <script src="https://js.stripe.com/v3/"></script>
     <script src="js/icons.js"></script>
-    <script src="js/theme.js"></script>
+
     <script>
         window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
     </script>
@@ -75,7 +75,6 @@
                     <p id="dashDate"></p>
                 </div>
                 <div style="display:flex;gap:10px;align-items:center;">
-                    <button class="theme-toggle" data-theme-toggle aria-label="Cambiar a modo claro"><span data-theme-icon></span></button>
                     <button onclick="window.location.href='questionnaire.html?update=1'"
                         style="background:var(--bg);border:1px solid var(--border-gold);color:var(--gold);padding:10px 16px;border-radius:8px;font-size:13px;font-weight:600;font-family:var(--font);cursor:pointer;transition:var(--transition);"
                         onmouseover="this.style.background='rgba(201,168,76,0.08)'" onmouseout="this.style.background='var(--bg)'">
