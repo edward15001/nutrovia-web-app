@@ -25,6 +25,42 @@ const MIGRATIONS = [
   // Contador de veces que el usuario ha regenerado su plan (restringe al tier free)
   `ALTER TABLE users ADD COLUMN IF NOT EXISTS plan_regeneration_count INTEGER NOT NULL DEFAULT 0`,
 
+  // Diario alimentario (app móvil): comidas registradas con foto u otros métodos
+  `CREATE TABLE IF NOT EXISTS food_log (
+    id            UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id       UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    meal_date     DATE NOT NULL DEFAULT CURRENT_DATE,
+    meal_type     VARCHAR(20),
+    name          VARCHAR(200),
+    calories      NUMERIC(8,2) NOT NULL DEFAULT 0,
+    protein_g     NUMERIC(8,2) NOT NULL DEFAULT 0,
+    carbs_g       NUMERIC(8,2) NOT NULL DEFAULT 0,
+    fat_g         NUMERIC(8,2) NOT NULL DEFAULT 0,
+    source        VARCHAR(20) NOT NULL DEFAULT 'camera',
+    matches_plan  VARCHAR(10),
+    feedback      VARCHAR(500),
+    created_at    TIMESTAMPTZ DEFAULT NOW()
+  )`,
+  `CREATE INDEX IF NOT EXISTS idx_food_log_user_date ON food_log(user_id, meal_date)`,
+
+  // Diario alimentario de la app móvil (analizador por cámara + descuento del día)
+  `CREATE TABLE IF NOT EXISTS food_log (
+    id            UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id       UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    meal_date     DATE NOT NULL DEFAULT CURRENT_DATE,
+    meal_type     VARCHAR(20),
+    name          VARCHAR(200),
+    calories      NUMERIC(8,2) NOT NULL DEFAULT 0,
+    protein_g     NUMERIC(8,2) NOT NULL DEFAULT 0,
+    carbs_g       NUMERIC(8,2) NOT NULL DEFAULT 0,
+    fat_g         NUMERIC(8,2) NOT NULL DEFAULT 0,
+    source        VARCHAR(20) NOT NULL DEFAULT 'camera',
+    matches_plan  VARCHAR(10),
+    feedback      VARCHAR(500),
+    created_at    TIMESTAMPTZ DEFAULT NOW()
+  )`,
+  `CREATE INDEX IF NOT EXISTS idx_food_log_user_date ON food_log(user_id, meal_date)`,
+
   // Sólo un registro de cuestionario y un plan por usuario (para el upsert ON CONFLICT).
   // PostgreSQL no soporta ADD CONSTRAINT IF NOT EXISTS, así que comprobamos pg_constraint.
   `DO $$ BEGIN

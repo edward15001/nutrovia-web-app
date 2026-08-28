@@ -108,6 +108,32 @@ CREATE TABLE IF NOT EXISTS payment_history (
     created_at      TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- ─── Registro de comidas (diario alimentario / analizador móvil) ──
+CREATE TABLE IF NOT EXISTS food_log (
+    id            UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id       UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    meal_date     DATE NOT NULL DEFAULT CURRENT_DATE,
+    -- Comida del plan a la que corresponde (desayuno/almuerzo/comida/merienda/cena)
+    -- o NULL si es un extra fuera del plan
+    meal_type     VARCHAR(20),
+    -- Alimento reconocido (nombre corto) y macros estimados
+    name          VARCHAR(200),
+    calories      NUMERIC(8,2) NOT NULL DEFAULT 0,
+    protein_g     NUMERIC(8,2) NOT NULL DEFAULT 0,
+    carbs_g       NUMERIC(8,2) NOT NULL DEFAULT 0,
+    fat_g         NUMERIC(8,2) NOT NULL DEFAULT 0,
+    -- Cómo se registró (camera / barcode / manual)
+    source        VARCHAR(20) NOT NULL DEFAULT 'camera',
+    -- Resultado de la comparación con el plan ("dentro" / "fuera" / null)
+    matches_plan  VARCHAR(10),
+    -- Mensaje de la IA sobre si cuadra o no con el plan
+    feedback      VARCHAR(500),
+    created_at    TIMESTAMPTZ DEFAULT NOW(),
+    CONSTRAINT food_log_matches_check CHECK (matches_plan IN ('dentro', 'fuera') OR matches_plan IS NULL)
+);
+
+CREATE INDEX IF NOT EXISTS idx_food_log_user_date ON food_log(user_id, meal_date);
+
 -- ─── Índices ─────────────────────────────────────────────────
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_subscriptions_status ON subscriptions(status);
