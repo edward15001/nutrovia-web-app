@@ -347,7 +347,19 @@ async function registerUser() {
         console.error(err);
         const alertEl = document.getElementById('alert-6') || document.getElementById('alert-5');
         if (alertEl) {
-            alertEl.textContent = 'Hubo un error inesperado. Inténtalo de nuevo.';
+            let msg = 'Hubo un error inesperado. Inténtalo de nuevo.';
+            try {
+                const parsed = JSON.parse(err.message);
+                if (parsed && parsed.error) msg = parsed.error;
+                else if (parsed && parsed.errors && parsed.errors.length) {
+                    msg = parsed.errors.map(e => e.msg).join(' · ');
+                }
+            } catch (_) {
+                if (err && err.message && err.message !== 'Failed to fetch') {
+                    msg = err.message;
+                }
+            }
+            alertEl.textContent = msg;
             alertEl.style.display = 'block';
         }
     } finally {

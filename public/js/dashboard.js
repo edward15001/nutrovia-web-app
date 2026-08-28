@@ -24,12 +24,35 @@ function isProUser() {
 // ═══ Init ════════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', async () => {
   initTopbar();
-  await Promise.all([loadPlan(), loadSubscription(), loadPaymentHistory()]);
-  renderDashboard();
-  hideLoading();
-  // Check-in semanal: preguntar si lleva 7+ días sin actividad
-  await checkCheckin();
+  try {
+    await Promise.all([loadPlan(), loadSubscription(), loadPaymentHistory()]);
+    renderDashboard();
+    // Check-in semanal: preguntar si lleva 7+ días sin actividad
+    await checkCheckin();
+  } catch (err) {
+    console.error('Error inicializando el dashboard:', err);
+    showDashboardError(err?.message || 'No se pudo cargar tu panel. Recarga la página e inténtalo de nuevo.');
+  } finally {
+    hideLoading();
+  }
 });
+
+const DASHBOARD_REQUEST_TIMEOUT_MS = 15000;
+
+async function fetchDashboard(path, options = {}) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), DASHBOARD_REQUEST_TIMEOUT_MS);
+  try {
+    return await fetch(path, { ...options, signal: controller.signal });
+  } catch (err) {
+    if (err?.name === 'AbortError') {
+      throw new Error('La carga está tardando demasiado. Comprueba tu conexión e inténtalo de nuevo.');
+    }
+    throw err;
+  } finally {
+    clearTimeout(timer);
+  }
+}
 
 function initTopbar() {
   const hour = new Date().getHours();
@@ -56,7 +79,7 @@ function initTopbar() {
 // ═══ Cargar plan ════════════════════════════════════════════
 async function loadPlan() {
   try {
-    const res = await fetch('/api/plan', {
+    const res = await fetchDashboard('/api/plan', {
       headers: { Authorization: `Bearer ${token}` }
     });
     if (!res.ok) {
@@ -70,25 +93,27 @@ async function loadPlan() {
     planData = await res.json();
   } catch (err) {
     console.error(err);
+    throw err;
   }
 }
 
 // ═══ Cargar suscripción ══════════════════════════════════════
 async function loadSubscription() {
   try {
-    const res = await fetch('/api/subscription/status', {
+    const res = await fetchDashboard('/api/subscription/status', {
       headers: { Authorization: `Bearer ${token}` }
     });
     subData = await res.json();
   } catch (err) {
     console.error('Error cargando suscripción:', err);
+    subData = { status: 'none' };
   }
 }
 
 // ═══ Cargar historial de pagos ═══════════════════════════════
 async function loadPaymentHistory() {
   try {
-    const res = await fetch('/api/subscription/history', {
+    const res = await fetchDashboard('/api/subscription/history', {
       headers: { Authorization: `Bearer ${token}` }
     });
     if (!res.ok) return;
@@ -96,6 +121,7 @@ async function loadPaymentHistory() {
     paymentHistory = data.payments || [];
   } catch (err) {
     console.error('Error cargando historial de pagos:', err);
+    paymentHistory = [];
   }
 }
 
@@ -810,6 +836,18 @@ function capitalizeFirst(str = '') {
 
 function hideLoading() {
   document.getElementById('loadingOverlay').style.display = 'none';
+}
+
+function showDashboardError(message) {
+  const main = document.querySelector('.dashboard-main');
+  if (!main) return;
+  main.innerHTML = `
+    <div style="text-align:center;padding:80px 24px;">
+      <h2 style="font-size:24px;font-weight:800;margin-bottom:10px;">No se pudo cargar el panel</h2>
+      <p style="color:var(--text-muted);margin-bottom:28px;">${message}</p>
+      <button class="btn-gold-large" onclick="window.location.reload()">Reintentar</button>
+    </div>
+  `;
 }
 
 function showNoPlanMessage() {
