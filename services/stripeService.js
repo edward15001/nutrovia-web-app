@@ -23,7 +23,7 @@ async function createCustomer(email, name) {
 
 /**
  * Crea un SetupIntent para guardar la tarjeta sin cobrar
- * El cobro real se activa al finalizar la prueba gratuita (7 días)
+ * El cobro real ocurre al crear la suscripción (cobro inmediato, sin trial)
  * Sin clave configurada devuelve un intent mock (desarrollo local).
  */
 async function createSetupIntent(customerId) {
@@ -100,11 +100,11 @@ async function getOrCreatePrice() {
 }
 
 /**
- * Crea una suscripción en Stripe con prueba gratuita (7 días por defecto)
- * El primer cobro ocurre al finalizar la prueba si el usuario no cancela
+ * Crea una suscripción en Stripe con cobro inmediato (sin prueba gratuita):
+ * la primera factura de 14 € se cobra al momento de activar Pro.
  * Sin clave configurada devuelve un ID mock (desarrollo local).
  */
-async function createSubscription(customerId, trialEndTimestamp) {
+async function createSubscription(customerId) {
     if (!stripe) {
         console.warn('[Stripe] No configurado. Usando suscripción mock.');
         return { id: `sub_mock_${Date.now()}` };
@@ -113,7 +113,6 @@ async function createSubscription(customerId, trialEndTimestamp) {
     const subscription = await stripe.subscriptions.create({
         customer: customerId,
         items: [{ price: priceId }],
-        trial_end: trialEndTimestamp, // Unix timestamp del fin de la prueba
         payment_behavior: 'default_incomplete',
         expand: ['latest_invoice.payment_intent'],
     });

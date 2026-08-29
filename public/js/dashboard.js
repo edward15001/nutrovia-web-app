@@ -156,31 +156,31 @@ function renderStatusBanner() {
   if (subData.status === 'trial') {
     if (subData.phase === 'prueba_gratuita') {
       banner.className = 'status-banner trial';
-      badge.textContent = 'PRUEBA GRATUITA';
-      title.textContent = `Quedan ${subData.days_remaining_trial} días de prueba gratis`;
-      subtitle.textContent = `Sin coste hasta el ${fmt(subData.trial_end)}. Si no te gusta, cancela y no se te cobra nada.`;
-      action.innerHTML = `<button class="btn-cancel" onclick="handleCancel()">Cancelar suscripción</button>`;
+      badge.textContent = 'PLAN PRO ACTIVO';
+      title.textContent = subData.trial_end ? `Próximo cobro: ${fmt(subData.trial_end)}` : 'Pro activo';
+      subtitle.textContent = '14 € · Pago mensual. Deja de pagar cuando quieras y vuelves al plan gratuito.';
+      action.innerHTML = `<button class="btn-cancel" onclick="handleCancel()">Dejar de pagar</button>`;
     } else if (subData.phase === 'ventana_cancelacion') {
       banner.className = 'status-banner warning';
-      badge.textContent = 'PRUEBA TERMINADA';
-      title.textContent = 'Tu prueba gratuita ha terminado';
-      subtitle.textContent = 'Si no cancelas, tu suscripción de 14 €/mes queda activa. Cancela cuando quieras.';
-      action.innerHTML = `<button class="btn-cancel" onclick="handleCancel()">Cancelar ahora</button>`;
+      badge.textContent = 'PRO ACTIVO';
+      title.textContent = 'Tu plan Pro está activo';
+      subtitle.textContent = '14 € · Pago mensual. Deja de pagar cuando quieras y vuelves al plan gratuito.';
+      action.innerHTML = `<button class="btn-cancel" onclick="handleCancel()">Dejar de pagar</button>`;
     }
   } else if (subData.status === 'active') {
     banner.className = 'status-banner active';
-    badge.textContent = 'SUSCRIPCIÓN ACTIVA';
-    title.textContent = `Próximo cobro: ${fmt(subData.next_billing_date)}`;
-    subtitle.textContent = '14 € · Pago mensual automático. Cancela cuando quieras.';
-    action.innerHTML = `<button class="btn-cancel" onclick="showTab('subscription', null)">Ver detalles</button>`;
-  } else if (subData.status === 'cancelled') {
-    banner.className = 'status-banner cancelled';
-    badge.textContent = 'CANCELADA';
-    title.textContent = 'Suscripción cancelada';
-    subtitle.textContent = 'Sin cargos futuros. Puedes volver a suscribirte cuando quieras.';
-    action.innerHTML = '';
+    badge.textContent = 'PLAN PRO ACTIVO';
+    title.textContent = subData.next_billing_date ? `Próximo cobro: ${fmt(subData.next_billing_date)}` : 'Pro activo';
+    subtitle.textContent = '14 € · Pago mensual. Deja de pagar cuando quieras y vuelves al plan gratuito.';
+    action.innerHTML = `<button class="btn-cancel" onclick="showTab('subscription', null)">Ver suscripción</button>`;
+  } else if (subData.status === 'cancelled' || subData.status === 'expired') {
+    banner.className = 'status-banner free';
+    badge.textContent = 'PLAN GRATUITO';
+    title.textContent = 'Estás en el plan gratuito';
+    subtitle.textContent = 'Gratis para siempre. Actualiza a Pro cuando quieras.';
+    action.innerHTML = `<button class="btn-gold" onclick="openUpgrade()">Actualizar a Pro</button>`;
   } else if (subData.status === 'past_due') {
-    banner.className = 'status-banner cancelled';
+    banner.className = 'status-banner warning';
     badge.textContent = 'PAGO PENDIENTE';
     title.textContent = 'Pago fallido';
     subtitle.textContent = 'Actualiza tu método de pago para continuar con tu plan.';
@@ -661,28 +661,24 @@ function renderSubscriptionTab() {
     return;
   }
 
-  const {
-    status, trial_start, trial_end, cancel_window_end,
-    next_billing_date, charge_day, cancelled_at
-  } = subData;
+  const { status } = subData;
 
+  // El usuario no cancela nada: o decide no pagar (plan gratuito, gratis para
+  // siempre) o decide pagar (Pro). Los estados 'cancelled'/'expired' del backend
+  // se muestran como el plan gratuito.
   const statusLabels = {
-    trial: 'Período de prueba',
+    trial: 'Prueba',
     active: 'Activa',
-    cancelled: 'Cancelada',
-    expired: 'Expirada',
+    cancelled: 'Sin pago',
+    expired: 'Sin pago',
     past_due: 'Pago pendiente',
   };
 
   const statusDot = {
-    trial: '#d9a441', active: '#4caf50', cancelled: '#e05c4c', expired: '#8a8a8a', past_due: '#e07b39'
+    trial: '#d9a441', active: '#4caf50', cancelled: '#8a8a8a', expired: '#8a8a8a', past_due: '#e07b39'
   };
 
   const isFree = status === 'cancelled' || status === 'expired';
-  const detailRows = [
-    !isFree && next_billing_date && ['Próximo cobro', fmt(next_billing_date)],
-    !isFree && charge_day && ['Día de cobro', `Día ${charge_day}`],
-  ].filter(Boolean);
 
   document.getElementById('subDetail').innerHTML = `
     <div class="subscription-head">
@@ -691,7 +687,7 @@ function renderSubscriptionTab() {
         <h2 class="subscription-title">${isFree ? 'Plan gratuito' : 'NutroVia Pro'}</h2>
         <p class="subscription-status"><span class="status-dot" style="background:${statusDot[status] || '#8a8a8a'}"></span>${statusLabels[status] || status}</p>
       </div>
-      ${!isFree ? `<button class="btn-cancel" onclick="handleCancel()">Cancelar suscripción</button>` : ''}
+      ${!isFree ? `<button class="btn-cancel" onclick="handleCancel()">Dejar de pagar</button>` : ''}
     </div>
 
     <div class="plan-comparison">
@@ -718,7 +714,6 @@ function renderSubscriptionTab() {
       </div>
     </div>
 
-    ${detailRows.length ? `<div class="subscription-details"><span class="dash-card-label">Detalles</span><div class="subscription-details-grid">${detailRows.map(([label, value]) => `<div class="subscription-detail-row"><span>${label}</span><strong>${value}</strong></div>`).join('')}</div></div>` : ''}
     ${renderPaymentHistory()}
   `;
 }
@@ -753,9 +748,9 @@ function renderPaymentHistory() {
   `;
 }
 
-// ═══ Cancelar suscripción ════════════════════════════════════
+// ═══ Dejar de pagar ══════════════════════════════════════════
 async function handleCancel() {
-  if (!confirm('¿Estás seguro de que quieres cancelar tu suscripción? Perderás acceso al plan.')) return;
+  if (!confirm('¿Quieres dejar de pagar y volver al plan gratuito?')) return;
 
   try {
     const res = await fetch('/api/subscription/cancel', {
@@ -765,11 +760,11 @@ async function handleCancel() {
     const data = await res.json();
 
     if (!res.ok) {
-      alert(data.error || 'Error al cancelar');
+      alert(data.error || 'Error al dejar de pagar');
       return;
     }
 
-    alert(`Suscripción cancelada. Fecha efectiva: ${fmt(data.effective_date)}`);
+    alert('Has vuelto al plan gratuito. Puedes actualizar a Pro cuando quieras.');
     await loadSubscription();
     renderStatusBanner();
     renderSubscriptionTab();
@@ -984,7 +979,7 @@ async function startProUpgrade() {
       errEl.textContent = error.message;
       errEl.style.display = 'block';
       btn.disabled = false;
-      btn.textContent = 'Empezar prueba gratuita de 7 días';
+      btn.textContent = 'Actualizar a Pro · 14 €/mes';
       return;
     }
 
@@ -1000,10 +995,10 @@ async function startProUpgrade() {
 
     if (!res.ok) {
       // Reintentar dejar el modal listo para un segundo intento
-      errEl.textContent = data.error || 'Error al activar la prueba gratuita.';
+      errEl.textContent = data.error || 'Error al activar Pro.';
       errEl.style.display = 'block';
       btn.disabled = false;
-      btn.textContent = 'Empezar prueba gratuita de 7 días';
+      btn.textContent = 'Actualizar a Pro · 14 €/mes';
       return;
     }
 
@@ -1015,6 +1010,6 @@ async function startProUpgrade() {
     errEl.textContent = 'Hubo un error de conexión. Inténtalo de nuevo.';
     errEl.style.display = 'block';
     btn.disabled = false;
-    btn.textContent = 'Empezar prueba gratuita de 7 días';
+    btn.textContent = 'Actualizar a Pro · 14 €/mes';
   }
 }

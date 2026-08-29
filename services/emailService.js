@@ -34,9 +34,8 @@ const BASE_STYLE = `
 
 const GOLD = '#c9a84c';
 
-// Precio mensual del plan y días de prueba (para los textos de los emails)
+// Precio mensual del plan (para los textos de los emails)
 const PLAN_PRICE_EUR = process.env.PLAN_PRICE_EUR || '14';
-const TRIAL_DAYS = process.env.TRIAL_DAYS || '7';
 
 function emailWrapper(content) {
   return `
@@ -113,82 +112,22 @@ async function sendNewUserNotificationEmail(user) {
   );
 }
 
-/** 1. Bienvenida tras registro */
-async function sendWelcomeEmail(user, trialEndDate, trialDays = TRIAL_DAYS) {
-  const fecha = new Date(trialEndDate).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+/** 1. Bienvenida tras activar Pro */
+async function sendWelcomeEmail(user, nextBillingDate) {
+  const fecha = new Date(nextBillingDate).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
   return sendEmail(
     user.email,
-    '¡Bienvenido/a a NutroVia! Tu prueba gratuita ha comenzado 🌿',
+    '¡Bienvenido/a a NutroVia Pro! Tu plan está activo 🏆',
     `
     <h2 style="color:${GOLD};margin-top:0;">¡Hola, ${user.name}!</h2>
-    <p style="line-height:1.7;color:#ccc;">Nos alegra tenerte en la familia <strong style="color:${GOLD};">NutroVia</strong>. Tu plan personalizado de nutrición y entrenamiento ya está disponible.</p>
+    <p style="line-height:1.7;color:#ccc;">Nos alegra tenerte en la familia <strong style="color:${GOLD};">NutroVia</strong>. Tu plan Pro está activo y tu plan personalizado de nutrición y entrenamiento ya está disponible.</p>
     <div style="background:#1a1a1a;border-left:3px solid ${GOLD};padding:15px 20px;border-radius:4px;margin:20px 0;">
-      <p style="margin:0;color:#aaa;font-size:13px;">🗓 TU PRUEBA GRATUITA</p>
-      <p style="margin:5px 0 0;color:#fff;font-size:16px;font-weight:bold;">Hasta el ${fecha}</p>
+      <p style="margin:0;color:#aaa;font-size:13px;">💳 TU SUSCRIPCIÓN PRO</p>
+      <p style="margin:5px 0 0;color:#fff;font-size:16px;font-weight:bold;">${PLAN_PRICE_EUR} € / mes · Próximo cobro: ${fecha}</p>
     </div>
-    <p style="color:#aaa;font-size:14px;line-height:1.7;">Durante estos ${trialDays} días disfruta de acceso completo a tu plan sin ningún coste. Si no te gusta, cancela antes del ${fecha} y <strong style="color:#fff;">no se te cobrará nada</strong>. Si decides seguir, el plan cuesta <strong style="color:#fff;">${PLAN_PRICE_EUR} € / mes</strong>.</p>
+    <p style="color:#aaa;font-size:14px;line-height:1.7;">Puedes dejar de pagar cuando quieras desde tu panel y volver al plan gratuito. Mientras estés en Pro disfrutas del menú detallado, la suplementación, la IA y los check-ins.</p>
     <div style="text-align:center;margin-top:30px;">
       <a href="${process.env.APP_URL}/dashboard.html" style="background:${GOLD};color:#0d0d0d;padding:14px 32px;text-decoration:none;border-radius:6px;font-weight:bold;font-size:15px;display:inline-block;">Ver mi plan personalizado</a>
-    </div>
-    `
-  );
-}
-
-/** 2. Aviso fin de prueba (último día de prueba) */
-async function sendTrialEndingEmail(user, chargeDate) {
-  const fecha = new Date(chargeDate).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
-  return sendEmail(
-    user.email,
-    'Tu prueba gratuita termina hoy — cancela o se activará tu suscripción',
-    `
-    <h2 style="color:${GOLD};margin-top:0;">Último día de prueba, ${user.name}</h2>
-    <p style="line-height:1.7;color:#ccc;">Esperamos que hayas disfrutado de NutroVia. Tu suscripción se activará automáticamente <strong style="color:#fff;">hoy, ${fecha}</strong>, si no la cancelas antes.</p>
-    <div style="background:#1a1a2a;border:1px solid #c9a84c44;padding:20px;border-radius:8px;margin:20px 0;">
-      <p style="margin:0;color:${GOLD};font-weight:bold;">⏰ HOY ES EL ÚLTIMO DÍA PARA CANCELAR SIN CARGO</p>
-      <p style="margin:10px 0 0;color:#ccc;font-size:14px;">Si decides continuar, hoy mismo se te cobrarán <strong style="color:#fff;">${PLAN_PRICE_EUR} € / mes</strong> el mismo día del mes en que te inscribiste.</p>
-    </div>
-    <div style="text-align:center;margin-top:25px;">
-      <a href="${process.env.APP_URL}/dashboard.html" style="background:#1a1a1a;color:${GOLD};padding:12px 28px;text-decoration:none;border-radius:6px;font-weight:bold;font-size:14px;border:1px solid ${GOLD};display:inline-block;margin-right:10px;">Gestionar suscripción</a>
-    </div>
-    `
-  );
-}
-
-/** 2b. Aviso de fin de prueba (enviado por el webhook de Stripe, ~3 días antes) */
-async function sendTrialWillEndEmail(user, trialEndDate) {
-  const fecha = new Date(trialEndDate).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
-  return sendEmail(
-    user.email,
-    `Tu prueba gratuita de NutroVia termina el ${fecha}`,
-    `
-    <h2 style="color:${GOLD};margin-top:0;">Tu prueba termina pronto, ${user.name}</h2>
-    <p style="line-height:1.7;color:#ccc;">Tu prueba gratuita de NutroVia finaliza el <strong style="color:#fff;">${fecha}</strong>. A partir de ese día se activará tu suscripción de <strong style="color:#fff;">${PLAN_PRICE_EUR} € / mes</strong>.</p>
-    <div style="background:#1a1a2a;border:1px solid #c9a84c44;padding:20px;border-radius:8px;margin:20px 0;">
-      <p style="margin:0;color:${GOLD};font-weight:bold;">⏰ SI NO QUIERES SEGUIR, CANCELA ANTES DEL ${fecha}</p>
-      <p style="margin:10px 0 0;color:#ccc;font-size:14px;">Si cancelas durante la prueba, no se te cobrará nada. Si decides continuar, disfrutarás de tu plan personalizado por ${PLAN_PRICE_EUR} € / mes.</p>
-    </div>
-    <div style="text-align:center;margin-top:25px;">
-      <a href="${process.env.APP_URL}/dashboard.html" style="background:#1a1a1a;color:${GOLD};padding:12px 28px;text-decoration:none;border-radius:6px;font-weight:bold;font-size:14px;border:1px solid ${GOLD};display:inline-block;">Gestionar suscripción</a>
-    </div>
-    `
-  );
-}
-
-/** 3. Aviso cobro inminente (el día antes del primer cargo) */
-async function sendChargeWarningEmail(user, chargeDate) {
-  const fecha = new Date(chargeDate).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
-  return sendEmail(
-    user.email,
-    `Aviso: Mañana se activa tu suscripción NutroVia — ${fecha}`,
-    `
-    <h2 style="color:${GOLD};margin-top:0;">Último aviso, ${user.name}</h2>
-    <p style="line-height:1.7;color:#ccc;">Mañana, <strong style="color:#fff;">${fecha}</strong>, se realizará el primer cargo de <strong style="color:#fff;">${PLAN_PRICE_EUR} €</strong> en tu método de pago registrado.</p>
-    <div style="background:#1a0a0a;border-left:3px solid #c94c4c;padding:15px 20px;border-radius:4px;margin:20px 0;">
-      <p style="margin:0;color:#e88;font-size:13px;">⚠️ Si quieres cancelar, hazlo hoy y no se te cobrará nada</p>
-    </div>
-    <p style="color:#999;font-size:13px;line-height:1.7;">Ten en cuenta: si cancelas a partir de mañana, el cargo ya estará realizado y la cancelación será efectiva para el siguiente mes.</p>
-    <div style="text-align:center;margin-top:25px;">
-      <a href="${process.env.APP_URL}/dashboard.html" style="background:#1a1a1a;color:#e88;padding:12px 28px;text-decoration:none;border-radius:6px;font-weight:bold;font-size:14px;border:1px solid #c94c4c;display:inline-block;">Cancelar suscripción</a>
     </div>
     `
   );
@@ -211,16 +150,16 @@ async function sendPaymentConfirmedEmail(user, amount, nextBillingDate) {
   );
 }
 
-/** 5. Confirmación de cancelación */
+/** 5. Confirmación de cancelación (vuelta al plan gratuito) */
 async function sendCancellationEmail(user, effectiveDate) {
   const fecha = new Date(effectiveDate).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
   return sendEmail(
     user.email,
-    'Suscripción cancelada — NutroVia',
+    'Has vuelto al plan gratuito — NutroVia',
     `
-    <h2 style="color:#ccc;margin-top:0;">Suscripción cancelada</h2>
-    <p style="color:#aaa;line-height:1.7;">Hemos procesado la cancelación de tu suscripción NutroVia. Seguirás teniendo acceso a tu plan hasta el <strong style="color:#fff;">${fecha}</strong>.</p>
-    <p style="color:#777;font-size:13px;">Si cambiaste de opinión, puedes volver a suscribirte en cualquier momento desde tu panel.</p>
+    <h2 style="color:#ccc;margin-top:0;">Has vuelto al plan gratuito</h2>
+    <p style="color:#aaa;line-height:1.7;">Hemos dejado de cobrarte el plan Pro. Seguirás teniendo acceso a tu plan hasta el <strong style="color:#fff;">${fecha}</strong> y después seguirás usando NutroVia gratis.</p>
+    <p style="color:#777;font-size:13px;">Si cambiaste de opinión, puedes actualizar a Pro en cualquier momento desde tu panel.</p>
     <div style="text-align:center;margin-top:25px;">
       <a href="${process.env.APP_URL}" style="background:#1a1a1a;color:${GOLD};padding:12px 28px;text-decoration:none;border-radius:6px;font-weight:bold;border:1px solid ${GOLD};display:inline-block;">Volver a NutroVia</a>
     </div>
@@ -275,9 +214,6 @@ async function sendNutritionPlanEmail(user, plan) {
 module.exports = {
   sendNewUserNotificationEmail,
   sendWelcomeEmail,
-  sendTrialEndingEmail,
-  sendTrialWillEndEmail,
-  sendChargeWarningEmail,
   sendPaymentConfirmedEmail,
   sendCancellationEmail,
   sendCheckinEmail,

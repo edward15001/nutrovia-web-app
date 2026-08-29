@@ -6,8 +6,7 @@ const stripeService = require('../services/stripeService');
 const emailService = require('../services/emailService');
 const { generateAndSavePlan } = require('../services/planGenerationService');
 
-// Días de prueba gratuita de Pro y precio mensual (configurables por entorno)
-const TRIAL_DAYS = parseInt(process.env.TRIAL_DAYS || '7', 10);
+// Precio mensual del plan Pro (configurable por entorno)
 const PLAN_PRICE_EUR = parseFloat(process.env.PLAN_PRICE_EUR || '14');
 
 // ─── POST /api/subscription/setup-intent ────────────────────
@@ -30,7 +29,8 @@ router.post('/setup-intent', authMiddleware, async (req, res) => {
 });
 
 // ─── POST /api/subscription/start ───────────────────────────
-// Activa la prueba gratuita después de guardar el método de pago
+// Activa Pro con cobro inmediato después de guardar el método de pago
+// (sin prueba gratuita: se cobran PLAN_PRICE_EUR €/mes desde el momento de activar).
 router.post('/start', authMiddleware, async (req, res) => {
     // Web: payment_method_id (de confirmCardSetup). Móvil: setup_intent_id
     // (PaymentSheet no expone el payment method; se recupera del SetupIntent).
@@ -86,35 +86,30 @@ router.post('/start', authMiddleware, async (req, res) => {
         // Vincular método de pago al cliente
         await stripeService.attachPaymentMethod(user.stripe_customer_id, resolvedPaymentMethodId);
 
-        // Calcular fechas: 7 días de prueba gratuita. Si no cancela,
-        // al terminar la prueba Stripe cobra 14 €/mes automáticamente.
-        const trialStart = new Date();
-        const trialEnd = new Date(trialStart);
-        trialEnd.setDate(trialEnd.getDate() + TRIAL_DAYS);
+        // Cobro inmediato: sin prueba gratuita. Stripe cobra la primera
+        // factura de PLAN_PRICE_EUR € al crear la suscripción.
+        const startedAt = new Date();
+        const nextBilling = new Date(startedAt);
+        nextBilling.setMonth(nextBilling.getMonth() + 1); // Próximo cobro: +1 mes
 
-        // La ventana de cancelación coincide con el fin de la prueba:
-        // si no te gusta, cancelas durante la prueba y no se te cobra nada.
-        const cancelWindowEnd = new Date(trialEnd);
+        const chargeDay = startedAt.getDate(); // Mismo día del mes
 
-        const chargeDay = trialStart.getDate(); // Mismo día del mes
-
-        // Crear suscripción en Stripe con trial hasta el final de la prueba
+        // Crear suscripción en Stripe (cobro inmediato, sin trial)
         const stripeSubscription = await stripeService.createSubscription(
-            user.stripe_customer_id,
-            Math.floor(cancelWindowEnd.getTime() / 1000) // Unix timestamp día 7
+            user.stripe_customer_id
         );
 
-        // Guardar suscripción en DB
+        // Guardar suscripción en DB como activa desde el primer momento
         await db.query(`
       INSERT INTO subscriptions
         (user_id, stripe_customer_id, stripe_subscription_id, stripe_payment_method_id,
-         trial_start, trial_end, cancel_window_end, charge_day, status)
-      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,'trial')
+         trial_start, trial_end, cancel_window_end, charge_day, next_billing_date, status)
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,'active')
     `, [userId, user.stripe_customer_id, stripeSubscription.id, resolvedPaymentMethodId,
-            trialStart, trialEnd, cancelWindowEnd, chargeDay]);
+            startedAt, nextBilling, nextBilling, chargeDay, nextBilling]);
 
-        // Email de bienvenida
-        await emailService.sendWelcomeEmail(user, trialEnd, TRIAL_DAYS);
+        // Email de bienvenida (Pro activo, sin mención de prueba)
+        await emailService.sendWelcomeEmail(user, nextBilling);
 
         // Regenerar el plan ahora como Pro: si el usuario tenía un plan FREE
         // (guardado sin IA ni suplementos), al activar Pro se recalcula con la
@@ -127,19 +122,16 @@ router.post('/start', authMiddleware, async (req, res) => {
         }
 
         res.json({
-            message: '¡Prueba gratuita iniciada!',
-            trial_days: TRIAL_DAYS,
+            message: '¡Plan Pro activado!',
             plan_price_eur: PLAN_PRICE_EUR,
-            trial_start: trialStart,
-            trial_end: trialEnd,
-            cancel_window_end: cancelWindowEnd,
+            next_billing_date: nextBilling,
             charge_day: chargeDay,
-            status: 'trial',
+            status: 'active',
         });
 
     } catch (err) {
-        console.error('Error iniciando suscripción:', err);
-        res.status(500).json({ error: 'Error al iniciar la prueba gratuita' });
+        console.error('Error activando Pro:', err);
+        res.status(500).json({ error: 'Error al activar Pro. Inténtalo de nuevo.' });
     }
 });
 

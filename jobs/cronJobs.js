@@ -10,114 +10,15 @@ const emailService = require('../services/emailService');
 function initCronJobs() {
     console.log('⏰ Iniciando cron jobs de NutroVia...');
 
-    // ─── Cron diario a las 08:00 ────────────────────────────
-    cron.schedule('0 8 * * *', async () => {
-        console.log(`\n[${new Date().toISOString()}] 🔄 Ejecutando cron jobs diarios...`);
-        await checkTrialEnding();
-        await checkChargeWarning();
-        await activateExpiredTrials();
-    }, { timezone: 'Europe/Madrid' });
-
     // ─── Cron semanal (lunes 09:00): check-in de progreso ─────
+    // (Ya no hay cron de trial: el cobro de Pro es inmediato y Stripe
+    // gestiona el ciclo de cobros; los webhooks actualizan la BD.)
     cron.schedule('0 9 * * 1', async () => {
         console.log(`\n[${new Date().toISOString()}] 🌱 Ejecutando check-ins semanales...`);
         await checkWeeklyCheckins();
     }, { timezone: 'Europe/Madrid' });
 
-    console.log('✅ Cron jobs registrados (diario 08:00 + check-in lunes 09:00 Madrid)');
-}
-
-/**
- * Último día de prueba: envía aviso a usuarios cuyo trial termina hoy
- */
-async function checkTrialEnding() {
-    try {
-        const result = await db.query(`
-      SELECT s.id, s.user_id, s.trial_end, s.cancel_window_end, u.name, u.email
-      FROM subscriptions s
-      JOIN users u ON u.id = s.user_id
-      WHERE s.status = 'trial'
-        AND s.trial_end_notified = FALSE
-        AND DATE(s.trial_end) <= CURRENT_DATE
-    `);
-
-        console.log(`📬 Subscripciones con trial terminado: ${result.rows.length}`);
-
-        for (const sub of result.rows) {
-            await emailService.sendTrialEndingEmail(
-                { name: sub.name, email: sub.email },
-                sub.cancel_window_end
-            );
-            await db.query(
-                'UPDATE subscriptions SET trial_end_notified = TRUE WHERE id = $1',
-                [sub.id]
-            );
-        }
-    } catch (err) {
-        console.error('❌ Error en checkTrialEnding:', err.message);
-    }
-}
-
-/**
- * Último día de prueba: envía aviso de cobro inminente (mañana se cobra 25 €)
- */
-async function checkChargeWarning() {
-    try {
-        const result = await db.query(`
-      SELECT s.id, s.user_id, s.cancel_window_end, u.name, u.email
-      FROM subscriptions s
-      JOIN users u ON u.id = s.user_id
-      WHERE s.status = 'trial'
-        AND s.charge_warning_notified = FALSE
-        AND DATE(s.cancel_window_end) = CURRENT_DATE + INTERVAL '1 day'
-    `);
-
-        console.log(`⚠️  Avisos de cobro inmediato: ${result.rows.length}`);
-
-        for (const sub of result.rows) {
-            await emailService.sendChargeWarningEmail(
-                { name: sub.name, email: sub.email },
-                sub.cancel_window_end
-            );
-            await db.query(
-                'UPDATE subscriptions SET charge_warning_notified = TRUE WHERE id = $1',
-                [sub.id]
-            );
-        }
-    } catch (err) {
-        console.error('❌ Error en checkChargeWarning:', err.message);
-    }
-}
-
-/**
- * Tras la prueba: activa suscripciones que no fueron canceladas.
- * Stripe cobra 25 €/mes automáticamente al terminar el trial.
- */
-async function activateExpiredTrials() {
-    try {
-        const result = await db.query(`
-      SELECT s.id, s.user_id, u.name, u.email
-      FROM subscriptions s
-      JOIN users u ON u.id = s.user_id
-      WHERE s.status = 'trial'
-        AND s.cancel_window_end <= NOW()
-    `);
-
-        console.log(`💳 Suscripciones a activar: ${result.rows.length}`);
-
-        for (const sub of result.rows) {
-            await db.query(
-                `UPDATE subscriptions
-         SET status = 'active',
-             next_billing_date = cancel_window_end + INTERVAL '1 month'
-         WHERE id = $1`,
-                [sub.id]
-            );
-            console.log(`✅ Suscripción activada para usuario ${sub.email}`);
-        }
-    } catch (err) {
-        console.error('❌ Error en activateExpiredTrials:', err.message);
-    }
+    console.log('✅ Cron jobs registrados (check-in lunes 09:00 Madrid)');
 }
 
 /**

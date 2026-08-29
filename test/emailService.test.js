@@ -25,11 +25,10 @@ describe('emailService (modo mock)', () => {
     emailService = require('../services/emailService');
   });
 
-  test('envía email de bienvenida en modo mock', async () => {
+  test('envía email de bienvenida (Pro activo) en modo mock', async () => {
     const ok = await emailService.sendWelcomeEmail(
       { name: 'Carlos', email: 'carlos@test.com' },
-      new Date('2026-09-01'),
-      7
+      new Date('2026-09-01')
     );
     assert.strictEqual(ok, true);
   });
@@ -51,10 +50,10 @@ describe('emailService (modo mock)', () => {
     assert.strictEqual(ok, true);
   });
 
-  test('envía aviso de fin de trial (webhook)', async () => {
-    const ok = await emailService.sendTrialWillEndEmail(
+  test('envía email de cancelación (vuelta al plan gratuito)', async () => {
+    const ok = await emailService.sendCancellationEmail(
       { name: 'Ana', email: 'ana@test.com' },
-      new Date('2026-09-05')
+      new Date('2026-10-01')
     );
     assert.strictEqual(ok, true);
   });

@@ -53,7 +53,7 @@ describe('stripeService', () => {
     });
   });
 
-  test('crea un Price mensual de 14 € y una suscripción con trial', async () => {
+  test('crea un Price mensual de 14 € y una suscripción con cobro inmediato (sin trial)', async () => {
     const calls = { pricesList: [], pricesCreate: [], subscriptions: [] };
     const service = loadService({
       stripeClient: {
@@ -70,22 +70,22 @@ describe('stripeService', () => {
         subscriptions: {
           create: async options => {
             calls.subscriptions.push(options);
-            return { id: 'sub_123', status: 'trialing' };
+            return { id: 'sub_123', status: 'active' };
           },
         },
       },
     });
 
-    const subscription = await service.createSubscription('cus_123', 1770000000);
+    const subscription = await service.createSubscription('cus_123');
 
     assert.strictEqual(subscription.id, 'sub_123');
     assert.strictEqual(calls.pricesCreate[0].currency, 'eur');
     assert.strictEqual(calls.pricesCreate[0].unit_amount, 1400);
     assert.deepStrictEqual(calls.pricesCreate[0].recurring, { interval: 'month' });
+    // Sin trial_end: la primera factura se cobra al momento
     assert.deepStrictEqual(calls.subscriptions[0], {
       customer: 'cus_123',
       items: [{ price: 'price_14_eur' }],
-      trial_end: 1770000000,
       payment_behavior: 'default_incomplete',
       expand: ['latest_invoice.payment_intent'],
     });
@@ -109,7 +109,7 @@ describe('stripeService', () => {
       },
     });
 
-    await service.createSubscription('cus_123', 1770000000);
+    await service.createSubscription('cus_123');
 
     assert.strictEqual(calls.createPrice, 0);
     assert.strictEqual(calls.createSubscription, 1);
@@ -151,7 +151,7 @@ describe('stripeService', () => {
 
     const customerId = await service.createCustomer('test@example.com', 'Test');
     const intent = await service.createSetupIntent(customerId);
-    const subscription = await service.createSubscription(customerId, 1770000000);
+    const subscription = await service.createSubscription(customerId);
 
     assert.match(customerId, /^cus_mock_/);
     assert.strictEqual(intent.id, 'seti_mock_123');

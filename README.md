@@ -2,7 +2,7 @@
 
 ![Node.js](https://img.shields.io/badge/Node.js-18+-green) ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue) ![Stripe](https://img.shields.io/badge/Stripe-Integrado-purple)
 
-Aplicación web profesional de nutrición y entrenamiento personalizado con planes generados por motor científico (Harris-Benedict). Modelo free/pro: el plan FREE es de por vida (funciones restringidas) y el plan Pro (14 €/mes con 7 días de prueba gratuita y cancelación sin cargo) desbloquea el menú detallado, la suplementación, la IA y los check-ins. El usuario puede volver a registrar sus valores cuando quiera (el plan se recalcula al momento) y un check-in semanal automático pregunta "¿Cómo va ese progreso?" si no hay cambios en 7 días.
+Aplicación web profesional de nutrición y entrenamiento personalizado con planes generados por motor científico (Harris-Benedict). Modelo free/pro: el plan FREE es gratuito de por vida (funciones restringidas) y el plan Pro (14 €/mes con cobro inmediato, sin prueba gratuita) desbloquea el menú detallado, la suplementación, la IA y los check-ins. El usuario puede volver a registrar sus valores cuando quiera (el plan se recalcula al momento) y un check-in semanal automático pregunta "¿Cómo va ese progreso?" si no hay cambios en 7 días.
 
 ---
 
@@ -83,7 +83,7 @@ La app estará disponible en: **http://localhost:3000**
 ├── routes/
 │   ├── auth.js               # Registro / Login
 │   ├── questionnaire.js      # Cuestionario → Plan (re-registro ilimitado)
-│   ├── subscription.js       # Ciclo de vida suscripción (7 días prueba)
+│   ├── subscription.js       # Ciclo de vida suscripción (cobro inmediato)
 │   ├── plans.js              # Consulta plan del usuario
 │   ├── checkin.js            # Check-in semanal de progreso
 │   └── webhook.js            # Eventos Stripe
@@ -199,9 +199,9 @@ DATABASE_URL=postgresql://user:pass@host:5432/nutrovia_db
 | POST | `/api/plan/swap` | Intercambiar una comida (Pro) | ✅ |
 | GET | `/api/access` | Nivel de acceso (free/pro) y funciones | ✅ |
 | POST | `/api/subscription/setup-intent` | Crear SetupIntent Stripe | ✅ |
-| POST | `/api/subscription/start` | Activar prueba gratuita (7 días) | ✅ |
+| POST | `/api/subscription/start` | Activar Pro (cobro inmediato, sin prueba) | ✅ |
 | GET | `/api/subscription/status` | Estado de suscripción | ✅ |
-| POST | `/api/subscription/cancel` | Cancelar suscripción (sin cargo en prueba) | ✅ |
+| POST | `/api/subscription/cancel` | Dejar de pagar (vuelta al plan gratuito) | ✅ |
 | GET | `/api/checkin/status` | ¿Toca check-in semanal? | ✅ |
 | POST | `/api/checkin/respond` | Responder al check-in | ✅ |
 | POST | `/api/webhook/stripe` | Webhook de Stripe | ❌ |
@@ -212,15 +212,13 @@ DATABASE_URL=postgresql://user:pass@host:5432/nutrovia_db
 
 ```
 Registro → Se genera el plan FREE (de por vida, sin pedir tarjeta). El usuario ve el menú
-"a oscuras" (solo kcal por día) y sin suplementos ni IA.
+"a oscuras" (solo kcal por día) y sin suplementos ni IA. Gratis para siempre.
 
-Upgrade  → El free puede actualizar a Pro (14 €/mes) guardando tarjeta: se activa una prueba
-gratuita de 7 días y el plan se regenera con IA, suplementos y menú detallado.
-Día 7   → Email: "Último día de prueba, cancela o se activa tu suscripción"
-Día 8   → Si no cancela → suscripción activa → Stripe cobra 14 €
-Mensual → Cobro recurrente de 14 € el día del mes de inscripción
+Upgrade  → El free puede actualizar a Pro (14 €/mes) guardando tarjeta: el cobro es INMEDIATO
+(sin prueba gratuita) y el plan se regenera con IA, suplementos y menú detallado.
+Mensual → Cobro recurrente de 14 € el día del mes de inscripción.
 
-Cancela  → En la prueba: inmediata y sin cargo. Activa: al final del período ya pagado.
+Dejar de pagar → Al final del período ya pagado vuelve al plan gratuito (sigue gratis para siempre).
 
 Re-registro → El free tiene 1 regeneración de plan; el Pro, ilimitadas. El usuario puede
 actualizar sus valores cuando quiera (cuestionario con datos precargados), el plan se

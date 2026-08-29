@@ -330,11 +330,11 @@
                 </div>
             </div>
 
-            <!-- ═══════ STEP 7: Pago / Prueba gratuita ═══════ -->
+            <!-- ═══════ STEP 7: Pago / Activar Pro ═══════ -->
             <div class="quiz-card" id="step-7" style="display:none">
                 <h2>Casi listo</h2>
-                <p class="subtitle">Guarda tu tarjeta para activar tu plan personalizado.<br><strong>No se te cobrará
-                        nada durante los 7 días de prueba</strong>.</p>
+                <p class="subtitle">Guarda tu tarjeta para activar tu plan Pro.<br><strong>Se te cobrarán 14 €
+                        al mes desde el momento de activarlo</strong>.</p>
 
                 <div class="pricing-box">
                     <div class="pricing-label">PLAN NUTROVIA PRO</div>
@@ -345,21 +345,20 @@
                         <li><span class="check-icon" data-icon="checkCircle" data-icon-size="14"></span> Suplementación personalizada</li>
                         <li><span class="check-icon" data-icon="checkCircle" data-icon-size="14"></span> Conteos ilimitados, IA, check-ins y progreso</li>
                     </ul>
-                    <div class="pricing-trial"><span class="nv-icon" data-icon="gift" data-icon-size="15"></span> 7 días de prueba gratuita<br>Si no te gusta, cancela y no se te cobra nada</div>
+                    <div class="pricing-trial"><span class="nv-icon" data-icon="gift" data-icon-size="15"></span> Sin permanencia<br>Deja de pagar cuando quieras y vuelves al plan gratuito</div>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">Tarjeta de crédito / débito</label>
                     <div id="card-element" class="stripe-card"></div>
                     <div id="card-errors" class="alert alert-error" style="display:none"></div>
-                    <p class="form-hint"><span class="nv-icon" data-icon="lock" data-icon-size="13"></span> Pago seguro cifrado por Stripe. Guardamos tu método de pago para activar
-                        la prueba, pero <strong>no realizaremos ningún cargo</strong> durante los 7 días de prueba. Si
-                        no te gusta, cancela antes de que termine y no se te cobrará nada.</p>
+                    <p class="form-hint"><span class="nv-icon" data-icon="lock" data-icon-size="13"></span> Pago seguro cifrado por Stripe. Se te cobrarán <strong>14 €/mes</strong>
+                        mientras tengas Pro. Puedes dejar de pagar cuando quieras desde tu panel.</p>
                 </div>
                 <div id="alert-7" class="alert alert-error" style="display:none"></div>
                 <div class="quiz-nav">
                     <button class="btn-prev" onclick="goToStep(6)">← Atrás</button>
-                    <button class="btn-next" id="trialBtn" onclick="startTrial()">Empezar prueba gratuita →</button>
+                    <button class="btn-next" id="trialBtn" onclick="startTrial()">Activar Pro · 14 €/mes →</button>
                 </div>
             </div>
 
@@ -369,7 +368,7 @@
                     <div class="success-icon" data-icon="sparkles" data-icon-size="40"></div>
                     <h2>¡Tu plan está listo!</h2>
                     <p id="successText">Hemos generado tu plan personalizado de nutrición y entrenamiento y tu
-                        <strong>prueba gratuita de 7 días está activa</strong>. Todo lo hemos enviado también a tu
+                        <strong>plan Pro está activo</strong>. Todo lo hemos enviado también a tu
                         email para que puedas consultarlo en cualquier momento.</p>
                     <a href="dashboard.html" class="btn-gold-large" id="successBtn">
                         Ir a Mi Panel →

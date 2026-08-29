@@ -29,7 +29,7 @@ router.post(['/', '/stripe'], express.raw({ type: 'application/json' }), async (
                 const customerId = invoice.customer;
                 const stripeSubscriptionId = invoice.subscription;
 
-                // Ignorar facturas de 0 € (p.ej. la inicial de un trial): no son pagos reales
+                // Ignorar facturas de 0 €: no son pagos reales
                 if (!invoice.amount_paid || invoice.amount_paid <= 0) break;
 
                 const userResult = await db.query(
@@ -111,33 +111,6 @@ router.post(['/', '/stripe'], express.raw({ type: 'application/json' }), async (
           SET status = 'cancelled', cancelled_at = NOW()
           WHERE stripe_subscription_id = $1 AND status != 'cancelled'
         `, [subscriptionId]);
-                break;
-            }
-
-            // ─── Trial terminando (notificación de Stripe) ─────────
-            case 'customer.subscription.trial_will_end': {
-                // Stripe avisa ~3 días antes del fin del trial. En producción los
-                // cron jobs no corren (solo en local), así que este webhook es el
-                // encargado de avisar al usuario por email.
-                const sub = event.data.object;
-                const userResult = await db.query(
-                    'SELECT id, name, email FROM users WHERE stripe_customer_id = $1',
-                    [sub.customer]
-                );
-                if (userResult.rows.length > 0) {
-                    const user = userResult.rows[0];
-                    const trialEnd = new Date(sub.current_period_end * 1000);
-                    await emailService.sendTrialWillEndEmail(user, trialEnd);
-                    // Marcar como notificado para que el cron local no duplique
-                    await db.query(
-                        `UPDATE subscriptions SET trial_end_notified = TRUE
-               WHERE user_id = $1`,
-                        [user.id]
-                    );
-                    console.log(`ℹ️  Trial ending soon enviado a ${user.email} (fin: ${trialEnd.toISOString()})`);
-                } else {
-                    console.log('ℹ️  Trial ending soon para customer desconocido:', sub.customer);
-                }
                 break;
             }
 

@@ -13,7 +13,7 @@ const formData = {
 let currentStep = 1;
 
 // ═══ Modo de uso ════════════════════════════════════════════
-// - Normal:       registro + tarjeta + prueba gratuita (usuario nuevo)
+// - Normal:       registro + plan gratuito (sin pago obligatorio)
 // - ?update=1:    actualizar valores → regenera el plan (sin pago)
 // - ?subscribe=1: re-suscribirse tras cancelar (con pago, sin registro)
 const urlParams = new URLSearchParams(window.location.search);
@@ -70,7 +70,7 @@ function renderSuccess() {
     const isPro = lastAccess && lastAccess.isPro;
     if (isPro) {
         textEl.innerHTML =
-            'Tu <strong>prueba gratuita de Pro está activa</strong>. Disfruta del plan completo (menú detallado, suplementación, IA y check-ins) durante 7 días. Todo lo hemos enviado también a tu email.';
+            'Tu <strong>plan Pro está activo</strong>. Disfruta del plan completo (menú detallado, suplementación, IA y check-ins) por 14 €/mes. Todo lo hemos enviado también a tu email.';
         btnEl.textContent = 'Ir a Mi Panel →';
         btnEl.href = 'dashboard.html';
         btnEl.insertAdjacentHTML('afterend', '');
@@ -403,7 +403,7 @@ async function submitQuestionnaire() {
     }
 }
 
-// ═══ Stripe: guardar tarjeta + activar prueba gratuita ═══════
+// ═══ Stripe: guardar tarjeta + activar Pro ═══════
 async function initPayment() {
     if (paymentInitialized) return;
     paymentInitialized = true;
@@ -496,13 +496,13 @@ async function startTrial() {
         const data = await res.json();
 
         if (!res.ok) {
-            alertEl.textContent = data.error || 'Error al iniciar la prueba gratuita.';
+            alertEl.textContent = data.error || 'Error al activar Pro.';
             alertEl.style.display = 'block';
             hideLoading();
             return;
         }
 
-        // ¡Prueba gratuita activada!
+        // ¡Pro activado!
         goToStep(8);
     } catch (err) {
         console.error('Error en startTrial:', err);

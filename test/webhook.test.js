@@ -50,9 +50,6 @@ function loadWebhook({ event, constructError, dbRows = {} }) {
       async sendPaymentConfirmedEmail(...args) {
         emails.push({ type: 'payment', args });
       },
-      async sendTrialWillEndEmail(...args) {
-        emails.push({ type: 'trial', args });
-      },
     },
   };
 

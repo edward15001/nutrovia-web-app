@@ -3379,6 +3379,11 @@ html[data-theme='light'] .upgrade-modal {
   border: 1px solid rgba(76, 201, 100, 0.3);
 }
 
+.status-banner.free {
+  background: rgba(201, 168, 76, 0.08);
+  border: 1px solid var(--border-gold);
+}
+
 .status-banner.warning {
   background: rgba(201, 120, 76, 0.08);
   border: 1px solid rgba(201, 120, 76, 0.3);
