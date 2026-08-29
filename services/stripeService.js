@@ -114,9 +114,23 @@ async function createSubscription(customerId) {
         customer: customerId,
         items: [{ price: priceId }],
         payment_behavior: 'default_incomplete',
+        // Guarda la tarjeta del primer pago como método por defecto para los
+        // cobros recurrentes off-session (no vuelve a pedir datos al cliente).
+        payment_settings: { save_default_payment_method: 'on_subscription' },
         expand: ['latest_invoice.payment_intent'],
     });
     return subscription;
+}
+
+/**
+ * Busca una suscripción abierta/pagada del cliente en Stripe.
+ * Útil en /intent para no duplicar: si el pago ya se completó (p. ej. un /start
+ * fallido durante un reintento), devolvemos la existente en vez de crear otra.
+ */
+async function findOpenSubscription(customerId) {
+    if (!stripe) return null;
+    const { data } = await stripe.subscriptions.list({ customer: customerId, limit: 10, status: 'all' });
+    return data.find(s => ['active', 'trialing', 'past_due'].includes(s.status)) || null;
 }
 
 /**
@@ -171,6 +185,7 @@ module.exports = {
     retrieveSetupIntent,
     attachPaymentMethod,
     createSubscription,
+    findOpenSubscription,
     cancelSubscription,
     retrieveSubscription,
     constructWebhookEvent,

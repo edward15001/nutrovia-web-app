@@ -31,6 +31,7 @@ let lastAccess = null;
 let stripe = null;
 let cardElement = null;
 let setupClientSecret = null;
+let pendingSubscriptionId = null;
 let paymentInitialized = false;
 
 // ═══ Navegación entre pasos ═══════════════════════════════════
@@ -416,7 +417,7 @@ async function initPayment() {
     }
 
     try {
-        const res = await fetch('/api/subscription/setup-intent', {
+        const res = await fetch('/api/subscription/intent', {
             method: 'POST',
             headers: { 'Authorization': `Bearer ${authToken}` },
         });
@@ -430,6 +431,7 @@ async function initPayment() {
         }
 
         setupClientSecret = data.client_secret;
+        pendingSubscriptionId = data.subscription_id;
         stripe = Stripe(data.publishable_key);
         cardElement = stripe.elements().create('card', {
             style: {
@@ -463,35 +465,47 @@ async function startTrial() {
     const errEl = document.getElementById('card-errors');
     [alertEl, errEl].forEach(el => { if (el) el.style.display = 'none'; });
 
-    if (!stripe || !cardElement || !setupClientSecret) {
+    if (!stripe || !cardElement || !pendingSubscriptionId) {
         alertEl.textContent = 'El formulario de pago aún no está listo. Espera un momento e inténtalo de nuevo.';
         alertEl.style.display = 'block';
         return;
     }
 
-    showLoading('Guardando tu tarjeta de forma segura...');
-    try {
-        const { error, setupIntent } = await stripe.confirmCardSetup(setupClientSecret, {
-            payment_method: {
-                card: cardElement,
-                billing_details: { name: formData.name, email: formData.email },
-            },
-        });
-
-        if (error) {
-            errEl.textContent = error.message;
-            errEl.style.display = 'block';
+    // Confirmar el PaymentIntent de la primera factura (cobra los 14 €). En un
+    // reintento ya pagado (client_secret null), saltamos directo a activar.
+    if (setupClientSecret) {
+        showLoading('Confirmando tu pago de 14 €...');
+        try {
+            const { error } = await stripe.confirmCardPayment(setupClientSecret, {
+                payment_method: {
+                    card: cardElement,
+                    billing_details: { name: formData.name, email: formData.email },
+                },
+            });
+            if (error) {
+                errEl.textContent = error.message;
+                errEl.style.display = 'block';
+                hideLoading();
+                return;
+            }
+        } catch (err) {
+            console.error('Error confirmando pago:', err);
+            alertEl.textContent = 'Hubo un error de conexión. Inténtalo de nuevo.';
+            alertEl.style.display = 'block';
             hideLoading();
             return;
         }
+    }
 
+    showLoading('Activando tu plan Pro...');
+    try {
         const res = await fetch('/api/subscription/start', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${authToken}`,
             },
-            body: JSON.stringify({ payment_method_id: setupIntent.payment_method }),
+            body: JSON.stringify({ subscription_id: pendingSubscriptionId }),
         });
         const data = await res.json();
 

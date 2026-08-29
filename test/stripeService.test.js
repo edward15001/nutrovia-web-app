@@ -87,6 +87,7 @@ describe('stripeService', () => {
       customer: 'cus_123',
       items: [{ price: 'price_14_eur' }],
       payment_behavior: 'default_incomplete',
+      payment_settings: { save_default_payment_method: 'on_subscription' },
       expand: ['latest_invoice.payment_intent'],
     });
   });

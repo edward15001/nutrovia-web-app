@@ -198,8 +198,8 @@ DATABASE_URL=postgresql://user:pass@host:5432/nutrovia_db
 | GET | `/api/plan` | Obtener plan personalizado | ✅ |
 | POST | `/api/plan/swap` | Intercambiar una comida (Pro) | ✅ |
 | GET | `/api/access` | Nivel de acceso (free/pro) y funciones | ✅ |
-| POST | `/api/subscription/setup-intent` | Crear SetupIntent Stripe | ✅ |
-| POST | `/api/subscription/start` | Activar Pro (cobro inmediato, sin prueba) | ✅ |
+| POST | `/api/subscription/intent` | Crear la sub y devolver el PaymentIntent de la 1ª factura | ✅ |
+| POST | `/api/subscription/start` | Finalizar activación de Pro tras el cobro | ✅ |
 | GET | `/api/subscription/status` | Estado de suscripción | ✅ |
 | POST | `/api/subscription/cancel` | Dejar de pagar (vuelta al plan gratuito) | ✅ |
 | GET | `/api/checkin/status` | ¿Toca check-in semanal? | ✅ |

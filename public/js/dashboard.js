@@ -885,6 +885,7 @@ function logout() {
 let upgradeStripe = null;
 let upgradeCardElement = null;
 let upgradeSetupSecret = null;
+let upgradePendingSubscriptionId = null;
 let upgradeInitialized = false;
 
 // Abre el modal de pago para pasar de free a Pro. Si Stripe aún no está
@@ -910,7 +911,7 @@ async function initUpgradeCheckout() {
   }
   try {
     document.getElementById('upgradeSubmitBtn').disabled = true;
-    const res = await fetch('/api/subscription/setup-intent', {
+    const res = await fetch('/api/subscription/intent', {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -923,6 +924,7 @@ async function initUpgradeCheckout() {
     }
 
     upgradeSetupSecret = data.client_secret;
+    upgradePendingSubscriptionId = data.subscription_id;
     upgradeStripe = Stripe(data.publishable_key);
     upgradeCardElement = upgradeStripe.elements().create('card', {
       style: {
@@ -958,23 +960,24 @@ async function startProUpgrade() {
   const btn = document.getElementById('upgradeSubmitBtn');
   errEl.style.display = 'none';
 
-  if (!upgradeStripe || !upgradeCardElement || !upgradeSetupSecret) {
+  if (!upgradeStripe || !upgradeCardElement || !upgradePendingSubscriptionId) {
     errEl.textContent = 'El formulario de pago aún no está listo. Inténtalo de nuevo.';
     errEl.style.display = 'block';
     return;
   }
 
   btn.disabled = true;
-  btn.textContent = 'Guardando tu tarjeta...';
+  btn.textContent = 'Confirmando tu pago de 14 €...';
 
-  try {
-    const { error, setupIntent } = await upgradeStripe.confirmCardSetup(upgradeSetupSecret, {
+  // Confirmar el PaymentIntent de la primera factura (cobra los 14 €). En un
+  // reintento ya pagado (client_secret null), saltamos directo a activar.
+  if (upgradeSetupSecret) {
+    const { error } = await upgradeStripe.confirmCardPayment(upgradeSetupSecret, {
       payment_method: {
         card: upgradeCardElement,
         billing_details: { name: user.name || '', email: user.email || '' },
       },
     });
-
     if (error) {
       errEl.textContent = error.message;
       errEl.style.display = 'block';
@@ -982,14 +985,17 @@ async function startProUpgrade() {
       btn.textContent = 'Actualizar a Pro · 14 €/mes';
       return;
     }
+  }
 
+  btn.textContent = 'Activando tu plan Pro...';
+  try {
     const res = await fetch('/api/subscription/start', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ payment_method_id: setupIntent.payment_method }),
+      body: JSON.stringify({ subscription_id: upgradePendingSubscriptionId }),
     });
     const data = await res.json();
 

@@ -9,112 +9,126 @@ const { generateAndSavePlan } = require('../services/planGenerationService');
 // Precio mensual del plan Pro (configurable por entorno)
 const PLAN_PRICE_EUR = parseFloat(process.env.PLAN_PRICE_EUR || '14');
 
-// ─── POST /api/subscription/setup-intent ────────────────────
-// Crea un SetupIntent de Stripe (el frontend captura la tarjeta sin cobrar)
-router.post('/setup-intent', authMiddleware, async (req, res) => {
+// ─── POST /api/subscription/intent ──────────────────────────
+// Crea la suscripción Pro (cobro inmediato) y devuelve el client_secret del
+// PaymentIntent de la primera factura. El cliente lo presenta en un
+// PaymentSheet (móvil) o confirmCardPayment (web): al confirmarlo se cobran
+// los PLAN_PRICE_EUR € y la suscripción queda activa en Stripe.
+router.post('/intent', authMiddleware, async (req, res) => {
     try {
-        const userResult = await db.query('SELECT stripe_customer_id FROM users WHERE id = $1', [req.user.id]);
-        const customer = userResult.rows[0];
-        if (!customer) return res.status(404).json({ error: 'Usuario no encontrado' });
+        const userId = req.user.id;
+        const userResult = await db.query(
+            'SELECT id, name, email, stripe_customer_id FROM users WHERE id = $1', [userId]
+        );
+        const user = userResult.rows[0];
+        if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
 
-        const setupIntent = await stripeService.createSetupIntent(customer.stripe_customer_id);
+        // Guard: no duplicar si ya hay una suscripción abierta en la BD
+        const existing = await db.query(
+            'SELECT id, status, stripe_subscription_id FROM subscriptions WHERE user_id = $1',
+            [userId]
+        );
+        if (existing.rows.length > 0) {
+            const prev = existing.rows[0];
+            if (prev.status !== 'cancelled' && prev.status !== 'expired') {
+                return res.status(409).json({ error: 'Ya tienes una suscripción activa' });
+            }
+            // Si la anterior era real en Stripe (cancelada a fin de período),
+            // cancelarla ya para que no siga cobrando mientras se activa la nueva.
+            if (prev.stripe_subscription_id && !prev.stripe_subscription_id.startsWith('sub_mock_')) {
+                await stripeService.cancelSubscription(prev.stripe_subscription_id, false);
+            }
+            await db.query('DELETE FROM subscriptions WHERE user_id = $1', [userId]);
+        }
+
+        // Robustez: si en Stripe ya existe una suscripción abierta/pagada para
+        // el cliente (p. ej. reintento tras un /start fallido), no crear otra.
+        const open = await stripeService.findOpenSubscription(user.stripe_customer_id);
+        if (open) {
+            return res.json({
+                already_active: true,
+                subscription_id: open.id,
+                client_secret: null,
+                publishable_key: process.env.STRIPE_PUBLISHABLE_KEY,
+            });
+        }
+
+        const subscription = await stripeService.createSubscription(user.stripe_customer_id);
+        const pi = subscription.latest_invoice && subscription.latest_invoice.payment_intent;
+        if (!pi || !pi.client_secret) {
+            return res.status(500).json({ error: 'No se pudo preparar el cobro' });
+        }
+
         res.json({
-            client_secret: setupIntent.client_secret,
+            client_secret: pi.client_secret,
             publishable_key: process.env.STRIPE_PUBLISHABLE_KEY,
+            subscription_id: subscription.id,
         });
     } catch (err) {
-        console.error('Error creando SetupIntent:', err);
-        res.status(500).json({ error: 'Error al configurar el pago' });
+        console.error('Error creando intent de suscripción:', err);
+        res.status(500).json({ error: 'Error al preparar el pago' });
     }
 });
 
 // ─── POST /api/subscription/start ───────────────────────────
-// Activa Pro con cobro inmediato después de guardar el método de pago
-// (sin prueba gratuita: se cobran PLAN_PRICE_EUR €/mes desde el momento de activar).
+// Finaliza la activación de Pro tras un pago confirmado (cobro inmediato).
+// El cliente envía el subscription_id devuelto por /intent; aquí se registra
+// la suscripción como activa en la BD, se envía el email y se regenera el plan.
 router.post('/start', authMiddleware, async (req, res) => {
-    // Web: payment_method_id (de confirmCardSetup). Móvil: setup_intent_id
-    // (PaymentSheet no expone el payment method; se recupera del SetupIntent).
-    const { payment_method_id, setup_intent_id } = req.body;
-    if (!payment_method_id && !setup_intent_id) {
-        return res.status(400).json({ error: 'Método de pago requerido' });
-    }
-
-    // Resolver el payment method (web → directo; móvil → desde el SetupIntent)
-    let resolvedPaymentMethodId = payment_method_id;
-    if (!resolvedPaymentMethodId && setup_intent_id) {
-        try {
-            const setupIntent = await stripeService.retrieveSetupIntent(setup_intent_id);
-            resolvedPaymentMethodId = setupIntent.payment_method;
-        } catch (err) {
-            console.error('Error recuperando SetupIntent:', err);
-            return res.status(400).json({ error: 'SetupIntent inválido o no encontrado' });
-        }
-        if (!resolvedPaymentMethodId) {
-            return res.status(400).json({ error: 'El SetupIntent no tiene método de pago asociado' });
-        }
+    const { subscription_id } = req.body;
+    if (!subscription_id) {
+        return res.status(400).json({ error: 'Falta el identificador de suscripción' });
     }
 
     try {
         const userId = req.user.id;
-
-        // Verificar si ya tiene suscripción (se permite re-suscribirse tras cancelar/expiar)
-        const existingSub = await db.query(
-            'SELECT id, status, stripe_subscription_id FROM subscriptions WHERE user_id = $1',
-            [userId]
-        );
-        if (existingSub.rows.length > 0) {
-            const prev = existingSub.rows[0];
-            const prevStatus = prev.status;
-            if (prevStatus !== 'cancelled' && prevStatus !== 'expired') {
-                return res.status(409).json({ error: 'Ya tienes una suscripción activa' });
-            }
-            // Si la anterior era real en Stripe (cancelada a fin de período), cancelarla ya
-            // para que no siga cobrando mientras la nueva está en prueba → evita doble cobro.
-            if (prev.stripe_subscription_id && !prev.stripe_subscription_id.startsWith('sub_mock_')) {
-                await stripeService.cancelSubscription(prev.stripe_subscription_id, false);
-            }
-            // Limpiar la suscripción anterior para poder crear una nueva (UNIQUE user_id)
-            await db.query('DELETE FROM subscriptions WHERE user_id = $1', [userId]);
-        }
-
         const userResult = await db.query(
-            'SELECT id, name, email, stripe_customer_id FROM users WHERE id = $1',
-            [userId]
+            'SELECT id, name, email, stripe_customer_id FROM users WHERE id = $1', [userId]
         );
         const user = userResult.rows[0];
+        if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
 
-        // Vincular método de pago al cliente
-        await stripeService.attachPaymentMethod(user.stripe_customer_id, resolvedPaymentMethodId);
+        // Idempotente: si ya quedó una sub abierta para este usuario, no duplicar.
+        const existing = await db.query(
+            `SELECT id, status FROM subscriptions
+             WHERE user_id = $1 AND status IN ('trial','active','past_due')`, [userId]
+        );
+        if (existing.rows.length > 0) {
+            return res.json({
+                message: '¡Plan Pro activado!',
+                status: existing.rows[0].status,
+                already_active: true,
+            });
+        }
 
-        // Cobro inmediato: sin prueba gratuita. Stripe cobra la primera
-        // factura de PLAN_PRICE_EUR € al crear la suscripción.
+        // Confirmar que el cobro se completó en Stripe antes de marcar activo.
+        const sub = await stripeService.retrieveSubscription(subscription_id);
+        if (sub.status === 'incomplete' || sub.status === 'incomplete_expired') {
+            return res.status(400).json({ error: 'El pago no se ha completado. Inténtalo de nuevo.' });
+        }
+
+        const defaultPm =
+            sub.default_payment_method ||
+            (sub.latest_invoice && sub.latest_invoice.payment_intent &&
+                sub.latest_invoice.payment_intent.payment_method) ||
+            null;
+
         const startedAt = new Date();
         const nextBilling = new Date(startedAt);
         nextBilling.setMonth(nextBilling.getMonth() + 1); // Próximo cobro: +1 mes
+        const chargeDay = startedAt.getDate();
 
-        const chargeDay = startedAt.getDate(); // Mismo día del mes
-
-        // Crear suscripción en Stripe (cobro inmediato, sin trial)
-        const stripeSubscription = await stripeService.createSubscription(
-            user.stripe_customer_id
-        );
-
-        // Guardar suscripción en DB como activa desde el primer momento
         await db.query(`
       INSERT INTO subscriptions
         (user_id, stripe_customer_id, stripe_subscription_id, stripe_payment_method_id,
          trial_start, trial_end, cancel_window_end, charge_day, next_billing_date, status)
       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,'active')
-    `, [userId, user.stripe_customer_id, stripeSubscription.id, resolvedPaymentMethodId,
+    `, [userId, user.stripe_customer_id, sub.id, defaultPm,
             startedAt, nextBilling, nextBilling, chargeDay, nextBilling]);
 
-        // Email de bienvenida (Pro activo, sin mención de prueba)
         await emailService.sendWelcomeEmail(user, nextBilling);
 
-        // Regenerar el plan ahora como Pro: si el usuario tenía un plan FREE
-        // (guardado sin IA ni suplementos), al activar Pro se recalcula con la
-        // mejora IA y la suplementación. Se espera para que la página recargada
-        // ya muestre el plan completo; si falla, no bloquea la activación.
+        // Regenerar el plan ahora como Pro (IA + suplementos). No bloquea.
         try {
             await regenerateProPlan(userId);
         } catch (err) {
