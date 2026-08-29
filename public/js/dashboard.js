@@ -680,12 +680,8 @@ function renderSubscriptionTab() {
 
   const isFree = status === 'cancelled' || status === 'expired';
   const detailRows = [
-    trial_start && ['Inicio de prueba', fmt(trial_start)],
-    trial_end && ['Fin de prueba', fmt(trial_end)],
-    cancel_window_end && ['Puedes cancelar hasta', fmt(cancel_window_end)],
-    next_billing_date && ['Próximo cobro', fmt(next_billing_date)],
-    charge_day && ['Día de cobro', `Día ${charge_day}`],
-    cancelled_at && ['Cancelada el', fmt(cancelled_at)],
+    !isFree && next_billing_date && ['Próximo cobro', fmt(next_billing_date)],
+    !isFree && charge_day && ['Día de cobro', `Día ${charge_day}`],
   ].filter(Boolean);
 
   document.getElementById('subDetail').innerHTML = `
