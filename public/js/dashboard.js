@@ -652,21 +652,14 @@ function renderSupplementsTab() {
 
 // ─── Subscription Tab ────────────────────────────────────────
 function renderSubscriptionTab() {
-  if (!subData || subData.status === 'none') {
-    document.getElementById('subDetail').innerHTML = `
-      <div class="dash-card-label">Estado de suscripción</div>
-      <p style="color:var(--text-muted);margin-top:12px;font-size:14px;">No tienes ninguna suscripción activa.</p>
-      <a href="#" onclick="openUpgrade();return false;" class="btn-gold" style="display:inline-flex;margin-top:16px;">Activar plan</a>
-    `;
-    return;
-  }
-
-  const { status } = subData;
+  const noSubscription = !subData || subData.status === 'none';
+  const { status } = subData || {};
 
   // El usuario no cancela nada: o decide no pagar (plan gratuito, gratis para
-  // siempre) o decide pagar (Pro). Los estados 'cancelled'/'expired' del backend
-  // se muestran como el plan gratuito.
+  // siempre) o decide pagar (Pro). Sin suscripción y con estado 'cancelled' /
+  // 'expired' se muestran todos como el plan gratuito.
   const statusLabels = {
+    none: 'Sin suscripción',
     trial: 'Prueba',
     active: 'Activa',
     cancelled: 'Sin pago',
@@ -675,15 +668,15 @@ function renderSubscriptionTab() {
   };
 
   const statusDot = {
-    trial: '#d9a441', active: '#4caf50', cancelled: '#8a8a8a', expired: '#8a8a8a', past_due: '#e07b39'
+    none: '#8a8a8a', trial: '#d9a441', active: '#4caf50', cancelled: '#8a8a8a', expired: '#8a8a8a', past_due: '#e07b39'
   };
 
-  const isFree = status === 'cancelled' || status === 'expired';
+  const isFree = noSubscription || status === 'cancelled' || status === 'expired';
 
   document.getElementById('subDetail').innerHTML = `
     <div class="subscription-head">
       <div>
-        <span class="dash-card-label">Mi suscripción</span>
+        <span class="dash-card-label">Estado de suscripción</span>
         <h2 class="subscription-title">${isFree ? 'Plan gratuito' : 'NutroVia Pro'}</h2>
         <p class="subscription-status"><span class="status-dot" style="background:${statusDot[status] || '#8a8a8a'}"></span>${statusLabels[status] || status}</p>
       </div>
@@ -710,9 +703,11 @@ function renderSubscriptionTab() {
           <li>Check-ins de progreso</li>
           <li>Regeneraciones ilimitadas</li>
         </ul>
-        ${isFree ? '<button class="btn-gold" onclick="openUpgrade()">Actualizar a Pro →</button>' : ''}
+        ${isFree ? '<button class="btn-gold" onclick="openUpgrade()">' + (noSubscription ? 'Activar plan' : 'Actualizar a Pro →') + '</button>' : ''}
       </div>
     </div>
+
+    ${noSubscription ? `<div class="dash-card-label" style="margin-top:28px;">No tienes ninguna suscripción activa</div>` : ''}
 
     ${renderPaymentHistory()}
   `;

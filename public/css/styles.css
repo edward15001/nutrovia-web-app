@@ -630,6 +630,15 @@ ul {
   background: transparent;
 }
 
+/* El overlap de -225px asume mucho hueco oscuro tras el CTA. En portátiles
+   (viewport poco alto) el mockup del teléfono subiría y taparía el botón
+   "Comenzar". Aquí recortamos ese overlap cuando no hay sitio. */
+@media (min-width: 901px) and (max-height: 880px) {
+  .nv-pinned-section.nv-phone-scene {
+    margin-top: -70px;
+  }
+}
+
 
 /* ESCENA 1: iPhone Reveal Stage */
 .nv-phone-stage {
