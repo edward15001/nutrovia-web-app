@@ -2083,7 +2083,6 @@ ul {
   line-height: 1.12;
   color: #ffffff;
   margin: 16px 0 20px;
-  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.85);
 }
 
 .nv-watch-desc {
@@ -2091,7 +2090,6 @@ ul {
   color: #e5e0d8;
   line-height: 1.65;
   margin-bottom: 28px;
-  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.75);
 }
 
 .nv-watch-features {
