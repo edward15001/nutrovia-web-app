@@ -68,12 +68,16 @@ function initTopbar() {
   const initials = (user.name || 'N').split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
   document.getElementById('sidebarAvatar').textContent = initials;
 
-  // Mobile menu button
+  // Mobile menu button: solo visible en pantallas pequeñas (el CSS lo gestiona,
+  // pero el JS lo forzaba display:flex siempre — corregido)
   const mobileBtn = document.getElementById('mobileMenuBtn');
-  mobileBtn.style.display = 'flex';
-
-  // Responsive
-  if (window.innerWidth <= 768) mobileBtn.style.display = 'flex';
+  if (window.innerWidth <= 768) {
+    mobileBtn.style.display = 'flex';
+  }
+  // Escuchar cambios de tamaño por si el usuario redimensiona
+  window.addEventListener('resize', () => {
+    mobileBtn.style.display = window.innerWidth <= 768 ? 'flex' : 'none';
+  }, { passive: true });
 }
 
 // ═══ Cargar plan ════════════════════════════════════════════
@@ -235,13 +239,18 @@ function renderOverview() {
   const areaPath = linePath + ' L' + last[0].toFixed(1) + ' 48 L' + chartPts[0][0].toFixed(1) + ' 48 Z';
   const goalY = (H - PAD - (kcalBase / maxKcal) * (H - PAD * 2)).toFixed(1);
 
-  // Move ring: 3 aros concéntricos P / C / G
+  // Move ring: aro único — progreso calórico del día actual vs objetivo
   const circ = r => 2 * Math.PI * r;
+  // Usamos las kcal del día actual (hoy); si no hay datos, 0
+  const todayIdx = (new Date().getDay() + 6) % 7; // lun=0 … dom=6
+  const todayKcal = weekKcal[todayIdx] || 0;
+  const todayFrac = Math.min(1, todayKcal / (kcalBase || 1));
+  const ringArc = (r, frac, color) =>
+    `<circle cx="60" cy="60" r="${r}" fill="none" stroke="${color}" stroke-width="8" stroke-linecap="round" stroke-dasharray="${(frac * circ(r)).toFixed(1)} ${circ(r).toFixed(1)}" transform="rotate(-90 60 60)"/>`;
+
   const pFrac = (protein_g * 4) / kcalBase;
   const cFrac = (carbs_g * 4) / kcalBase;
   const gFrac = (fat_g * 9) / kcalBase;
-  const ringArc = (r, frac, color, offset) =>
-    `<circle cx="60" cy="60" r="${r}" fill="none" stroke="${color}" stroke-width="7" stroke-linecap="round" stroke-dasharray="${(frac * circ(r)).toFixed(1)} ${circ(r).toFixed(1)}" stroke-dashoffset="${offset || 0}" transform="rotate(-90 60 60)"/>`;
 
   // Días de entreno: sesiones reales del plan, rellenadas hasta los días que
   // el usuario pidió en su perfil (para que el panel reaccione a sus cambios).
@@ -286,10 +295,8 @@ function renderOverview() {
       </div>
       <div class="db-ring-box">
         <svg viewBox="0 0 120 120" class="db-ring">
-          <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="7"/>
-          ${ringArc(50, pFrac, '#f0d58c')}
-          ${ringArc(40, cFrac, '#c9a84c', (-circ(40) * pFrac).toFixed(1))}
-          ${ringArc(30, gFrac, '#9e7f2e', (-circ(30) * (pFrac + cFrac)).toFixed(1))}
+          <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="8"/>
+          ${ringArc(50, todayFrac, '#f0d58c')}
         </svg>
         <div class="db-ring-center">
           <span class="db-ring-num">${kcalBase}</span>
