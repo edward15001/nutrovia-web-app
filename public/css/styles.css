@@ -123,7 +123,8 @@ ul {
 }
 
 .gold-gradient {
-  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold) 100%);
+  /* Mismo degradado dorado que los acentos de títulos del resto de la página */
+  background: linear-gradient(135deg, #f5ecd5 0%, #c9a84c 50%, #dfc47a 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -4236,9 +4237,19 @@ html[data-theme='light'] .nv-marquee-title {
 }
 
 /* Textos blancos sobre fondos que pasan a claro */
-html[data-theme='light'] .nv-purpose-title,
-html[data-theme='light'] .nv-watch-title {
+/* La sección Watch conserva su foto de fondo oscura en ambos temas, así que
+   su titular se mantiene blanco opaco al 100 % (no debe heredar la tinta
+a). */
+html[data-theme='light'] .nv-purpose-title {
   color: var(--text);
+}
+
+html[data-theme='light'] .nv-watch-head .nv-watch-title {
+  color: #ffffff;
+}
+
+html[data-theme='light'] .nv-watch-head .nv-watch-desc {
+  color: #ece7df;
 }
 
 html[data-theme='light'] .p-feat strong {
