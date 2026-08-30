@@ -760,8 +760,8 @@ ul {
 
 /* ─── Watch: anula el oscurecimiento genérico — viene después para ganar la cascada ─── */
 .nv-lifestyle-bg--watch .nv-lifestyle-fullimg {
-  filter: contrast(1.02) brightness(0.65) saturate(0.85);
-  opacity: 0.72;
+  filter: contrast(1.02) brightness(0.50) saturate(0.85);
+  opacity: 0.55;
 }
 
 .nv-lifestyle-gradient-mask {
