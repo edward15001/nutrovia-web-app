@@ -83,7 +83,7 @@ function renderSuccess() {
         btnEl.href = 'dashboard.html';
         if (!document.getElementById('upgradeBtn')) {
             btnEl.insertAdjacentHTML('afterend',
-                `<a href="dashboard.html#upgrade" class="btn-gold-large" id="upgradeBtn" style="background:linear-gradient(135deg,#e0be64,#c9a84c);margin-top:10px;">Actualizar a Pro →</a>`);
+                `<a href="dashboard.html#upgrade" class="btn-gold-large" id="upgradeBtn" style="margin-top:10px;">Actualizar a Pro →</a>`);
         }
     }
 }

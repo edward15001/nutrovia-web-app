@@ -7,7 +7,7 @@ const path = require('path');
 
 const PORT = process.env.PORT || 8123;
 const ROOT = path.join(__dirname, 'public');
-const API_HOST = 'nutrovia.es';
+const API_HOST = 'www.nutrovia.es';
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',

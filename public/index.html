@@ -5,758 +5,527 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description"
-    content="NutroVia — Tu plan de nutrición y entrenamiento personalizado. Ciencia aplicada a tu cuerpo con el método Harris-Benedict. Empieza gratis 7 días.">
-  <title>NutroVia — Nutrición & Entrenamiento Personalizado</title>
+    content="NutroVia — Tu plan de nutrición y entrenamiento personalizado. Ciencia aplicada a tu cuerpo con el método Harris-Benedict. Empieza gratis.">
+  <title>NutroVia — Nutrición &amp; Entrenamiento Personalizado</title>
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&family=Space+Mono:wght@400;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,300&display=swap"
     rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=4">
-  <script>document.documentElement.setAttribute('data-theme','dark')</script>
-  <script src="js/icons.js"></script>
-
-  <script>
-    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
-  </script>
-  <script defer src="/_vercel/insights/script.js"></script>
+  <script src="https://unpkg.com/lucide@0.462.0/dist/umd/lucide.min.js"></script>
+  <style>
+    /* NutroVia — identidad visual v1.0
+       La landing es autónoma: no consume css/styles.css. */
+    @font-face {
+      font-family: "Keratus";
+      src: url("fonts/keratus-bold.otf") format("opentype"),
+           url("fonts/keratus-bold.ttf") format("truetype");
+      font-weight: 700 900;
+      font-style: normal;
+      font-display: swap;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #F2EFE8;
+      color: #1B1A17;
+      font-family: "Archivo", system-ui, -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    img { display: block; max-width: 100%; }
+    a { color: #27503A; text-underline-offset: 3px; }
+    a:hover { color: #96631F; }
+    ::selection { background: #EBD3A6; }
+    *:focus-visible { outline: 2px solid #3A6B4F; outline-offset: 2px; }
+    @keyframes nvMarquee { from { transform: translateX(0) } to { transform: translateX(-50%) } }
+    .nv-cta:hover { background: #27503A !important; }
+    .nv-cta-line:hover { background: #E8E4DA !important; }
+    .nv-cta-inv:hover { background: #332F29 !important; }
+    .nv-cta-papel:hover { background: #E8E4DA !important; }
+    .nv-navlink:hover { color: #27503A; }
+    .nv-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.06); opacity: .9; }
+    @media (max-width: 900px) {
+      .nv-nav-mid { display: none !important; }
+      .nv-h1 { font-size: 54px !important; }
+      .nv-h2 { font-size: 36px !important; }
+      .nv-h2-serif { font-size: 40px !important; }
+      .nv-close-title { font-size: 44px !important; }
+      .nv-marquee-text { font-size: 28px !important; }
+      .nv-pad { padding: 64px 24px !important; }
+    }
+  </style>
 </head>
 
 <body>
 
-  <!-- ─── HEADER / NAVBAR FLOTANTE GLASSMORPHISM AUTO-HIDE ───────── -->
-  <header class="site-header" id="siteHeader">
-    <nav class="navbar navbar--glass" id="navbar">
-      <div class="nav-container">
-        <a href="#hero" class="nav-logo">
-          <img src="/img/logo_nutrovia_negro.png" alt="NutroVia Logo" class="nav-logo-icon">
-          <span class="nav-logo-text">NUTROVIA<span class="logo-dot">.</span></span>
-        </a>
-        <div class="nav-actions" id="navActions">
-          <a href="login.html" class="btn-ghost">Iniciar sesión</a>
-          <a href="questionnaire.html" class="btn-gold">Comenzar</a>
-        </div>
-        <!-- Botón tipo bocadillo / hamburguesa móvil -->
-        <button class="nav-mobile-toggle" id="navMobileToggle" aria-label="Abrir menú de navegación" aria-expanded="false">
-          <span class="toggle-bar"></span>
-          <span class="toggle-bar"></span>
-        </button>
+  <!-- NAV -->
+  <nav style="position:sticky;top:0;z-index:20;background:#F2EFE8;border-bottom:2px solid #1B1A17">
+    <div
+      style="max-width:1440px;margin:0 auto;padding:18px 40px;display:flex;align-items:center;justify-content:space-between;gap:32px;flex-wrap:wrap">
+      <a href="#hero" style="display:flex;align-items:center;gap:14px;text-decoration:none;color:#1B1A17;min-width:0">
+        <img src="img/logo_negro.png" alt="NutroVia" style="width:30px;height:auto">
+        <span style="font-size:14px;font-family:'Keratus','Archivo',sans-serif;font-weight:800;letter-spacing:.22em">NUTROVIA</span>
+      </a>
+      <div style="display:flex;align-items:center;gap:28px;flex-wrap:wrap;justify-content:flex-end;min-width:0">
+        <a class="nv-navlink nv-nav-mid" href="#concepto" style="font-size:14px;font-weight:600;text-decoration:none;color:#1B1A17">El concepto</a>
+        <a class="nv-navlink nv-nav-mid" href="#proceso" style="font-size:14px;font-weight:600;text-decoration:none;color:#1B1A17">Cómo funciona</a>
+        <a class="nv-navlink nv-nav-mid" href="#proposito" style="font-size:14px;font-weight:600;text-decoration:none;color:#1B1A17">El propósito</a>
+        <a class="nv-navlink nv-nav-mid" href="#precio" style="font-size:14px;font-weight:600;text-decoration:none;color:#1B1A17">Precio</a>
+        <a class="nv-navlink" href="login.html" style="font-size:14px;font-weight:600;text-decoration:none;color:#1B1A17">Entrar</a>
+        <a class="nv-cta" href="questionnaire.html"
+          style="font-size:14px;font-weight:800;text-decoration:none;background:#3A6B4F;color:#F2EFE8;padding:12px 18px">Comenzar</a>
       </div>
-    </nav>
-  </header>
-
-  <!-- Panel lateral móvil (Sombra suave desde la derecha, sin bordes ni opacidad dura) -->
-  <div class="mobile-drawer-backdrop" id="mobileDrawerBackdrop"></div>
-  <aside class="mobile-drawer" id="mobileDrawer" aria-hidden="true">
-    <div class="mobile-drawer-inner">
-      <nav class="mobile-drawer-nav">
-        <a href="login.html" class="mobile-drawer-link">Iniciar sesión</a>
-        <a href="questionnaire.html" class="mobile-drawer-link mobile-drawer-link--gold">Comenzar</a>
-      </nav>
     </div>
-  </aside>
+  </nav>
 
-  <main>
-    <!-- ─── HERO SECTION ───────────────────────────────────── -->
-    <section class="hero" id="hero">
-      <div class="hero-bg"></div>
-      <div class="hero-particles" id="particles"></div>
-
-      <!-- FOTO DE STOCK: Fondo completo de sección con máscara de gradiente oscuro -->
-      <div class="nv-lifestyle-bg nv-lifestyle-bg--hero" aria-hidden="true">
-        <img src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=1600&auto=format&fit=crop" alt="Atleta entrenando" class="nv-lifestyle-fullimg" loading="eager">
-        <div class="nv-lifestyle-gradient-mask"></div>
-      </div>
-
-      <div class="container hero-content">
-        <div class="hero-badge animate-fade-up">
-          <span class="badge-dot"></span>
-          Plan científico personalizado
+  <!-- HERO -->
+  <section id="hero"
+    style="border-bottom:2px solid #1B1A17;background-color:#EAF1EC;background-image:linear-gradient(rgba(27,26,23,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(27,26,23,.07) 1px,transparent 1px);background-size:44px 44px">
+    <div style="max-width:1440px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr))">
+      <div class="nv-pad" style="padding:96px 40px;display:flex;flex-direction:column;justify-content:center;position:relative;z-index:2">
+        <div
+          style="display:inline-flex;align-items:center;gap:10px;align-self:flex-start;background:#3A6B4F;color:#F2EFE8;padding:9px 14px;font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;margin-bottom:32px">
+          <i data-lucide="flask-conical" style="width:14px;height:14px"></i>Plan científico personalizado
         </div>
-        <h1 class="hero-title hero-title--refined animate-fade-up delay-1">
-          Tu mejor versión,<br>
-          <span class="hero-serif-accent">respaldada por la ciencia</span>
-        </h1>
-        <p class="hero-subtitle animate-fade-up delay-2">
-          Recibe un plan de nutrición y entrenamiento completamente adaptado a <span class="hero-sub-accent">ti.</span>
-        </p>
-        <div class="hero-cta animate-fade-up delay-3">
-          <a href="questionnaire.html" class="btn-gold-large" id="heroCtaBtn">
-            <span class="btn-shine"></span>
-            Comenzar
-          </a>
+        <h1 class="nv-h1"
+          style="font-family:'Newsreader',Georgia,serif;font-weight:300;font-size:88px;line-height:1;letter-spacing:-0.025em;margin:0 0 28px;text-wrap:pretty">
+          Tu mejor versión,<br>calculada.</h1>
+        <p style="font-size:19px;line-height:1.55;color:#3E3A34;margin:0 0 40px;max-width:520px">Nutrición y
+          entrenamiento adaptados a tus valores reales. Lo recalculamos cada vez que cambian.</p>
+        <div style="display:flex;gap:16px;flex-wrap:wrap">
+          <a class="nv-cta" href="questionnaire.html"
+            style="background:#3A6B4F;color:#F2EFE8;text-decoration:none;padding:18px 24px;font-weight:800;font-size:16px;display:inline-flex;align-items:center;gap:44px">Crear
+            mi plan <i data-lucide="arrow-right" style="width:18px;height:18px"></i></a>
+          <a class="nv-cta-line" href="#concepto"
+            style="border:2px solid #1B1A17;background:#F2EFE8;color:#1B1A17;text-decoration:none;padding:16px 22px;font-weight:800;font-size:16px">Cómo
+            funciona</a>
         </div>
       </div>
-    </section>
-
-    <!-- ─── SECUENCIA NARRATIVA ESTILO FUTURE.CO ───────────── -->
-    <div class="nv-narrative-container">
-
-      <!-- ESCENA 1: Dark Pinned Stage — iPhone Mockup Reveal (FONDO NEGRO LISO) -->
-      <section class="nv-pinned-section nv-phone-scene" id="nv-phone-transition" aria-label="Experiencia NutroVia en iPhone">
-        
-        <div class="nv-phone-stage" id="nvPhoneStage">
-          
-          <!-- Mockup Ilustrado SVG iPhone 17 Pro con Pantalla HTML/CSS Nítida -->
-          <div class="nv-device-wrapper" id="nvSequencePhone">
-            <img src="mockups/iphone17pro.svg" alt="NutroVia en iPhone" class="nv-device-frame">
-            <div class="nv-screen nv-screen--iphone">
-              
-              <!-- Vista 1: Pantalla de Carga/Bienvenida con el Logo de Nutrovia centrado -->
-              <div class="nv-app-view nv-app-view--splash nv-app-view--visible" id="nvPhoneSplash">
-                <div class="splash-welcome-box">
-                  <img src="/img/logo_nutrovia_negro.png" alt="NutroVia Logo" class="splash-logo-img">
-                  <span class="splash-brand-title">NUTROVIA<span class="logo-dot">.</span></span>
-                  <div class="splash-pulse"></div>
-                </div>
-                <div class="splash-glow-aura"></div>
-              </div>
-
-              <!-- Vista 2: Dashboard Interactivo Completo -->
-              <div class="nv-app-view nv-app-view--dashboard" id="nvPhoneDash">
-                <div class="nv-dash-header">
-                  <div>
-                    <span class="nv-dash-greeting">Buenas tardes,</span>
-                    <strong class="nv-dash-username">Eduardo</strong>
-                  </div>
-                  <span class="nv-dash-avatar">ED</span>
-                </div>
-                <div class="nv-dash-plan-badge">
-                  <span class="plan-label">PLAN PERSONALIZADO</span>
-                  <span class="plan-name">Perder peso</span>
-                  <span class="plan-meta">Semana 04 · Nivel moderado</span>
-                </div>
-                <div class="nv-dash-macros-grid">
-                  <div class="macro-cell">
-                    <strong>2.450</strong>
-                    <small>kcal</small>
-                    <span>Objetivo</span>
-                  </div>
-                  <div class="macro-cell">
-                    <strong>168</strong>
-                    <small>g</small>
-                    <span>Proteína</span>
-                  </div>
-                  <div class="macro-cell">
-                    <strong>4</strong>
-                    <small>días</small>
-                    <span>Entreno</span>
-                  </div>
-                </div>
-                <div class="nv-dash-section-title">
-                  <span>Hoy en tu plan</span>
-                  <a href="#nv-concept" style="color:var(--gold);font-size:9px;text-decoration:none;">Ver todo →</a>
-                </div>
-                <div class="nv-dash-item">
-                  <span class="nv-dash-item-icon">01</span>
-                  <div class="nv-dash-item-info">
-                    <strong>Desayuno</strong>
-                    <small>Avena, proteína y frutos rojos</small>
-                  </div>
-                  <b style="font-size:10px;color:var(--gold);">612 kcal</b>
-                </div>
-                <div class="nv-dash-item">
-                  <span class="nv-dash-item-icon">02</span>
-                  <div class="nv-dash-item-info">
-                    <strong>Entrenamiento</strong>
-                    <small>Full body · 42 min</small>
-                  </div>
-                  <b style="font-size:10px;color:var(--text-muted);">4 ejercicios</b>
-                </div>
-              </div>
-
-            </div>
-          </div>
-
-          <!-- Tarjeta Narrativa 01: Fija en el lateral derecho al hacer scroll -->
-          <div class="nv-card nv-card--intro" id="nvCardIntro">
-            <span class="nv-card-num">01 · TU DÍA, DE UN VISTAZO</span>
-            <h3 class="nv-card-title">Calorías, macros y entreno en un solo lugar</h3>
-            <p class="nv-card-desc">
-              Un panel claro y conciso calculado para tus números reales. Sin interpretar tablas complejas ni contar calorías a ciegas.
-            </p>
-            <ul class="nv-card-checklist">
-              <li><span class="check-icon" data-icon="check" data-icon-size="14"></span> Plan de nutrición 100% individualizado</li>
-              <li><span class="check-icon" data-icon="check" data-icon-size="14"></span> Distribución de macronutrientes exactos</li>
-              <li><span class="check-icon" data-icon="check" data-icon-size="14"></span> Rutinas adaptadas a tus días disponibles</li>
-            </ul>
-          </div>
-
+      <div style="position:relative;min-height:560px">
+        <img class="nv-photo" src="img/img1.webp" alt="Preparación de comida real">
+        <div
+          style="position:absolute;inset:0;background:linear-gradient(90deg,#EAF1EC 0%,rgba(234,241,236,.72) 22%,rgba(234,241,236,.14) 58%,transparent 100%);pointer-events:none">
         </div>
-      </section>
-
-      <!-- CAPA CREMA 1: El Concepto + Cómo se genera tu plan + Bento Grid (FONDO CLARO LISO) -->
-      <section class="nv-layer-card nv-layer-cream" id="nv-concept" aria-label="El concepto NutroVia">
-        <div class="container nv-cream-content">
-          
-          <div class="nv-header-block">
-            <span class="nv-tag-pill">El concepto</span>
-            <h2 class="nv-editorial-title">
-              Planes genéricos para cuerpos genéricos.<br>
-              <span class="nv-title-accent">Hasta ahora.</span>
-            </h2>
-            <p class="nv-editorial-sub">
-              NutroVia calcula tu metabolismo basal y tu gasto energético diario mediante la ecuación científica Harris-Benedict, estructurando tu nutrición, entrenamiento y suplementación a partir de tu biología real.
-            </p>
-            <p class="nv-serif-quote">«La nutrición no debería ser un misterio.»</p>
-          </div>
-
-          <!-- Proceso en 3 pasos -->
-          <div class="nv-process-wrapper">
-            <span class="nv-tag-pill">Cómo se genera tu plan</span>
-            <h3 class="nv-process-title">De tus datos a tu plan completo, <span class="nv-title-accent">en 3 pasos</span></h3>
-            
-            <div class="nv-steps-row">
-              <div class="nv-step-box">
-                <span class="step-badge">01</span>
-                <h4>Tus datos</h4>
-                <p>Edad, sexo biológico, peso, altura, objetivo y nivel de actividad real.</p>
-              </div>
-              <div class="step-arrow-divider">→</div>
-              <div class="nv-step-box">
-                <span class="step-badge">02</span>
-                <h4>Cálculo metabólico</h4>
-                <p>Tu tasa metabólica basal y TDEE calculados con precisión científica.</p>
-              </div>
-              <div class="step-arrow-divider">→</div>
-              <div class="nv-step-box">
-                <span class="step-badge">03</span>
-                <h4>Tu plan completo</h4>
-                <p>Menú semanal de 7 días, rutina deportiva, macros y suplementación.</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Gradientes compartidos por los visuales del bento -->
-          <svg width="0" height="0" style="position:absolute" aria-hidden="true">
-            <defs>
-              <linearGradient id="bentoRingGrad" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="#e6c878"/>
-                <stop offset="100%" stop-color="#9e7f2e"/>
-              </linearGradient>
-              <linearGradient id="bentoGaugeGrad" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="#e6c878"/>
-                <stop offset="100%" stop-color="#9e7f2e"/>
-              </linearGradient>
-              <linearGradient id="bentoSparkGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="rgba(201, 168, 76, 0.35)"/>
-                <stop offset="100%" stop-color="rgba(201, 168, 76, 0)"/>
-              </linearGradient>
-            </defs>
-          </svg>
-
-          <!-- Tarjetas de producto estilo Apple (2×2) -->
-          <div class="acards">
-            <!-- 01 · Oscura: nutrición con intención (radar de macros) -->
-            <div class="acard acard--dark">
-              <div>
-                <span class="acard-label acard-label--gold">Nutrición con intención</span>
-                <h3 class="acard-title acard-title--gold">Come con propósito</h3>
-                <p class="acard-body acard-body--white">Menús calculados que encajan con tu objetivo, tus horarios y tu tipo de dieta.</p>
-              </div>
-              <div class="acard-visual">
-                <div class="aradar">
-                  <svg viewBox="0 0 200 140" aria-hidden="true">
-                    <circle class="radar-ring" cx="100" cy="70" r="54"/>
-                    <circle class="radar-ring" cx="100" cy="70" r="40"/>
-                    <circle class="radar-ring" cx="100" cy="70" r="26"/>
-                    <path class="radar-x" d="M46 70h108"/>
-                    <path class="radar-x" d="M100 16v108"/>
-                    <path class="radar-x" d="M62 32l76 76"/>
-                    <path class="radar-x" d="M138 32l-76 76"/>
-                    <path class="radar-sweep" d="M100 70 L127 23.2 A54 54 0 0 0 100 16 Z"/>
-                    <g class="radar-marker" transform="translate(147 26)"><circle r="4.5"/><text x="10" y="4">P</text></g>
-                    <g class="radar-marker" transform="translate(153 96)"><circle r="4.5"/><text x="10" y="4">C</text></g>
-                    <g class="radar-marker" transform="translate(42 94)"><circle r="4.5"/><text x="-30" y="4">G</text></g>
-                    <circle class="radar-dot" cx="122" cy="52" r="2.5"/>
-                    <circle class="radar-dot" cx="72" cy="42" r="2.5"/>
-                    <circle class="radar-dot" cx="84" cy="100" r="2.5"/>
-                    <circle class="radar-dot" cx="130" cy="114" r="2.5"/>
-                  </svg>
-                  <div class="aradar-center">
-                    <span class="aradar-num">2.450</span>
-                    <span class="aradar-unit">KCAL / DÍA</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- 02 · Crema: alimentación real (plato de macros) -->
-            <div class="acard acard--cream">
-              <div>
-                <span class="acard-label acard-label--dark">Comida real</span>
-                <h3 class="acard-title acard-title--dark">Alimentación que disfrutas</h3>
-                <p class="acard-body acard-body--dark">Recetas balanceadas y variadas sin pasar hambre ni renunciar al sabor.</p>
-              </div>
-              <div class="acard-visual">
-                <div class="bento-plate">
-                  <svg viewBox="0 0 60 60">
-                    <circle class="plate-carbs" cx="30" cy="30" r="22"/>
-                    <circle class="plate-protein" cx="30" cy="30" r="22"/>
-                    <circle class="plate-fat" cx="30" cy="30" r="22"/>
-                  </svg>
-                  <div class="bento-plate-center">P·C·G</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- 03 · Contornos: ciencia metabólica (gauge TDEE) -->
-            <div class="acard acard--contour">
-              <div>
-                <span class="acard-label acard-label--dark">Ciencia metabólica</span>
-                <h3 class="acard-title acard-title--dark">Tu metabolismo real</h3>
-                <p class="acard-body acard-body--dark">Tu gasto energético TDEE calculado con precisión como base no negociable.</p>
-              </div>
-              <div class="acard-visual">
-                <div class="bento-gauge">
-                  <svg viewBox="0 0 120 70">
-                    <circle class="gauge-track" cx="60" cy="62" r="40"/>
-                    <circle class="gauge-fg" cx="60" cy="62" r="40"/>
-                  </svg>
-                  <div class="bento-gauge-txt">
-                    <span class="g-num">2.800</span><br>
-                    <span class="g-unit">KCAL TDEE</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- 04 · Dorada: seguimiento claro (gráfica blanca) -->
-            <div class="acard acard--gold acard--alerts">
-              <span class="acard-label acard-label--light">Seguimiento claro</span>
-              <div class="agold-plot">
-                <svg viewBox="0 0 200 80" preserveAspectRatio="none">
-                  <path class="garea" d="M10 70 L45 58 L80 62 L115 40 L150 46 L190 18 L190 80 L10 80 Z"/>
-                  <path class="gline" d="M10 70 L45 58 L80 62 L115 40 L150 46 L190 18"/>
-                  <circle class="gdot" cx="190" cy="18" r="3.5"/>
-                </svg>
-                <span class="agold-tag">−3,2 kg</span>
-              </div>
-              <h3 class="acard-title acard-title--white">Entiende cada ajuste calórico y la evolución semanal de tu composición corporal.</h3>
-            </div>
-          </div>
-
-          <!-- Dietas compatibles -->
-          <div class="bento-tags acard-tags">
-            <span class="b-tag">Sin gluten</span>
-            <span class="b-tag">Vegano</span>
-            <span class="b-tag">Vegetariano</span>
-            <span class="b-tag">Omnívoro</span>
-            <span class="b-tag">Sin lactosa</span>
-            <span class="b-tag">Keto / Low-Carb</span>
-          </div>
-
-        </div>
-      </section>
-
-      <!-- ─── MINI CARRUSEL HORIZONTAL CONTINUO ESTILO FUTURE.CO (ASIMÉTRICO & WEBP) ─── -->
-      <section class="nv-marquee-section" aria-label="Galería NutroVia en acción">
-        <div class="nv-marquee-header container">
-          <span class="nv-tag-pill">NutroVia en el mundo real</span>
-          <h2 class="nv-marquee-title">Constancia que se adapta a <span class="nv-title-accent">tu ritmo de vida</span></h2>
-        </div>
-
-        <div class="nv-marquee-track-wrapper">
-          <div class="nv-marquee-track">
-            <!-- Bloque 1 de tarjetas con anchos asimétricos -->
-            <div class="nv-marquee-card nv-marquee-card--wide">
-              <img src="/img/img1.webp" alt="Entrenamiento personalizado" class="marquee-card-img" loading="lazy" decoding="async">
-              <div class="marquee-card-overlay"></div>
-              <div class="marquee-card-content">
-                <span class="marquee-tag">ENTRENAMIENTO</span>
-                <h4>Nunca entrenas solo</h4>
-                <p>Progresión calculada semana a semana.</p>
-              </div>
-            </div>
-
-            <div class="nv-marquee-card nv-marquee-card--narrow">
-              <img src="/img/img2.webp" alt="Nutrición real y flexible" class="marquee-card-img" loading="lazy" decoding="async">
-              <div class="marquee-card-overlay"></div>
-              <div class="marquee-card-content">
-                <span class="marquee-tag">FLEXIBILIDAD</span>
-                <h4>Diseñado para la vida real</h4>
-                <p>Ajusta días y horarios sin penalizaciones.</p>
-              </div>
-            </div>
-
-            <div class="nv-marquee-card nv-marquee-card--medium">
-              <img src="/img/img3.webp" alt="Progreso en vivo" class="marquee-card-img" loading="lazy" decoding="async">
-              <div class="marquee-card-overlay"></div>
-              <div class="marquee-card-content">
-                <span class="marquee-tag">SEGUIMIENTO</span>
-                <h4>Progreso que perdura</h4>
-                <p>Métricas precisas en tu móvil y muñeca.</p>
-              </div>
-            </div>
-
-            <div class="nv-marquee-card nv-marquee-card--standard">
-              <img src="/img/img4.webp" alt="Ejecución y técnica" class="marquee-card-img" loading="lazy" decoding="async">
-              <div class="marquee-card-overlay"></div>
-              <div class="marquee-card-content">
-                <span class="marquee-tag">TÉCNICA</span>
-                <h4>Entrena con confianza</h4>
-                <p>Series, pausas y ejercicios estructurados.</p>
-              </div>
-            </div>
-
-            <div class="nv-marquee-card nv-marquee-card--wide">
-              <img src="/img/img5.webp" alt="Ciencia metabólica" class="marquee-card-img" loading="lazy" decoding="async">
-              <div class="marquee-card-overlay"></div>
-              <div class="marquee-card-content">
-                <span class="marquee-tag">CIENCIA</span>
-                <h4>Creado por algoritmos reales</h4>
-                <p>Harris-Benedict y gasto TDEE exacto.</p>
-              </div>
-            </div>
-
-            <div class="nv-marquee-card nv-marquee-card--narrow">
-              <img src="/img/img6.webp" alt="Resultados sostenibles" class="marquee-card-img" loading="lazy" decoding="async">
-              <div class="marquee-card-overlay"></div>
-              <div class="marquee-card-content">
-                <span class="marquee-tag">RESULTADOS</span>
-                <h4>Hábitos de por vida</h4>
-                <p>Transformación física sin dietas milagro.</p>
-              </div>
-            </div>
-
-            <!-- Duplicado para loop continuo infinito sin saltos con mismos anchos asimétricos -->
-            <div class="nv-marquee-card nv-marquee-card--wide" aria-hidden="true">
-              <img src="/img/img1.webp" alt="" class="marquee-card-img" loading="lazy" decoding="async">
-              <div class="marquee-card-overlay"></div>
-              <div class="marquee-card-content">
-                <span class="marquee-tag">ENTRENAMIENTO</span>
-                <h4>Nunca entrenas solo</h4>
-                <p>Progresión calculada semana a semana.</p>
-              </div>
-            </div>
-
-            <div class="nv-marquee-card nv-marquee-card--narrow" aria-hidden="true">
-              <img src="/img/img2.webp" alt="" class="marquee-card-img" loading="lazy" decoding="async">
-              <div class="marquee-card-overlay"></div>
-              <div class="marquee-card-content">
-                <span class="marquee-tag">FLEXIBILIDAD</span>
-                <h4>Diseñado para la vida real</h4>
-                <p>Ajusta días y horarios sin penalizaciones.</p>
-              </div>
-            </div>
-
-            <div class="nv-marquee-card nv-marquee-card--medium" aria-hidden="true">
-              <img src="/img/img3.webp" alt="" class="marquee-card-img" loading="lazy" decoding="async">
-              <div class="marquee-card-overlay"></div>
-              <div class="marquee-card-content">
-                <span class="marquee-tag">SEGUIMIENTO</span>
-                <h4>Progreso que perdura</h4>
-                <p>Métricas precisas en tu móvil y muñeca.</p>
-              </div>
-            </div>
-
-            <div class="nv-marquee-card nv-marquee-card--standard" aria-hidden="true">
-              <img src="/img/img4.webp" alt="" class="marquee-card-img" loading="lazy" decoding="async">
-              <div class="marquee-card-overlay"></div>
-              <div class="marquee-card-content">
-                <span class="marquee-tag">TÉCNICA</span>
-                <h4>Entrena con confianza</h4>
-                <p>Series, pausas y ejercicios estructurados.</p>
-              </div>
-            </div>
-
-            <div class="nv-marquee-card nv-marquee-card--wide" aria-hidden="true">
-              <img src="/img/img5.webp" alt="" class="marquee-card-img" loading="lazy" decoding="async">
-              <div class="marquee-card-overlay"></div>
-              <div class="marquee-card-content">
-                <span class="marquee-tag">CIENCIA</span>
-                <h4>Creado por algoritmos reales</h4>
-                <p>Harris-Benedict y gasto TDEE exacto.</p>
-              </div>
-            </div>
-
-            <div class="nv-marquee-card nv-marquee-card--narrow" aria-hidden="true">
-              <img src="/img/img6.webp" alt="" class="marquee-card-img" loading="lazy" decoding="async">
-              <div class="marquee-card-overlay"></div>
-              <div class="marquee-card-content">
-                <span class="marquee-tag">RESULTADOS</span>
-                <h4>Hábitos de por vida</h4>
-                <p>Transformación física sin dietas milagro.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ESCENA 2: Dark Pinned Stage — El Propósito & Adaptabilidad -->
-      <section class="nv-pinned-section nv-purpose-scene" id="nv-purpose" aria-label="El propósito de NutroVia">
-        <!-- FOTO DE STOCK: Fondo completo de sección -->
-        <div class="nv-lifestyle-bg nv-lifestyle-bg--purpose" aria-hidden="true">
-          <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1600&auto=format&fit=crop" alt="Constancia y entrenamiento" class="nv-lifestyle-fullimg" loading="lazy">
-          <div class="nv-lifestyle-gradient-mask"></div>
-        </div>
-
-        <div class="nv-purpose-stage">
-          <div class="nv-purpose-card">
-            <span class="nv-card-num">02 · EL PROPÓSITO</span>
-            <h2 class="nv-purpose-title">
-              No se trata de contar calorías.<br>
-              Se trata de <span class="gold-gradient">entender tu cuerpo</span>.
-            </h2>
-            <p class="nv-purpose-desc">
-              Cada plan se adapta a tu objetivo, tu actividad física y tus intolerancias. Y lo más importante: evoluciona contigo, mes a mes.
-            </p>
-            <div class="nv-purpose-features">
-              <div class="p-feat">
-                <span class="p-feat-icon" data-icon="target" data-icon-size="18"></span>
-                <div>
-                  <strong>Objetivos ajustables</strong>
-                  <small>Déficit, superávit o mantenimiento cuando tú lo decidas.</small>
-                </div>
-              </div>
-              <div class="p-feat">
-                <span class="p-feat-icon" data-icon="refresh" data-icon-size="18"></span>
-                <div>
-                  <strong>Recálculo continuo</strong>
-                  <small>Ajuste de macronutrientes según cambie tu peso y fuerza.</small>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="nv-purpose-device" id="nvPurposePhone">
-            <div class="nv-device-wrapper">
-              <img src="mockups/iphone17pro.svg" alt="NutroVia en iPhone" class="nv-device-frame">
-              <div class="nv-screen nv-screen--iphone">
-                <div class="nv-app-view nv-app-view--dashboard nv-app-view--visible">
-                  <div class="nv-dash-header">
-                    <div>
-                      <span class="nv-dash-greeting">Mi nutrición</span>
-                      <strong class="nv-dash-username">Lunes · 2.450 kcal</strong>
-                    </div>
-                    <span class="nv-dash-avatar">ED</span>
-                  </div>
-                  <div class="nv-dash-days-row">
-                    <span class="day-chip active">L</span>
-                    <span class="day-chip">M</span>
-                    <span class="day-chip">X</span>
-                    <span class="day-chip">J</span>
-                    <span class="day-chip">V</span>
-                    <span class="day-chip">S</span>
-                    <span class="day-chip">D</span>
-                  </div>
-                  <div class="nv-dash-item">
-                    <span class="nv-dash-item-icon" data-icon="nutrition" data-icon-size="11"></span>
-                    <div class="nv-dash-item-info">
-                      <strong>Comida</strong>
-                      <small>Pollo con arroz y verduras al vapor</small>
-                    </div>
-                    <b class="nv-dash-item-val">857 kcal</b>
-                  </div>
-                  <div class="nv-dash-item">
-                    <span class="nv-dash-item-icon" data-icon="moon" data-icon-size="11"></span>
-                    <div class="nv-dash-item-info">
-                      <strong>Cena</strong>
-                      <small>Salmón con patata asada y espárragos</small>
-                    </div>
-                    <b class="nv-dash-item-val">490 kcal</b>
-                  </div>
-                  <div class="nv-dash-tip">
-                    <span class="nv-icon" data-icon="sparkles" data-icon-size="13"></span> Distribución de macros: 35% P · 50% C · 15% G
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ESCENA 3: Dark Hero — Apple Watch Protagonista e Independiente -->
-      <section class="nv-watch-hero-section" id="nv-watch-section" aria-label="NutroVia en Apple Watch">
-        <!-- FOTO DE STOCK: Fondo completo de sección -->
-        <div class="nv-lifestyle-bg nv-lifestyle-bg--watch" aria-hidden="true">
-          <img src="https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?q=80&w=1600&auto=format&fit=crop" alt="Atleta al aire libre con reloj" class="nv-lifestyle-fullimg" loading="lazy">
-          <div class="nv-lifestyle-gradient-mask"></div>
-        </div>
-
-        <div class="container nv-watch-inner">
-          <div class="nv-purpose-card" style="max-width:720px;margin:0 auto 48px;text-align:center;position:relative;z-index:2;">
-            <span class="nv-card-num">03 · NUTROVIA EN TU MUÑECA</span>
-            <h2 class="nv-purpose-title">
-              Lo esencial,<br>
-              <span class="gold-gradient">a un golpe de vista.</span>
-            </h2>
-            <p class="nv-purpose-desc">
-              Calorías restantes, desglose de macronutrientes en vivo y alertas de entrenamiento sin necesidad de sacar el teléfono del bolsillo. La constancia vive en tu muñeca.
-            </p>
-          </div>
-
-          <!-- Feature card: tu día de un vistazo (mockup real del watch, contenido) -->
-          <div class="watch-feature">
-            <div class="watch-feature-text nv-watch-text-col">
-              <span class="acard-label acard-label--gold">En la muñeca</span>
-              <h3 class="acard-title acard-title--gold">Tu día de un vistazo</h3>
-              <p class="acard-body acard-body--white">Calorías restantes, macros y próximo entreno sin sacar el móvil del bolsillo.</p>
-              <div class="watch-feature-chips">
-                <span class="wf-chip"><span class="wf-dot"></span>2.450 kcal restantes</span>
-                <span class="wf-chip"><span class="wf-dot"></span>P 168 · C 240 · G 72</span>
-                <span class="wf-chip"><span class="wf-dot"></span>Próximo entreno: Fuerza A</span>
-              </div>
-            </div>
-            <div class="watch-feature-visual">
-              <div class="watch-device" id="nvWatchMockup">
-                <img src="mockups/apple-watch.svg" alt="NutroVia en Apple Watch" class="nv-watch-frame">
-                <div class="nv-screen nv-screen--watch">
-                  <div class="watch-ui-container">
-                    <span class="watch-tag">HOY</span>
-                    <div class="watch-ring-wrapper">
-                      <svg viewBox="0 0 100 100" class="watch-ring-svg">
-                        <circle cx="50" cy="50" r="42" class="ring-bg"></circle>
-                        <circle cx="50" cy="50" r="42" class="ring-fg"></circle>
-                      </svg>
-                      <div class="watch-ring-center">
-                        <span class="watch-calories-num">2.450</span>
-                        <span class="watch-calories-unit">kcal</span>
-                      </div>
-                    </div>
-                    <div class="watch-macros-pills">
-                      <div class="w-pill"><span class="p-p">P</span> 168</div>
-                      <div class="w-pill"><span class="p-c">C</span> 240</div>
-                      <div class="w-pill"><span class="p-g">G</span> 72</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 3 minis: semana, rutas, entreno -->
-          <div class="watch-mini-grid">
-            <!-- Crema: tu semana trazada (barras diarias) -->
-            <div class="acard acard--cream">
-              <div>
-                <span class="acard-label acard-label--dark">Sincronización</span>
-                <h3 class="acard-title acard-title--dark">Tu semana trazada</h3>
-                <p class="acard-body acard-body--dark">Tus datos en tiempo real, directos en la muñeca, sin tocar nada.</p>
-              </div>
-              <div class="acard-visual">
-                <div class="wweek">
-                  <div class="wweek-bars">
-                    <div class="wbar" style="--h:55%"><i></i><span>L</span></div>
-                    <div class="wbar" style="--h:80%"><i></i><span>M</span></div>
-                    <div class="wbar" style="--h:62%"><i></i><span>X</span></div>
-                    <div class="wbar on" style="--h:95%"><i></i><span>J</span></div>
-                    <div class="wbar" style="--h:70%"><i></i><span>V</span></div>
-                    <div class="wbar" style="--h:45%"><i></i><span>S</span></div>
-                    <div class="wbar" style="--h:38%"><i></i><span>D</span></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Contornos: rutas y elevación (mapa topográfico) -->
-            <div class="acard acard--contour">
-              <div>
-                <span class="acard-label acard-label--dark">Rutas y elevación</span>
-                <h3 class="acard-title acard-title--dark">Tu ruta, trazada</h3>
-                <p class="acard-body acard-body--dark">Mapas topográficos con tu recorrido y altitud, al instante en la muñeca.</p>
-              </div>
-              <div class="acard-visual">
-                <div class="acontour">
-                  <span class="ct-elev" style="top:4%; left:6%">5.800</span>
-                  <span class="ct-elev" style="top:38%; right:6%">5.600</span>
-                  <span class="ct-elev" style="bottom:8%; left:36%">5.400</span>
-                  <svg viewBox="0 0 260 120" preserveAspectRatio="none">
-                    <path class="ct-line" d="M-10 44 Q 60 10 130 38 T 270 26"/>
-                    <path class="ct-line" d="M-10 62 Q 60 28 130 56 T 270 44"/>
-                    <path class="ct-line" d="M-10 80 Q 60 46 130 74 T 270 62"/>
-                    <path class="ct-line" d="M-10 98 Q 60 64 130 92 T 270 80"/>
-                    <path class="ct-trail" d="M0 106 Q 55 46 125 68 T 262 28"/>
-                    <circle class="ct-dot" cx="262" cy="28" r="4"/>
-                  </svg>
-                </div>
-              </div>
-            </div>
-
-            <!-- Dorada: alertas de entreno (anillo de completado) -->
-            <div class="acard acard--gold acard--alerts">
-              <div class="agold-top">
-                <span class="acard-label acard-label--light">Alertas de entreno</span>
-                <span class="agold-badge">HOY · 18:00</span>
-              </div>
-              <div class="aworkout">
-                <div class="aworkout-ring">
-                  <svg viewBox="0 0 100 100">
-                    <circle class="aw-ring-bg" cx="50" cy="50" r="42"/>
-                    <circle class="aw-ring-fg" cx="50" cy="50" r="42"/>
-                  </svg>
-                  <svg class="aw-check" viewBox="0 0 24 24"><path d="M4.5 12.5l5 5L19.5 7"/></svg>
-                </div>
-                <div class="aworkout-meta">
-                  <span class="aw-title">¡Entreno completado!</span>
-                  <span class="aw-sub">42 min · 320 kcal · Fuerza A</span>
-                </div>
-              </div>
-              <h3 class="acard-title acard-title--white">Te avisamos cuando toca entrenar y cuándo has alcanzado tu objetivo del día.</h3>
-            </div>
-          </div>
-
-          <div class="nv-watch-cta">
-            <a href="questionnaire.html" class="btn-gold-large">
-              Crear mi plan ahora →
-            </a>
-          </div>
-        </div>
-      </section>
-
+      </div>
     </div>
-  </main>
+    <div style="border-top:2px solid #1B1A17;background:#3A6B4F;color:#F2EFE8">
+      <div style="max-width:1440px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr))">
+        <div style="padding:30px 40px;border-right:1px solid rgba(242,239,232,.25);min-width:0">
+          <div style="font-size:26px;font-weight:800;letter-spacing:-0.01em;overflow-wrap:anywhere">Harris-Benedict</div>
+          <div style="font-size:13px;color:#C4D6C8;margin-top:6px">Motor de cálculo metabólico</div>
+        </div>
+        <div style="padding:30px 40px;border-right:1px solid rgba(242,239,232,.25);min-width:0">
+          <div style="font-size:26px;font-weight:800;letter-spacing:-0.01em;font-variant-numeric:tabular-nums">7 días</div>
+          <div style="font-size:13px;color:#C4D6C8;margin-top:6px">Menú semanal completo</div>
+        </div>
+        <div style="padding:30px 40px;border-right:1px solid rgba(242,239,232,.25);min-width:0">
+          <div style="font-size:26px;font-weight:800;letter-spacing:-0.01em;font-variant-numeric:tabular-nums">3 min</div>
+          <div style="font-size:13px;color:#C4D6C8;margin-top:6px">Del cuestionario al plan</div>
+        </div>
+        <div style="padding:30px 40px;min-width:0">
+          <div style="font-size:26px;font-weight:800;letter-spacing:-0.01em;overflow-wrap:anywhere">Gratis</div>
+          <div style="font-size:13px;color:#C4D6C8;margin-top:6px">Plan Free de por vida</div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-  <!-- ─── FOOTER ───────────────────────────────────────────── -->
-  <footer class="site-footer">
-    <div class="container footer-inner">
-      <div class="footer-top-row">
-        <div class="footer-brand-col">
-          <div class="nav-logo">
-            <span class="logo-text">NUTROVIA</span>
-            <span class="logo-dot">.</span>
+  <!-- CONCEPTO -->
+  <section id="concepto"
+    style="border-bottom:2px solid #1B1A17;background-color:#F2EFE8;background-image:radial-gradient(rgba(27,26,23,.13) 1px,transparent 1px);background-size:22px 22px">
+    <div class="nv-pad" style="max-width:1440px;margin:0 auto;padding:96px 40px">
+      <div style="font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#3A6B4F;margin-bottom:32px">El concepto</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:64px;align-items:stretch">
+        <div style="background:#F2EFE8;box-shadow:0 0 0 2px #1B1A17;padding:48px;min-width:0">
+          <h2 class="nv-h2-serif"
+            style="font-family:'Newsreader',Georgia,serif;font-weight:300;font-size:60px;line-height:1.06;letter-spacing:-0.02em;margin:0;text-wrap:pretty">
+            Planes genéricos para cuerpos genéricos. Hasta ahora.</h2>
+        </div>
+        <div style="background:#F0EDF7;box-shadow:0 0 0 2px #1B1A17;padding:48px;min-width:0;display:flex;flex-direction:column">
+          <p style="font-size:19px;line-height:1.6;color:#3E3A34;margin:0 0 32px">NutroVia calcula tu metabolismo basal
+            y tu gasto energético diario mediante la ecuación científica Harris-Benedict, estructurando tu nutrición,
+            entrenamiento y suplementación a partir de tu biología real.</p>
+          <div style="margin-top:auto;border-top:2px solid #1B1A17;padding-top:28px">
+            <p style="font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:300;font-size:32px;line-height:1.3;margin:0;color:#433C64">
+              «La nutrición no debería ser un misterio.»</p>
           </div>
-          <p class="footer-motto">
-            Plataforma científica de nutrición y entrenamiento de alta precisión. Diseñada para transformar hábitos de por vida.
-          </p>
-        </div>
-
-        <div class="footer-links-col">
-          <h4>Navegación</h4>
-          <a href="#hero">Inicio</a>
-          <a href="#nv-phone-transition">La App</a>
-          <a href="#nv-concept">El Concepto</a>
-          <a href="#nv-purpose">El Propósito</a>
-          <a href="#nv-watch-section">Apple Watch</a>
-        </div>
-
-        <div class="footer-links-col">
-          <h4>Plataforma</h4>
-          <a href="questionnaire.html">Crear Plan</a>
-          <a href="login.html">Iniciar Sesión</a>
-          <a href="dashboard.html">Mi Panel</a>
-          <a href="#faq">Preguntas Frecuentes</a>
         </div>
       </div>
+    </div>
+  </section>
 
-      <div class="footer-bottom-row">
-        <p>© 2026 NutroVia. Todos los derechos reservados.</p>
-        <p class="footer-disclaimer">Los planes generados no sustituyen el diagnóstico ni consejo médico profesional.</p>
+  <!-- PROCESO -->
+  <section id="proceso"
+    style="border-bottom:2px solid #1B1A17;background-color:#E8E4DA;background-image:repeating-linear-gradient(135deg,rgba(27,26,23,.045) 0 2px,transparent 2px 12px)">
+    <div class="nv-pad" style="max-width:1440px;margin:0 auto;padding:96px 40px">
+      <div style="font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#3A6B4F;margin-bottom:28px">Cómo se genera tu plan</div>
+      <h2 class="nv-h2" style="font-size:52px;font-weight:800;letter-spacing:-0.025em;line-height:1.08;margin:0 0 64px;max-width:900px">De
+        tus datos a tu plan completo, en 3 pasos</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:2px;padding:2px">
+        <div style="background:#F2EFE8;padding:44px;min-width:0;box-shadow:0 0 0 2px #1B1A17">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px">
+            <span style="width:44px;height:44px;background:#3A6B4F;color:#F2EFE8;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800">01</span>
+            <i data-lucide="clipboard-list" style="width:22px;height:22px;color:#3A6B4F"></i>
+          </div>
+          <h3 style="font-size:30px;margin:0 0 14px;letter-spacing:-0.01em">Tus datos</h3>
+          <p style="font-size:17px;line-height:1.55;color:#3E3A34;margin:0">Edad, sexo biológico, peso, altura,
+            objetivo y nivel de actividad real.</p>
+        </div>
+        <div style="background:#F2EFE8;padding:44px;min-width:0;box-shadow:0 0 0 2px #1B1A17">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px">
+            <span style="width:44px;height:44px;background:#5A5183;color:#F2EFE8;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800">02</span>
+            <i data-lucide="calculator" style="width:22px;height:22px;color:#5A5183"></i>
+          </div>
+          <h3 style="font-size:30px;margin:0 0 14px;letter-spacing:-0.01em">Cálculo metabólico</h3>
+          <p style="font-size:17px;line-height:1.55;color:#3E3A34;margin:0">Tu tasa metabólica basal y TDEE calculados
+            con precisión científica.</p>
+        </div>
+        <div style="background:#F2EFE8;padding:44px;min-width:0;box-shadow:0 0 0 2px #1B1A17">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px">
+            <span style="width:44px;height:44px;background:#A8523F;color:#F2EFE8;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800">03</span>
+            <i data-lucide="check-check" style="width:22px;height:22px;color:#A8523F"></i>
+          </div>
+          <h3 style="font-size:30px;margin:0 0 14px;letter-spacing:-0.01em">Tu plan completo</h3>
+          <p style="font-size:17px;line-height:1.55;color:#3E3A34;margin:0">Menú semanal de 7 días, rutina deportiva,
+            macros y suplementación.</p>
+        </div>
       </div>
+    </div>
+  </section>
 
-      <div class="footer-big-watermark" aria-hidden="true">
-        <span>NUTROVIA</span>
+  <!-- TU DÍA DE UN VISTAZO -->
+  <section style="position:relative;border-bottom:2px solid #1B1A17;background:#F2EFE8">
+    <img class="nv-photo" src="img/img2.webp" alt="">
+    <div
+      style="position:absolute;inset:0;background:linear-gradient(90deg,#F2EFE8 0%,rgba(242,239,232,.94) 34%,rgba(242,239,232,.55) 58%,rgba(242,239,232,.18) 100%);pointer-events:none">
+    </div>
+    <div style="position:relative;max-width:1440px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr))">
+      <div class="nv-pad" style="padding:96px 40px;display:flex;flex-direction:column;justify-content:center">
+        <div style="font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#3A6B4F;margin-bottom:28px">01 · Tu día, de un vistazo</div>
+        <h2 class="nv-h2" style="font-size:52px;font-weight:800;letter-spacing:-0.025em;line-height:1.08;margin:0 0 24px;max-width:560px">
+          Calorías, macros y entreno en un solo lugar</h2>
+        <p style="font-size:19px;line-height:1.55;color:#3E3A34;margin:0 0 40px;max-width:520px">Un panel claro y
+          conciso calculado para tus números reales. Sin interpretar tablas complejas ni contar calorías a ciegas.</p>
+        <div style="display:flex;flex-direction:column;border-top:2px solid #1B1A17;max-width:560px">
+          <div style="display:flex;align-items:center;gap:16px;padding:18px 0;border-bottom:1px solid #CFC9BC;font-size:17px">
+            <i data-lucide="check" style="width:20px;height:20px;color:#3A6B4F;flex:none"></i>Plan de nutrición 100% individualizado</div>
+          <div style="display:flex;align-items:center;gap:16px;padding:18px 0;border-bottom:1px solid #CFC9BC;font-size:17px">
+            <i data-lucide="check" style="width:20px;height:20px;color:#3A6B4F;flex:none"></i>Distribución de macronutrientes exactos</div>
+          <div style="display:flex;align-items:center;gap:16px;padding:18px 0;border-bottom:2px solid #1B1A17;font-size:17px">
+            <i data-lucide="check" style="width:20px;height:20px;color:#3A6B4F;flex:none"></i>Rutinas adaptadas a tus días disponibles</div>
+        </div>
+      </div>
+      <div class="nv-pad" style="padding:96px 40px;display:flex;align-items:center;justify-content:center;min-height:640px">
+        <div style="width:100%;max-width:400px;border:2px solid #1B1A17;background:#F7F5F0;box-shadow:0 24px 60px rgba(27,26,23,.22)">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 22px;border-bottom:2px solid #1B1A17">
+            <div style="min-width:0">
+              <div style="font-size:12px;color:#6B665C">Buenas tardes,</div>
+              <div style="font-size:19px;font-weight:800">Eduardo</div>
+            </div>
+            <span style="width:38px;height:38px;background:#1B1A17;color:#F2EFE8;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex:none">ED</span>
+          </div>
+          <div style="padding:20px 22px;border-bottom:1px solid #CFC9BC;background:#EAF1EC">
+            <div style="font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#27503A;margin-bottom:10px">Plan personalizado</div>
+            <div style="font-size:24px;font-weight:800;letter-spacing:-0.01em">Perder peso</div>
+            <div style="font-size:13px;color:#6B665C;margin-top:4px">Semana 04 · Nivel moderado</div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-bottom:1px solid #CFC9BC;font-variant-numeric:tabular-nums">
+            <div style="padding:18px 14px;border-right:1px solid #CFC9BC;min-width:0">
+              <div style="font-size:24px;font-weight:800;letter-spacing:-0.02em">2 450</div>
+              <div style="font-size:11px;color:#6B665C;margin-top:4px">kcal objetivo</div>
+            </div>
+            <div style="padding:18px 14px;border-right:1px solid #CFC9BC;min-width:0">
+              <div style="font-size:24px;font-weight:800;letter-spacing:-0.02em">168 g</div>
+              <div style="font-size:11px;color:#6B665C;margin-top:4px">proteína</div>
+            </div>
+            <div style="padding:18px 14px;min-width:0">
+              <div style="font-size:24px;font-weight:800;letter-spacing:-0.02em">4 días</div>
+              <div style="font-size:11px;color:#6B665C;margin-top:4px">entreno</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 22px;border-bottom:2px solid #1B1A17">
+            <span style="font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#6B665C">Hoy en tu plan</span>
+            <a href="dashboard.html" style="font-size:12px;font-weight:600;text-decoration:none">Ver todo →</a>
+          </div>
+          <div style="display:flex;align-items:center;gap:16px;padding:18px 22px;border-bottom:1px solid #CFC9BC">
+            <i data-lucide="sunrise" style="width:20px;height:20px;color:#3A6B4F;flex:none"></i>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:15px;font-weight:800">Desayuno</div>
+              <div style="font-size:13px;color:#6B665C">Avena, proteína y frutos rojos</div>
+            </div>
+            <b style="font-size:14px;white-space:nowrap;font-variant-numeric:tabular-nums">612 kcal</b>
+          </div>
+          <div style="display:flex;align-items:center;gap:16px;padding:18px 22px">
+            <i data-lucide="dumbbell" style="width:20px;height:20px;color:#A8523F;flex:none"></i>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:15px;font-weight:800">Entrenamiento</div>
+              <div style="font-size:13px;color:#6B665C">Full body · 42 min</div>
+            </div>
+            <b style="font-size:14px;white-space:nowrap;color:#6B665C">4 ejercicios</b>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CUATRO PILARES -->
+  <section style="border-bottom:2px solid #1B1A17;background:#1B1A17">
+    <div class="nv-pad" style="max-width:1440px;margin:0 auto;padding:96px 40px">
+      <div style="font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#B9CFC0;margin-bottom:28px">Lo que entra en tu plan</div>
+      <h2 class="nv-h2" style="font-size:52px;font-weight:800;letter-spacing:-0.025em;line-height:1.08;margin:0 0 64px;max-width:900px;color:#F2EFE8">
+        Cuatro dominios, un solo cálculo</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:2px">
+        <div style="background:#EAF1EC;padding:44px;min-width:0;display:flex;flex-direction:column">
+          <i data-lucide="apple" style="width:32px;height:32px;color:#3A6B4F;margin-bottom:28px"></i>
+          <div style="font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#27503A;margin-bottom:14px">Nutrición con intención</div>
+          <h3 style="font-size:28px;margin:0 0 14px;letter-spacing:-0.01em">Come con propósito</h3>
+          <p style="font-size:16px;line-height:1.55;color:#3E3A34;margin:0 0 32px">Menús calculados que encajan con tu
+            objetivo, tus horarios y tu tipo de dieta.</p>
+          <div style="margin-top:auto;border-top:2px solid #1B1A17;padding-top:20px;font-variant-numeric:tabular-nums">
+            <div style="font-size:36px;font-weight:800;letter-spacing:-0.03em">2 450</div>
+            <div style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#6B665C;margin-top:4px">kcal / día</div>
+          </div>
+        </div>
+        <div style="background:#F7EAE6;padding:44px;min-width:0;display:flex;flex-direction:column">
+          <i data-lucide="dumbbell" style="width:32px;height:32px;color:#A8523F;margin-bottom:28px"></i>
+          <div style="font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#813A2B;margin-bottom:14px">Entrenamiento</div>
+          <h3 style="font-size:28px;margin:0 0 14px;letter-spacing:-0.01em">Tu semana trazada</h3>
+          <p style="font-size:16px;line-height:1.55;color:#3E3A34;margin:0 0 32px">Rutinas ajustadas a los días que
+            tienes y al nivel en el que estás hoy.</p>
+          <div style="margin-top:auto;border-top:2px solid #1B1A17;padding-top:20px">
+            <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;align-items:end;height:56px">
+              <div style="background:#A8523F;height:78%"></div>
+              <div style="background:#E4BCB0;height:18%"></div>
+              <div style="background:#A8523F;height:92%"></div>
+              <div style="background:#E4BCB0;height:18%"></div>
+              <div style="background:#A8523F;height:70%"></div>
+              <div style="background:#A8523F;height:88%"></div>
+              <div style="background:#E4BCB0;height:18%"></div>
+            </div>
+            <div style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#6B665C;margin-top:10px">4 sesiones / semana</div>
+          </div>
+        </div>
+        <div style="background:#F0EDF7;padding:44px;min-width:0;display:flex;flex-direction:column">
+          <i data-lucide="moon" style="width:32px;height:32px;color:#5A5183;margin-bottom:28px"></i>
+          <div style="font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#433C64;margin-bottom:14px">Descanso y soporte</div>
+          <h3 style="font-size:28px;margin:0 0 14px;letter-spacing:-0.01em">Suplementación honesta</h3>
+          <p style="font-size:16px;line-height:1.55;color:#3E3A34;margin:0 0 32px">Solo lo que tu plan justifica, con
+            dosis y momento del día. Nada más.</p>
+          <div style="margin-top:auto;border-top:2px solid #1B1A17;padding-top:20px">
+            <div style="font-size:36px;font-weight:800;letter-spacing:-0.03em;font-variant-numeric:tabular-nums">3</div>
+            <div style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#6B665C;margin-top:4px">suplementos sugeridos</div>
+          </div>
+        </div>
+        <div style="background:#FBF2E2;padding:44px;min-width:0;display:flex;flex-direction:column">
+          <i data-lucide="trending-up" style="width:32px;height:32px;color:#96631F;margin-bottom:28px"></i>
+          <div style="font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#96631F;margin-bottom:14px">Metabolismo real</div>
+          <h3 style="font-size:28px;margin:0 0 14px;letter-spacing:-0.01em">Tu evolución semanal</h3>
+          <p style="font-size:16px;line-height:1.55;color:#3E3A34;margin:0 0 32px">Entiende cada ajuste calórico y la
+            evolución de tu composición corporal.</p>
+          <div style="margin-top:auto;border-top:2px solid #1B1A17;padding-top:20px">
+            <div style="display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:5px;align-items:end;height:56px">
+              <div style="background:#EBD3A6;height:100%"></div>
+              <div style="background:#EBD3A6;height:94%"></div>
+              <div style="background:#EBD3A6;height:90%"></div>
+              <div style="background:#EBD3A6;height:82%"></div>
+              <div style="background:#EBD3A6;height:78%"></div>
+              <div style="background:#EBD3A6;height:70%"></div>
+              <div style="background:#EBD3A6;height:66%"></div>
+              <div style="background:#C98B3C;height:60%"></div>
+            </div>
+            <div style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#6B665C;margin-top:10px">78,4 → 72 kg</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MARQUESINA -->
+  <section style="border-bottom:2px solid #1B1A17;background:#A8523F;color:#F2EFE8;overflow:hidden;padding:34px 0">
+    <div style="display:flex;width:max-content;animation:nvMarquee 28s linear infinite">
+      <div class="nv-marquee-text"
+        style="display:flex;align-items:center;gap:56px;padding-right:56px;font-family:'Newsreader',Georgia,serif;font-weight:300;font-size:44px;white-space:nowrap">
+        <span>Constancia que se adapta a tu ritmo de vida</span><span style="color:#E4BCB0">·</span>
+        <span>Sin dietas milagro</span><span style="color:#E4BCB0">·</span>
+        <span>Recalculado cuando cambias</span><span style="color:#E4BCB0">·</span>
+      </div>
+      <div class="nv-marquee-text"
+        style="display:flex;align-items:center;gap:56px;padding-right:56px;font-family:'Newsreader',Georgia,serif;font-weight:300;font-size:44px;white-space:nowrap">
+        <span>Constancia que se adapta a tu ritmo de vida</span><span style="color:#E4BCB0">·</span>
+        <span>Sin dietas milagro</span><span style="color:#E4BCB0">·</span>
+        <span>Recalculado cuando cambias</span><span style="color:#E4BCB0">·</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROPÓSITO -->
+  <section id="proposito" style="border-bottom:2px solid #1B1A17">
+    <div style="max-width:1440px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr))">
+      <div style="position:relative;min-height:620px">
+        <img class="nv-photo" src="img/img3.webp" alt="">
+        <div
+          style="position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,rgba(247,234,230,.16) 46%,rgba(247,234,230,.78) 80%,#F7EAE6 100%);pointer-events:none">
+        </div>
+      </div>
+      <div class="nv-pad" style="padding:96px 40px;display:flex;flex-direction:column;justify-content:center;background:#F7EAE6;position:relative;z-index:2">
+        <div style="font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#813A2B;margin-bottom:28px">02 · El propósito</div>
+        <h2 class="nv-h2-serif"
+          style="font-family:'Newsreader',Georgia,serif;font-weight:300;font-size:62px;line-height:1.06;letter-spacing:-0.02em;margin:0 0 24px;text-wrap:pretty">
+          No se trata de contar calorías. Se trata de entender tu cuerpo.</h2>
+        <p style="font-size:19px;line-height:1.55;color:#3E3A34;margin:0 0 44px;max-width:560px">Cada plan se adapta a
+          tu objetivo, tu actividad física y tus intolerancias. Y lo más importante: evoluciona contigo, mes a mes.</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:2px;padding:2px;max-width:640px">
+          <div style="background:#F2EFE8;padding:28px;min-width:0;box-shadow:0 0 0 2px #1B1A17">
+            <i data-lucide="target" style="width:24px;height:24px;color:#3A6B4F;margin-bottom:18px"></i>
+            <div style="font-size:19px;font-weight:800;margin-bottom:8px">Objetivos ajustables</div>
+            <div style="font-size:15px;line-height:1.5;color:#3E3A34">Déficit, superávit o mantenimiento cuando tú lo decidas.</div>
+          </div>
+          <div style="background:#F2EFE8;padding:28px;min-width:0;box-shadow:0 0 0 2px #1B1A17">
+            <i data-lucide="refresh-cw" style="width:24px;height:24px;color:#5A5183;margin-bottom:18px"></i>
+            <div style="font-size:19px;font-weight:800;margin-bottom:8px">Recálculo continuo</div>
+            <div style="font-size:15px;line-height:1.5;color:#3E3A34">Ajuste de macronutrientes según cambie tu peso y fuerza.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GALERÍA -->
+  <section style="border-bottom:2px solid #1B1A17;background:#E8E4DA">
+    <div class="nv-pad" style="max-width:1440px;margin:0 auto;padding:96px 40px">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:32px;flex-wrap:wrap;margin-bottom:48px">
+        <div>
+          <div style="font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#3A6B4F;margin-bottom:20px">NutroVia en acción</div>
+          <h2 class="nv-h2" style="font-size:44px;font-weight:800;letter-spacing:-0.025em;line-height:1.1;margin:0;max-width:760px">
+            Comida real, entrenamiento real, descanso real</h2>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:36px;align-items:start">
+        <div style="position:relative;aspect-ratio:3/4"><img class="nv-photo" src="img/meal.jpg" alt="Plato completo"></div>
+        <div style="position:relative;aspect-ratio:3/4;margin-top:56px"><img class="nv-photo" src="img/img4.webp" alt="Detalle de esfuerzo"></div>
+        <div style="position:relative;aspect-ratio:3/4"><img class="nv-photo" src="img/chopping_vegetable.jpg" alt="Manos preparando"></div>
+        <div style="position:relative;aspect-ratio:3/4;margin-top:56px"><img class="nv-photo" src="img/img5.webp" alt="Descanso"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRECIO -->
+  <section id="precio"
+    style="border-bottom:2px solid #1B1A17;background-color:#1B1A17;background-image:radial-gradient(rgba(242,239,232,.1) 1px,transparent 1px);background-size:22px 22px">
+    <div class="nv-pad" style="max-width:1440px;margin:0 auto;padding:96px 40px">
+      <div style="font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#B9CFC0;margin-bottom:28px">Precio</div>
+      <h2 class="nv-h2" style="font-size:52px;font-weight:800;letter-spacing:-0.025em;line-height:1.08;margin:0 0 64px;max-width:900px;color:#F2EFE8">
+        Empieza gratis. Pasa a Pro cuando el plan te importe de verdad.</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:2px;padding:2px">
+        <div style="background:#1B1A17;color:#F2EFE8;padding:48px;min-width:0;display:flex;flex-direction:column;box-shadow:0 0 0 2px #F2EFE8">
+          <div style="font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#9A958A;margin-bottom:24px">Free</div>
+          <div style="font-size:56px;font-weight:800;letter-spacing:-0.035em;line-height:1;margin-bottom:8px">0 €</div>
+          <div style="font-size:15px;color:#9A958A;margin-bottom:36px">De por vida, sin tarjeta</div>
+          <div style="display:flex;flex-direction:column;border-top:2px solid #F2EFE8;margin-bottom:36px">
+            <div style="display:flex;align-items:center;gap:14px;padding:15px 0;border-bottom:1px solid rgba(242,239,232,.28);font-size:16px">
+              <i data-lucide="check" style="width:18px;height:18px;color:#B9CFC0;flex:none"></i>Cálculo metabólico completo</div>
+            <div style="display:flex;align-items:center;gap:14px;padding:15px 0;border-bottom:1px solid rgba(242,239,232,.28);font-size:16px">
+              <i data-lucide="check" style="width:18px;height:18px;color:#B9CFC0;flex:none"></i>Objetivo de calorías y macros</div>
+            <div style="display:flex;align-items:center;gap:14px;padding:15px 0;border-bottom:1px solid rgba(242,239,232,.28);font-size:16px;color:#8A857A">
+              <i data-lucide="minus" style="width:18px;height:18px;flex:none"></i>Menú semanal detallado</div>
+            <div style="display:flex;align-items:center;gap:14px;padding:15px 0;border-bottom:2px solid #F2EFE8;font-size:16px;color:#8A857A">
+              <i data-lucide="minus" style="width:18px;height:18px;flex:none"></i>Suplementación y check-ins</div>
+          </div>
+          <a class="nv-cta-inv" href="questionnaire.html"
+            style="margin-top:auto;border:2px solid #F2EFE8;color:#F2EFE8;text-decoration:none;padding:16px 22px;font-weight:800;font-size:16px;align-self:flex-start">Crear cuenta gratis</a>
+        </div>
+        <div style="background:#3A6B4F;color:#F2EFE8;padding:48px;min-width:0;display:flex;flex-direction:column;box-shadow:0 0 0 2px #F2EFE8">
+          <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:24px">
+            <span style="font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#C4D6C8">Pro</span>
+            <span style="background:#F2EFE8;color:#1B1A17;font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;padding:5px 10px">Recomendado</span>
+          </div>
+          <div style="font-size:56px;font-weight:800;letter-spacing:-0.035em;line-height:1;margin-bottom:8px">14 €<span
+              style="font-size:20px;font-weight:600;letter-spacing:0;color:#C4D6C8"> / mes</span></div>
+          <div style="font-size:15px;color:#C4D6C8;margin-bottom:36px">Sin permanencia, cancela cuando quieras</div>
+          <div style="display:flex;flex-direction:column;border-top:2px solid #F2EFE8;margin-bottom:36px">
+            <div style="display:flex;align-items:center;gap:14px;padding:15px 0;border-bottom:1px solid rgba(242,239,232,.28);font-size:16px">
+              <i data-lucide="check" style="width:18px;height:18px;flex:none"></i>Todo lo de Free</div>
+            <div style="display:flex;align-items:center;gap:14px;padding:15px 0;border-bottom:1px solid rgba(242,239,232,.28);font-size:16px">
+              <i data-lucide="check" style="width:18px;height:18px;flex:none"></i>Menú de 7 días con sustituciones</div>
+            <div style="display:flex;align-items:center;gap:14px;padding:15px 0;border-bottom:1px solid rgba(242,239,232,.28);font-size:16px">
+              <i data-lucide="check" style="width:18px;height:18px;flex:none"></i>Rutina deportiva y suplementación</div>
+            <div style="display:flex;align-items:center;gap:14px;padding:15px 0;border-bottom:2px solid #F2EFE8;font-size:16px">
+              <i data-lucide="check" style="width:18px;height:18px;flex:none"></i>Check-ins y recálculo continuo</div>
+          </div>
+          <a class="nv-cta-papel" href="questionnaire.html"
+            style="margin-top:auto;background:#F2EFE8;color:#1B1A17;text-decoration:none;padding:18px 24px;font-weight:800;font-size:16px;align-self:flex-start;display:inline-flex;align-items:center;gap:40px">Pasar
+            a Pro <i data-lucide="arrow-right" style="width:18px;height:18px"></i></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CIERRE -->
+  <section style="position:relative;border-bottom:2px solid #1B1A17;background:#F2EFE8">
+    <img class="nv-photo" src="img/img6.webp" alt="" style="opacity:.85">
+    <div
+      style="position:absolute;inset:0;background:linear-gradient(90deg,#F2EFE8 0%,rgba(242,239,232,.95) 34%,rgba(242,239,232,.6) 58%,rgba(242,239,232,.2) 100%);pointer-events:none">
+    </div>
+    <div class="nv-pad"
+      style="position:relative;max-width:1440px;margin:0 auto;padding:160px 40px 200px;display:flex;flex-direction:column;align-items:flex-start;gap:48px;color:#1B1A17;min-height:560px;justify-content:center">
+      <div class="nv-close-title"
+        style="font-family:'Newsreader',Georgia,serif;font-weight:300;font-size:76px;line-height:1.06;letter-spacing:-0.02em;text-wrap:pretty;max-width:820px">
+        Crea tu plan en tres minutos. Lo demás lo calculamos nosotros.</div>
+      <a class="nv-cta" href="questionnaire.html"
+        style="background:#3A6B4F;color:#F2EFE8;text-decoration:none;padding:20px 28px;font-weight:800;font-size:18px;display:inline-flex;align-items:center;gap:48px">Crear
+        mi plan ahora <i data-lucide="arrow-right" style="width:20px;height:20px"></i></a>
+    </div>
+  </section>
+
+  <!-- PIE -->
+  <footer style="position:relative;background:#1B1A17;color:#F2EFE8;overflow:hidden;padding-top:160px">
+    <div aria-hidden="true" style="position:absolute;left:0;right:0;bottom:-4%;display:flex;justify-content:center;pointer-events:none;user-select:none">
+      <span style="font-family:'Keratus','Archivo',sans-serif;font-size:min(21vw,300px);font-weight:800;letter-spacing:-0.045em;line-height:.8;color:#F2EFE8;opacity:.06;white-space:nowrap">NUTROVIA</span>
+    </div>
+    <div class="nv-pad" style="position:relative;max-width:1440px;margin:0 auto;padding:80px 40px 40px">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:56px;padding-bottom:56px;border-bottom:2px solid #F2EFE8">
+        <div style="min-width:0">
+          <div style="display:flex;align-items:center;gap:14px;margin-bottom:24px">
+            <img src="img/logo_negro.png" alt="" style="width:30px;height:auto;filter:invert(1)">
+            <span style="font-size:14px;font-family:'Keratus','Archivo',sans-serif;font-weight:800;letter-spacing:.22em">NUTROVIA</span>
+          </div>
+          <p style="font-size:15px;line-height:1.6;color:#9A958A;margin:0;max-width:360px">Plataforma científica de
+            nutrición y entrenamiento de alta precisión. Diseñada para transformar hábitos de por vida.</p>
+        </div>
+        <div style="min-width:0">
+          <div style="font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#9A958A;margin-bottom:20px">Navegación</div>
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <a href="#hero" style="font-size:15px;text-decoration:none;color:#F2EFE8">Inicio</a>
+            <a href="#concepto" style="font-size:15px;text-decoration:none;color:#F2EFE8">El concepto</a>
+            <a href="#proceso" style="font-size:15px;text-decoration:none;color:#F2EFE8">Cómo funciona</a>
+            <a href="#proposito" style="font-size:15px;text-decoration:none;color:#F2EFE8">El propósito</a>
+          </div>
+        </div>
+        <div style="min-width:0">
+          <div style="font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#9A958A;margin-bottom:20px">Plataforma</div>
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <a href="questionnaire.html" style="font-size:15px;text-decoration:none;color:#F2EFE8">Crear plan</a>
+            <a href="login.html" style="font-size:15px;text-decoration:none;color:#F2EFE8">Iniciar sesión</a>
+            <a href="dashboard.html" style="font-size:15px;text-decoration:none;color:#F2EFE8">Mi panel</a>
+            <a href="#precio" style="font-size:15px;text-decoration:none;color:#F2EFE8">Precio</a>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;gap:32px;flex-wrap:wrap;padding-top:28px;margin-top:120px;font-size:13px;color:#9A958A">
+        <span>© 2026 NutroVia. Todos los derechos reservados.</span>
+        <span style="max-width:520px">Los planes generados no sustituyen el diagnóstico ni consejo médico
+          profesional.</span>
       </div>
     </div>
   </footer>
 
-  <!-- Librerías de animación GSAP y ScrollTrigger -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-  <script src="js/main.js"></script>
+  <script>
+    if (window.lucide) window.lucide.createIcons();
+    else window.addEventListener('load', function () { if (window.lucide) window.lucide.createIcons(); });
+  </script>
 </body>
 
 </html>

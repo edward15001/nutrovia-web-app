@@ -178,9 +178,22 @@ router.get('/status', authMiddleware, async (req, res) => {
             return res.json({ status: 'none', message: 'Sin suscripción activa' });
         }
 
-        const sub = result.rows[0];
-        const now = new Date();
-        let daysRemaining = null;
+    const sub = result.rows[0];
+
+    // Datos públicos de la tarjeta (solo últimos 4 dígitos + marca + caducidad),
+    // para mostrarlos en el panel. Si no hay método guardado o Stripe no está
+    // configurado, se omite silenciosamente.
+    if (sub.stripe_payment_method_id) {
+        try {
+            const card = await stripeService.getPaymentMethodDetails(sub.stripe_payment_method_id);
+            if (card) sub.card = card;
+        } catch (err) {
+            console.error('Error obteniendo tarjeta:', err.message);
+        }
+    }
+
+    const now = new Date();
+    let daysRemaining = null;
 
         if (sub.status === 'trial') {
             const trialEnd = new Date(sub.trial_end);

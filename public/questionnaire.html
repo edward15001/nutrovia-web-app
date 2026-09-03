@@ -9,10 +9,9 @@
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css?v=4">
-    <script>document.documentElement.setAttribute('data-theme','dark')</script>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Newsreader:ital,opsz,wght@0,6..72,300;1,6..72,300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css?v=20260903u">
+    <script>document.documentElement.setAttribute('data-theme','nutrovia')</script>
     <script src="js/icons.js"></script>
 
     <script src="https://js.stripe.com/v3/"></script>
@@ -23,16 +22,21 @@
 </head>
 
 <body>
-    <div class="page-wrapper">
+    <div class="page-wrapper page-wrapper--quiz">
         <div class="quiz-container">
 
             <!-- Header -->
             <div class="quiz-header">
-                <div class="quiz-logo">NUTRO<span class="logo-dot">V</span>IA</div>
+                <div class="quiz-header-top">
+                    <a href="index.html" class="quiz-logo">
+                        <img src="img/logo/logo_nutrovia_negro.png" alt="NutroVia" class="quiz-logo-mark">
+                        <span>NUTROVIA</span>
+                    </a>
+                    <p class="progress-text" id="progressText">Paso 1 de 8</p>
+                </div>
                 <div class="progress-bar-container">
                     <div class="progress-bar" id="progressBar" style="width:12%"></div>
                 </div>
-                <p class="progress-text" id="progressText">Paso 1 de 8</p>
             </div>
 
             <!-- ═══════ STEP 1: Datos personales ═══════ -->
@@ -115,28 +119,28 @@
                 <h2>¿Cuál es tu objetivo?</h2>
                 <p class="subtitle">Tu plan se construirá específicamente para este fin</p>
                 <div class="option-grid cols-1">
-                    <button class="option-btn" onclick="selectOption(this, 'goal', 'perder_peso')">
+                    <button class="option-btn tone-savia" onclick="selectOption(this, 'goal', 'perder_peso')">
                         <span class="option-icon" data-icon="flame" data-icon-size="18"></span>
                         <span class="option-text">
                             <span class="option-title">Perder peso</span>
                             <span class="option-desc">Déficit calórico inteligente + quema de grasa</span>
                         </span>
                     </button>
-                    <button class="option-btn" onclick="selectOption(this, 'goal', 'ganar_masa')">
+                    <button class="option-btn tone-arcilla" onclick="selectOption(this, 'goal', 'ganar_masa')">
                         <span class="option-icon" data-icon="training" data-icon-size="18"></span>
                         <span class="option-text">
                             <span class="option-title">Ganar masa muscular</span>
                             <span class="option-desc">Superávit calórico + alta proteína + hipertrofia</span>
                         </span>
                     </button>
-                    <button class="option-btn" onclick="selectOption(this, 'goal', 'mantener')">
+                    <button class="option-btn tone-malva" onclick="selectOption(this, 'goal', 'mantener')">
                         <span class="option-icon" data-icon="scale" data-icon-size="18"></span>
                         <span class="option-text">
                             <span class="option-title">Mantener peso</span>
                             <span class="option-desc">Equilibrio calórico + composición corporal óptima</span>
                         </span>
                     </button>
-                    <button class="option-btn" onclick="selectOption(this, 'goal', 'mejorar_salud')">
+                    <button class="option-btn tone-ambar" onclick="selectOption(this, 'goal', 'mejorar_salud')">
                         <span class="option-icon" data-icon="heart" data-icon-size="18"></span>
                         <span class="option-text">
                             <span class="option-title">Mejorar salud general</span>
@@ -156,35 +160,35 @@
                 <h2>¿Cómo es tu día a día?</h2>
                 <p class="subtitle">Esto determina tu gasto calórico total</p>
                 <div class="option-grid cols-1">
-                    <button class="option-btn" onclick="selectOption(this, 'activity_level', 'sedentario')">
+                    <button class="option-btn tone-savia" onclick="selectOption(this, 'activity_level', 'sedentario')">
                         <span class="option-icon" data-icon="armchair" data-icon-size="18"></span>
                         <span class="option-text">
                             <span class="option-title">Sedentario</span>
                             <span class="option-desc">Trabajo de oficina, muy poca actividad física</span>
                         </span>
                     </button>
-                    <button class="option-btn" onclick="selectOption(this, 'activity_level', 'ligero')">
+                    <button class="option-btn tone-ambar" onclick="selectOption(this, 'activity_level', 'ligero')">
                         <span class="option-icon" data-icon="walk" data-icon-size="18"></span>
                         <span class="option-text">
                             <span class="option-title">Ligeramente activo</span>
                             <span class="option-desc">Ejercicio 1-2 días por semana o trabajo de pie</span>
                         </span>
                     </button>
-                    <button class="option-btn" onclick="selectOption(this, 'activity_level', 'moderado')">
+                    <button class="option-btn tone-arcilla" onclick="selectOption(this, 'activity_level', 'moderado')">
                         <span class="option-icon" data-icon="run" data-icon-size="18"></span>
                         <span class="option-text">
                             <span class="option-title">Moderadamente activo</span>
                             <span class="option-desc">Ejercicio 3-4 días por semana</span>
                         </span>
                     </button>
-                    <button class="option-btn" onclick="selectOption(this, 'activity_level', 'activo')">
+                    <button class="option-btn tone-malva" onclick="selectOption(this, 'activity_level', 'activo')">
                         <span class="option-icon" data-icon="training" data-icon-size="18"></span>
                         <span class="option-text">
                             <span class="option-title">Activo</span>
                             <span class="option-desc">Ejercicio intenso 5-6 días por semana</span>
                         </span>
                     </button>
-                    <button class="option-btn" onclick="selectOption(this, 'activity_level', 'muy_activo')">
+                    <button class="option-btn tone-savia" onclick="selectOption(this, 'activity_level', 'muy_activo')">
                         <span class="option-icon" data-icon="flame" data-icon-size="18"></span>
                         <span class="option-text">
                             <span class="option-title">Muy activo / Atleta</span>
@@ -204,27 +208,27 @@
                 <h2>Preferencias alimenticias</h2>
                 <p class="subtitle">Tu menú se adaptará completamente a tu dieta</p>
                 <div class="option-grid cols-1">
-                    <button class="option-btn" onclick="selectOption(this, 'dietary_preference', 'omnivoro')">
+                    <button class="option-btn tone-savia" onclick="selectOption(this, 'dietary_preference', 'omnivoro')">
                         <span class="option-icon" data-icon="utensils" data-icon-size="18"></span>
                         <span class="option-text"><span class="option-title">Omnívoro</span><span
                                 class="option-desc">Como de todo sin restricciones</span></span>
                     </button>
-                    <button class="option-btn" onclick="selectOption(this, 'dietary_preference', 'vegetariano')">
+                    <button class="option-btn tone-malva" onclick="selectOption(this, 'dietary_preference', 'vegetariano')">
                         <span class="option-icon" data-icon="egg" data-icon-size="18"></span>
                         <span class="option-text"><span class="option-title">Vegetariano</span><span
                                 class="option-desc">Sin carne ni pescado, sí huevos y lácteos</span></span>
                     </button>
-                    <button class="option-btn" onclick="selectOption(this, 'dietary_preference', 'vegano')">
+                    <button class="option-btn tone-savia" onclick="selectOption(this, 'dietary_preference', 'vegano')">
                         <span class="option-icon" data-icon="leaf" data-icon-size="18"></span>
                         <span class="option-text"><span class="option-title">Vegano</span><span class="option-desc">Sin
                                 ningún producto de origen animal</span></span>
                     </button>
-                    <button class="option-btn" onclick="selectOption(this, 'dietary_preference', 'sin_gluten')">
+                    <button class="option-btn tone-ambar" onclick="selectOption(this, 'dietary_preference', 'sin_gluten')">
                         <span class="option-icon" data-icon="wheat" data-icon-size="18"></span>
                         <span class="option-text"><span class="option-title">Sin gluten</span><span
                                 class="option-desc">Intolerancia o celiaquía al gluten</span></span>
                     </button>
-                    <button class="option-btn" onclick="selectOption(this, 'dietary_preference', 'sin_lactosa')">
+                    <button class="option-btn tone-arcilla" onclick="selectOption(this, 'dietary_preference', 'sin_lactosa')">
                         <span class="option-icon" data-icon="milk" data-icon-size="18"></span>
                         <span class="option-text"><span class="option-title">Sin lactosa</span><span
                                 class="option-desc">Intolerancia a la lactosa</span></span>
@@ -241,19 +245,19 @@
                 <div style="margin-top: 24px;">
                     <label class="form-label">Nivel de experiencia en el gimnasio</label>
                     <div class="option-grid cols-1">
-                        <button class="option-btn" onclick="selectOption(this, 'training_experience', 'principiante')"
+                        <button class="option-btn tone-savia" onclick="selectOption(this, 'training_experience', 'principiante')"
                             style="padding:12px 16px">
                             <span class="option-icon" data-icon="seedling" data-icon-size="18"></span>
                             <span class="option-text"><span class="option-title">Principiante</span><span
                                     class="option-desc">Menos de 1 año entrenando</span></span>
                         </button>
-                        <button class="option-btn" onclick="selectOption(this, 'training_experience', 'intermedio')"
+                        <button class="option-btn tone-ambar" onclick="selectOption(this, 'training_experience', 'intermedio')"
                             style="padding:12px 16px">
                             <span class="option-icon" data-icon="zap" data-icon-size="18"></span>
                             <span class="option-text"><span class="option-title">Intermedio</span><span
                                     class="option-desc">1-3 años de entrenamiento constante</span></span>
                         </button>
-                        <button class="option-btn" onclick="selectOption(this, 'training_experience', 'avanzado')"
+                        <button class="option-btn tone-arcilla" onclick="selectOption(this, 'training_experience', 'avanzado')"
                             style="padding:12px 16px">
                             <span class="option-icon" data-icon="trophy" data-icon-size="18"></span>
                             <span class="option-text"><span class="option-title">Avanzado</span><span
@@ -265,19 +269,19 @@
                 <div style="margin-top: 24px;">
                     <label class="form-label">¿Dónde entrenas?</label>
                     <div class="option-grid cols-1">
-                        <button class="option-btn" onclick="selectOption(this, 'training_equipment', 'casa')"
+                        <button class="option-btn tone-savia" onclick="selectOption(this, 'training_equipment', 'casa')"
                             style="padding:12px 16px">
                             <span class="option-icon" data-icon="home" data-icon-size="18"></span>
                             <span class="option-text"><span class="option-title">En casa</span><span
                                     class="option-desc">Solo peso corporal, gomas o mancuernas</span></span>
                         </button>
-                        <button class="option-btn" onclick="selectOption(this, 'training_equipment', 'gimnasio')"
+                        <button class="option-btn tone-arcilla" onclick="selectOption(this, 'training_equipment', 'gimnasio')"
                             style="padding:12px 16px">
                             <span class="option-icon" data-icon="training" data-icon-size="18"></span>
                             <span class="option-text"><span class="option-title">En el gimnasio</span><span
                                     class="option-desc">Tengo acceso a máquinas y barras</span></span>
                         </button>
-                        <button class="option-btn" onclick="selectOption(this, 'training_equipment', 'mixto')"
+                        <button class="option-btn tone-malva" onclick="selectOption(this, 'training_equipment', 'mixto')"
                             style="padding:12px 16px">
                             <span class="option-icon" data-icon="refresh" data-icon-size="18"></span>
                             <span class="option-text"><span class="option-title">Mixto</span><span

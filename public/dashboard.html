@@ -9,12 +9,11 @@
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css?v=4">
-    <script>document.documentElement.setAttribute('data-theme','dark')</script>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Newsreader:ital,opsz,wght@0,6..72,300;1,6..72,300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css?v=20260903mob11">
+    <script>document.documentElement.setAttribute('data-theme','nutrovia')</script>
     <script src="https://js.stripe.com/v3/"></script>
-    <script src="js/icons.js"></script>
+    <script src="js/icons.js?v=20260903h"></script>
 
     <script>
         window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
@@ -33,19 +32,19 @@
                 </div>
             </div>
             <nav class="sidebar-nav">
-                <a href="#overview" class="sidebar-link active" onclick="showTab('overview', this)">
+                <a href="#overview" class="sidebar-link active tone-savia" onclick="showTab('overview', this)">
                     <span class="sidebar-icon" data-icon="home" data-icon-size="16"></span> Resumen
                 </a>
-                <a href="#nutrition" class="sidebar-link" onclick="showTab('nutrition', this)">
+                <a href="#nutrition" class="sidebar-link tone-savia" onclick="showTab('nutrition', this)">
                     <span class="sidebar-icon" data-icon="nutrition" data-icon-size="16"></span> Mi Nutrición
                 </a>
-                <a href="#training" class="sidebar-link" onclick="showTab('training', this)">
+                <a href="#training" class="sidebar-link tone-arcilla" onclick="showTab('training', this)">
                     <span class="sidebar-icon" data-icon="training" data-icon-size="16"></span> Mi Entrenamiento
                 </a>
-                <a href="#supplements" class="sidebar-link" onclick="showTab('supplements', this)">
+                <a href="#supplements" class="sidebar-link tone-malva" onclick="showTab('supplements', this)">
                     <span class="sidebar-icon" data-icon="supplement" data-icon-size="16"></span> Suplementación
                 </a>
-                <a href="#subscription" class="sidebar-link" onclick="showTab('subscription', this)">
+                <a href="#subscription" class="sidebar-link tone-ambar" onclick="showTab('subscription', this)">
                     <span class="sidebar-icon" data-icon="subscription" data-icon-size="16"></span> Mi Suscripción
                 </a>
             </nav>
@@ -58,8 +57,8 @@
                     </div>
                 </div>
                 <button onclick="logout()"
-                    style="margin-top:16px;width:100%;background:transparent;border:1px solid var(--border);color:var(--text-muted);padding:9px;border-radius:8px;font-size:13px;font-family:var(--font);cursor:pointer;transition:var(--transition);"
-                    onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--text-muted)'">
+                    style="margin-top:16px;width:100%;background:transparent;border:2px solid var(--tinta);color:var(--texto-cuerpo);padding:10px;border-radius:0;font-size:13px;font-weight:600;font-family:var(--font);cursor:pointer;transition:var(--transition-fast);"
+                    onmouseover="this.style.color='var(--arcilla-700)'" onmouseout="this.style.color='var(--texto-cuerpo)'">
                     Cerrar sesión
                 </button>
             </div>
@@ -75,14 +74,11 @@
                     <p id="dashDate"></p>
                 </div>
                 <div style="display:flex;gap:10px;align-items:center;">
-                    <button onclick="window.location.href='questionnaire.html?update=1'"
-                        style="background:var(--bg);border:1px solid var(--border-gold);color:var(--gold);padding:10px 16px;border-radius:8px;font-size:13px;font-weight:600;font-family:var(--font);cursor:pointer;transition:var(--transition);"
-                        onmouseover="this.style.background='rgba(201,168,76,0.08)'" onmouseout="this.style.background='var(--bg)'">
+                    <button class="btn-line" onclick="window.location.href='questionnaire.html?update=1'">
                         <span class="nv-icon" data-icon="pencil" data-icon-size="14"></span> Actualizar mis datos
                     </button>
-                    <button onclick="document.getElementById('sidebar').classList.toggle('open')"
-                        style="display:none;background:transparent;border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:8px;font-size:18px;"
-                        id="mobileMenuBtn"><span data-icon="menu" data-icon-size="18"></span></button>
+                    <button class="mobile-menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')"
+                        id="mobileMenuBtn"><span class="nv-icon" data-icon="menu" data-icon-size="20"></span></button>
                 </div>
             </div>
 
@@ -98,38 +94,29 @@
 
             <!-- ═══ TAB: RESUMEN (BENTO GRID) ═══ -->
             <div id="tab-overview">
-                <div class="dash-bento" id="dashBento"></div>
+                <div class="dash-grid" id="dashBento"></div>
             </div>
 
             <!-- ═══ TAB: NUTRICIÓN (CALENDARIO SEMANAL) ═══ -->
             <div id="tab-nutrition" style="display:none">
                 <div class="cal-week" id="calWeek"></div>
                 <div class="cal-detail" id="calDetail"></div>
+                <div class="cal-total" id="calTotal"></div>
             </div>
 
             <!-- ═══ TAB: ENTRENAMIENTO ═══ -->
             <div id="tab-training" style="display:none">
-                <div class="dash-card" style="margin-bottom:20px;" id="trainingHeader"></div>
-                <div class="training-grid" id="trainingGrid"></div>
-                <div class="dash-card" style="margin-top:20px;" id="trainingNotes"></div>
-                <div class="dash-card" style="margin-top:20px;" id="trainingProgression"></div>
+                <div id="trainingRoot"></div>
             </div>
 
             <!-- ═══ TAB: SUPLEMENTACIÓN ═══ -->
             <div id="tab-supplements" style="display:none">
-                <div style="margin-bottom:20px;">
-                    <div
-                        style="background:rgba(201,168,76,0.06);border:1px solid var(--border-gold);border-radius:12px;padding:16px 20px;font-size:13px;color:var(--text-muted);">
-                        <span class="nv-icon" data-icon="warning" data-icon-size="15"></span> Las recomendaciones de suplementación son orientativas. Consulta siempre con un profesional
-                        de la salud antes de tomar suplementos.
-                    </div>
-                </div>
-                <div class="supp-grid" id="suppsGrid"></div>
+                <div id="suppsRoot"></div>
             </div>
 
             <!-- ═══ TAB: SUSCRIPCIÓN ═══ -->
             <div id="tab-subscription" style="display:none">
-                <div class="dash-card" id="subDetail"></div>
+                <div id="subRoot"></div>
             </div>
 
         </main>
@@ -181,7 +168,7 @@
         </div>
     </div>
 
-    <script src="js/dashboard.js"></script>
+    <script src="js/dashboard.js?v=20260903k2"></script>
 </body>
 
 </html>

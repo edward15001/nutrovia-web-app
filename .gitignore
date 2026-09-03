@@ -6,3 +6,7 @@ npm-debug.log*
 Thumbs.db
 dist/
 coverage/
+
+# Assets de diseño (no forman parte de la app)
+Identidad visual Nutrovia Web App/
+*.zip

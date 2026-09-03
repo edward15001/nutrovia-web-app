@@ -74,6 +74,7 @@ const MIGRATIONS = [
 ];
 
 async function runMigrations() {
+  let failures = 0;
   for (const sql of MIGRATIONS) {
     try {
       await db.query(sql);
@@ -83,11 +84,16 @@ async function runMigrations() {
       if (err.code === '42P01' || err.code === '3F000') {
         console.warn('⚠️  Migración omitida (tabla aún no creada):', err.message);
       } else {
+        failures++;
         console.error('❌ Error en migración:', err.message);
       }
     }
   }
-  console.log('✅ Migraciones de BD aplicadas');
+  if (failures > 0) {
+    console.error(`⛔ Migraciones con errores: ${failures}. La BD puede estar desactualizada — revisa DATABASE_URL.`);
+  } else {
+    console.log('✅ Migraciones de BD aplicadas');
+  }
 }
 
 module.exports = { runMigrations };

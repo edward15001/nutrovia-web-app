@@ -179,6 +179,31 @@ function constructWebhookEvent(payload, signature) {
     );
 }
 
+/**
+ * Devuelve los datos públicos de la tarjeta (últimos 4 dígitos, marca y
+ * caducidad) de un método de pago de Stripe. En modo mock (sin Stripe)
+ * devuelve null para que el frontend muestre un estado neutro.
+ * Nunca exponemos el número completo, solo last4.
+ */
+async function getPaymentMethodDetails(paymentMethodId) {
+    if (!stripe || !paymentMethodId || paymentMethodId.startsWith('pm_mock_')) {
+        return null;
+    }
+    try {
+        const pm = await stripe.paymentMethods.retrieve(paymentMethodId);
+        if (pm.type !== 'card' || !pm.card) return null;
+        return {
+            brand: pm.card.brand,
+            last4: pm.card.last4,
+            exp_month: pm.card.exp_month,
+            exp_year: pm.card.exp_year,
+        };
+    } catch (err) {
+        console.error('Error obteniendo método de pago:', err.message);
+        return null;
+    }
+}
+
 module.exports = {
     createCustomer,
     createSetupIntent,
@@ -189,5 +214,6 @@ module.exports = {
     cancelSubscription,
     retrieveSubscription,
     constructWebhookEvent,
+    getPaymentMethodDetails,
     stripe,
 };
