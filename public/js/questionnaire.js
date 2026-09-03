@@ -26,6 +26,8 @@ let authToken = null;
 
 // Nivel de acceso devuelto por el backend (free/pro) tras generar el plan
 let lastAccess = null;
+// Plan generado (para la tarjeta de éxito)
+let lastPlan = null;
 
 // ═══ Estado del pago (Stripe) ═══════════════════════════════
 let stripe = null;
@@ -45,6 +47,8 @@ function goToStep(targetStep) {
     document.getElementById(`step-${currentStep}`).style.display = 'none';
     currentStep = targetStep;
     document.getElementById(`step-${currentStep}`).style.display = 'block';
+    // La pantalla de éxito usa un fondo verde a toda la página
+    document.body.classList.toggle('success-mode', targetStep === 8);
     updateProgress();
     if (targetStep === 8) renderSuccess();
 
@@ -54,37 +58,53 @@ function goToStep(targetStep) {
 // Renderiza la pantalla de éxito (paso 8) según el nivel de acceso:
 // - FREE: plan gratuito con CTA de actualizar a Pro (opcional).
 // - PRO / edición: plan completo (o actualización confirmada).
+// Etiquetas de nivel de experiencia para la tarjeta de éxito
+const LEVEL_LABEL = {
+    principiante: 'nivel principiante',
+    intermedio: 'nivel intermedio',
+    avanzado: 'nivel avanzado',
+};
+
 function renderSuccess() {
     const isEdit = updateMode;
     const textEl = document.getElementById('successText');
     const btnEl = document.getElementById('successBtn');
 
+    // Datos de las tarjetas (objetivo / menú / entreno)
+    const kcalEl = document.getElementById('ssKcal');
+    const daysEl = document.getElementById('ssDays');
+    const levelEl = document.getElementById('ssLevel');
+
+    if (kcalEl && lastPlan) {
+        kcalEl.textContent = Number(lastPlan.daily_calories || 0).toLocaleString('es-ES');
+    }
+    if (daysEl) {
+        daysEl.textContent = (formData.training_days || 3) + ' días';
+    }
+    if (levelEl) {
+        levelEl.textContent = LEVEL_LABEL[formData.training_experience] || 'nivel ' + (formData.training_experience || '');
+    }
+
     if (isEdit) {
         textEl.innerHTML =
             'Hemos <strong>actualizado tu plan</strong> con tus nuevos datos. Tu menú semanal, tu rutina y tu suplementación ya se han recalculado.';
-        btnEl.textContent = 'Ir a Mi Panel →';
+        btnEl.innerHTML = 'Ir a mi panel&nbsp;&nbsp;→';
         btnEl.href = 'dashboard.html';
-        btnEl.insertAdjacentHTML('afterend', '');
         return;
     }
 
     const isPro = lastAccess && lastAccess.isPro;
     if (isPro) {
         textEl.innerHTML =
-            'Tu <strong>plan Pro está activo</strong>. Disfruta del plan completo (menú detallado, suplementación, IA y check-ins) por 14 €/mes. Todo lo hemos enviado también a tu email.';
-        btnEl.textContent = 'Ir a Mi Panel →';
+            'Hemos generado tu plan personalizado de nutrición y entrenamiento, y tu <strong>plan Pro está activo</strong>. Todo lo hemos enviado también a tu email.';
+        btnEl.innerHTML = 'Ir a mi panel&nbsp;&nbsp;→';
         btnEl.href = 'dashboard.html';
-        btnEl.insertAdjacentHTML('afterend', '');
     } else {
         // Plan FREE
         textEl.innerHTML =
-            'Tu <strong>plan gratuito</strong> ya está listo. Actualiza a <strong>Pro (14 €/mes)</strong> para desbloquear el menú detallado, la suplementación, la IA y los check-ins de progreso.';
-        btnEl.textContent = 'Ir a Mi Panel';
+            'Hemos generado tu plan personalizado de nutrición y entrenamiento. Tu <strong>plan gratuito</strong> ya está activo.';
+        btnEl.innerHTML = 'Ir a mi panel&nbsp;&nbsp;→';
         btnEl.href = 'dashboard.html';
-        if (!document.getElementById('upgradeBtn')) {
-            btnEl.insertAdjacentHTML('afterend',
-                `<a href="dashboard.html#upgrade" class="btn-gold-large" id="upgradeBtn" style="margin-top:10px;">Actualizar a Pro →</a>`);
-        }
     }
 }
 
@@ -92,7 +112,7 @@ function updateProgress() {
     // La pantalla de éxito (paso 8) siempre muestra la barra completa
     if (currentStep >= 8) {
         document.getElementById('progressBar').style.width = '100%';
-        document.getElementById('progressText').textContent = '¡Plan listo!';
+        document.getElementById('progressText').textContent = 'COMPLETADO';
         return;
     }
     const stepIndex = isEditFlow ? currentStep - 1 : currentStep;
@@ -165,7 +185,8 @@ function collectStepData(step) {
             formData.targetWeight = tw ? parseFloat(tw) : null;
             break;
         case 5:
-            formData.training_days = parseInt(document.getElementById('trainingDays').value);
+            // El valor ya se actualizó al pulsar los segmentos de la barra
+            formData.training_days = formData.training_days || 3;
             break;
     }
 }
@@ -177,6 +198,43 @@ function selectOption(btn, field, value) {
     if (parent) parent.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
     btn.classList.add('selected');
     formData[field] = value;
+
+    // Actualizar la franja de gasto estimado del paso 4 (actividad)
+    if (field === 'activity_level') updateGastoEstimado();
+}
+
+// Multiplicador de actividad según el nivel elegido
+const ACTIVITY_MULT = {
+    sedentario: 1.2,
+    ligero: 1.375,
+    moderado: 1.55,
+    activo: 1.725,
+    muy_activo: 1.9,
+};
+
+// Estima el gasto calórico diario = BMR (Harris-Benedict) × factor de actividad
+function updateGastoEstimado() {
+    const valEl = document.getElementById('gastoEstimadoVal');
+    if (!valEl) return;
+
+    const sex = formData.sex;
+    const age = parseFloat(formData.age);
+    const height = parseFloat(formData.height);
+    const weight = parseFloat(formData.weight);
+    const mult = ACTIVITY_MULT[formData.activity_level];
+
+    if (!mult || !age || !height || !weight) {
+        valEl.textContent = '— kcal / día';
+        return;
+    }
+
+    // Harris-Benedict revisada
+    const bmr = sex === 'mujer'
+        ? 447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age)
+        : 88.362 + (13.397 * weight) + (4.799 * height) - (5.677 * age);
+
+    const kcal = Math.round(bmr * mult);
+    valEl.textContent = kcal.toLocaleString('es-ES') + ' kcal / día';
 }
 
 function toggleCondition(el) {
@@ -199,9 +257,14 @@ function toggleCondition(el) {
     }
 }
 
-function updateSlider(el) {
-    document.getElementById('trainingDaysVal').textContent = `${el.value} día${el.value > 1 ? 's' : ''}`;
-    formData.training_days = parseInt(el.value);
+// Barra segmentada de días por semana (1-6)
+function setTrainingDays(n) {
+    formData.training_days = parseInt(n);
+    const valEl = document.getElementById('trainingDaysVal');
+    if (valEl) valEl.textContent = n;
+    document.querySelectorAll('#daysBar .days-seg').forEach((seg, i) => {
+        seg.classList.toggle('filled', i < n);
+    });
 }
 
 // ═══ Rellenar formulario con los datos actuales (modo edición) ═
@@ -249,11 +312,10 @@ async function prefillForm() {
             formData.health_conditions = p.health_conditions.filter(c => c !== 'ninguna');
         }
 
-        // Días de entrenamiento
-        const slider = document.getElementById('trainingDays');
-        slider.value = formData.training_days;
-        document.getElementById('trainingDaysVal').textContent =
-            `${formData.training_days} día${formData.training_days > 1 ? 's' : ''}`;
+        // Días de entrenamiento: rellenar la barra segmentada y el valor
+        if (document.getElementById('trainingDaysVal')) {
+            setTrainingDays(formData.training_days || 3);
+        }
     } catch (err) {
         console.error('Error rellenando formulario:', err);
     }
@@ -338,12 +400,14 @@ async function registerUser() {
         localStorage.setItem('nutrovia_token', data.token);
         localStorage.setItem('nutrovia_user', JSON.stringify(data.user));
 
-        // Guardar cuestionario y obtener el plan. Por defecto el usuario queda
-        // en el plan FREE (sin pago obligatorio). Se llama a goToStep(8), que
-        // muestra la pantalla de éxito y ofrece actualizar a Pro como opción.
+        // Guardar cuestionario y obtener el plan. El usuario queda en FREE por
+        // defecto; ahora se le lleva al paso 7 (pago) donde puede activar Pro
+        // (14 €/mes) o continuar con el plan gratuito sin pagar.
         const qRes = await submitQuestionnaire();
         lastAccess = qRes && qRes.access ? qRes.access : null;
-        goToStep(8);
+        lastPlan = qRes && qRes.plan ? qRes.plan : null;
+        goToStep(7);
+        initPayment();
     } catch (err) {
         console.error(err);
         const alertEl = document.getElementById('alert-6') || document.getElementById('alert-5');
@@ -527,6 +591,14 @@ async function startTrial() {
     }
 }
 
+// Continúa con el plan gratuito (sin pago). El plan ya se generó al registrar/actualizar.
+function continueFree() {
+    // Asegurar que el éxito muestra el modo gratuito (lastAccess.isPro = false)
+    lastAccess = lastAccess || {};
+    lastAccess.isPro = false;
+    goToStep(8);
+}
+
 // ═══ Helpers ════════════════════════════════════════════════
 function showLoading(msg = 'Cargando...') {
     document.getElementById('loadingText').textContent = msg;
@@ -537,6 +609,17 @@ function hideLoading() {
 }
 
 // ═══ Init ════════════════════════════════════════════════════
+// Por defecto se marca "Ninguna condición especial" (la desmarcará prefillForm
+// si el usuario tiene condiciones guardadas).
+// Solo al cargar la página, antes de cualquier prefill.
+(function initHealthDefault() {
+    const ninguna = document.querySelector('.checkbox-item[data-value="ninguna"]');
+    if (ninguna && !ninguna.classList.contains('checked')) {
+        ninguna.classList.add('checked');
+        formData.health_conditions = ['ninguna'];
+    }
+})();
+
 if (loggedIn) {
     if (!isEditFlow) {
         // Si ya tiene sesión y entra normal, ir directamente al dashboard

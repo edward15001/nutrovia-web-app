@@ -7713,6 +7713,7 @@ input:focus, select:focus, textarea:focus, .form-input:focus {
   align-items: stretch;
   justify-content: flex-start;
   padding: 0;
+  overflow-x: clip;
 }
 
 .quiz-container {
@@ -8176,4 +8177,791 @@ input:focus, select:focus, textarea:focus, .form-input:focus {
   .login-media {
     display: none;
   }
+}
+
+/* ════════════════════════════════════════════════════════════
+   23. CUESTIONARIO v2 — mockup sin marco
+   Cabecera full-width (logo + PASO X DE 8) y barra de progreso ancha
+   debajo; contenido del paso con campos limitados a ~520px.
+   ════════════════════════════════════════════════════════════ */
+
+/* ── Cabecera: hija directa del wrapper → ancho real de pantalla ── */
+.page-wrapper--quiz > .quiz-header {
+  width: 100%;
+  padding: 20px 44px 16px;
+  border-bottom: none;
+  background: transparent;
+}
+
+/* La barra cruza el ancho completo de la pantalla, centrada por naturaleza */
+.page-wrapper--quiz > .quiz-header .progress-bar-container {
+  height: 8px;
+  margin: 14px 0 0;
+  background: var(--neutro-300);
+  border: none;
+  overflow: hidden;
+}
+
+.page-wrapper--quiz > .quiz-header .progress-bar {
+  height: 100%;
+  background: var(--savia-900);
+}
+
+/* ── Contenido del paso: columna centrada y simétrica ── */
+.quiz-container .quiz-card {
+  width: 100%;
+  max-width: 660px;
+  margin: 0 auto;
+  padding: 44px 24px 56px;
+}
+
+/* Los campos ocupan el ancho de la columna centrada */
+.quiz-container .quiz-card .form-group,
+.quiz-container .quiz-card .form-input-group,
+.quiz-container .quiz-card .option-grid,
+.quiz-container .quiz-card .checkbox-group {
+  max-width: none;
+}
+
+/* Nav: botón Continuar a la derecha, sin filete superior */
+.quiz-container .quiz-card .quiz-nav {
+  border-top: none;
+  margin-top: 36px;
+  padding-top: 0;
+  justify-content: flex-end;
+  gap: 14px;
+}
+
+.quiz-container .quiz-card .quiz-nav .btn-next { margin-left: auto; }
+
+/* Título del paso: serif elegante */
+.quiz-container .quiz-card h2 {
+  font-size: clamp(30px, 3.2vw, 44px);
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.quiz-container .quiz-card .subtitle {
+  font-size: 15px;
+  margin-bottom: 32px;
+}
+
+/* Etiquetas y campos del formulario */
+.quiz-container .quiz-card .form-label {
+  font-size: 11.5px;
+  letter-spacing: 0.14em;
+  font-weight: 800;
+  color: var(--texto-cuerpo);
+  margin-bottom: 7px;
+}
+
+.quiz-container .quiz-card .form-input {
+  border: 1.5px solid var(--tinta);
+  background: var(--papel-alt);
+  font-size: 15px;
+  padding: 13px 14px;
+}
+
+.quiz-container .quiz-card .form-input::placeholder {
+  color: var(--texto-suave);
+}
+
+.quiz-container .quiz-card .form-input:focus {
+  outline: 2px solid var(--arcilla-500);
+  outline-offset: 2px;
+  border-color: var(--tinta);
+}
+
+/* El objetivo (paso 3) ocupa la columna ancha */
+.quiz-container .quiz-card.quiz-card--wide .option-grid.cols-1 {
+  max-width: none;
+}
+
+/* ── Paso 5: preferencias ── */
+/* Dieta: tarjetas en cuadrícula de 3 columnas con filete compartido */
+.quiz-container .quiz-card .diet-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  border: 1.5px solid var(--neutro-500);
+  border-top: 1.5px solid var(--neutro-500);
+  margin-bottom: 32px;
+}
+
+.quiz-container .quiz-card .diet-grid .option-btn {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  border: none;
+  border-right: 1.5px solid var(--neutro-500);
+  border-bottom: 1.5px solid var(--neutro-500);
+  background: var(--papel);
+  padding: 20px 18px;
+  text-align: left;
+}
+
+.quiz-container .quiz-card .diet-grid .option-btn:nth-child(3n) { border-right: none; }
+.quiz-container .quiz-card .diet-grid .option-btn:nth-last-child(-n+3) { border-bottom: none; }
+
+.quiz-container .quiz-card .diet-grid .option-btn::before,
+.quiz-container .quiz-card .diet-grid .option-btn::after { display: none; }
+
+.quiz-container .quiz-card .diet-grid .option-btn.selected {
+  /* La selección de la cuadrícula no lleva los filetes gruesos del paso 3:
+     se marca solo con fondo verde y un borde verde limpio alrededor */
+  border-top: 1.5px solid var(--savia-500);
+  border-right: 1.5px solid var(--savia-500);
+  border-bottom: 1.5px solid var(--savia-500);
+  border-left: 1.5px solid var(--savia-500);
+  box-shadow: none;
+  background: var(--savia-100);
+}
+
+.quiz-container .quiz-card .diet-grid .option-btn.selected .option-title { color: var(--savia-700); }
+
+.quiz-container .quiz-card .diet-grid .option-title { font-size: 15px; }
+.quiz-container .quiz-card .diet-grid .option-desc { font-size: 13px; margin-top: 2px; }
+
+.quiz-container .quiz-card .diet-grid .option-icon { color: var(--neutro-500); width: auto; height: auto; background: transparent; }
+.quiz-container .quiz-card .diet-grid .option-icon svg { width: 22px; height: 22px; }
+.quiz-container .quiz-card .diet-grid .option-btn.selected .option-icon { color: var(--savia-500); }
+
+/* Días por semana: valor grande + barra segmentada */
+.quiz-container .quiz-card .days-block { max-width: none; }
+
+.quiz-container .quiz-card .days-value {
+  display: flex;
+  align-items: baseline;
+  font-size: 34px;
+  color: var(--texto);
+  margin: 4px 0 18px;
+}
+
+.quiz-container .quiz-card .days-value strong {
+  font-size: 40px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--texto);
+}
+
+.quiz-container .quiz-card .days-bar {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 5px;
+}
+
+.quiz-container .quiz-card .days-seg {
+  height: 22px;
+  background: var(--hueso);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.quiz-container .quiz-card .days-seg.filled { background: var(--savia-500); }
+
+.quiz-container .quiz-card .days-scale {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-size: 12.5px;
+  color: var(--texto-suave);
+}
+
+/* Dos columnas: nivel + donde entrenas */
+.quiz-container .quiz-card .pref-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  margin-top: 36px;
+  max-width: none;
+}
+
+.quiz-container .quiz-card .pref-col .form-label {
+  margin-bottom: 12px;
+  display: block;
+}
+
+.quiz-container .quiz-card .pref-col .option-grid.pref-list {
+  border-top: 1.5px solid var(--neutro-500);
+}
+
+.quiz-container .quiz-card .pref-col .option-btn { padding: 16px 6px; }
+
+@media (max-width: 640px) {
+  .quiz-container .quiz-card .diet-grid { grid-template-columns: 1fr; }
+  .quiz-container .quiz-card .diet-grid .option-btn:nth-child(3n) { border-right: 1.5px solid var(--neutro-500); }
+  .quiz-container .quiz-card .diet-grid .option-btn:nth-last-child(-n+3) { border-bottom: none; }
+  .quiz-container .quiz-card .diet-grid .option-btn:last-child { border-bottom: none; }
+  .quiz-container .quiz-card .pref-cols { grid-template-columns: 1fr; gap: 24px; }
+}
+
+/* ── Paso 4: iconos neutros, solo verde al seleccionar ── */
+.quiz-container .quiz-card .option-grid.neutral-icons .option-btn .option-icon {
+  color: var(--neutro-500);
+}
+
+.quiz-container .quiz-card .option-grid.neutral-icons .option-btn:hover .option-icon { color: var(--neutro-700); }
+
+.quiz-container .quiz-card .option-grid.neutral-icons .option-btn.selected .option-icon {
+  color: var(--savia-500);
+}
+
+/* Multiplicador a la derecha (×1,2 / ×1,375 ...) */
+.quiz-container .quiz-card .option-grid.neutral-icons .option-mult {
+  margin-left: auto;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--texto-suave);
+  font-variant-numeric: tabular-nums;
+  padding-left: 16px;
+  align-self: center;
+}
+
+.quiz-container .quiz-card .option-grid.neutral-icons .option-btn.selected .option-mult {
+  color: var(--savia-700);
+}
+
+/* Franja de gasto estimado al final */
+.gasto-strip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 28px;
+  border: 1.5px solid var(--neutro-500);
+  background: var(--savia-100);
+  padding: 16px 18px;
+  font-size: 14px;
+  color: var(--texto-cuerpo);
+}
+
+.gasto-strip .gasto-strip-icon {
+  color: var(--savia-500);
+  flex-shrink: 0;
+}
+
+.gasto-strip strong { color: var(--savia-700); }
+
+/* Selección más marcada: acento lateral grueso + filetes superior e inferior en tinta.
+   Solo aplica a las filas planas (no a la cuadrícula de dieta ni al segmento de sexo). */
+.quiz-container .quiz-card .option-btn.selected:not(.diet-grid .option-btn):not(.option-grid.segment .option-btn) {
+  border-top: 2px solid var(--tinta);
+  border-bottom: 2px solid var(--tinta);
+  box-shadow: inset 3px 0 0 var(--savia-500);
+}
+
+.quiz-container .quiz-card .option-btn.tone-arcilla.selected { box-shadow: inset 3px 0 0 var(--arcilla-500); }
+.quiz-container .quiz-card .option-btn.tone-malva.selected { box-shadow: inset 3px 0 0 var(--malva-500); }
+.quiz-container .quiz-card .option-btn.tone-ambar.selected { box-shadow: inset 3px 0 0 var(--ambar-500); }
+
+/* La fila anterior cede su filete para no doblar la línea superior (filas planas) */
+.quiz-container .quiz-card .option-btn:has(+ .option-btn.selected):not(.diet-grid .option-btn):not(.option-grid.segment .option-btn) {
+  border-bottom: none;
+}
+
+/* Si la seleccionada es la primera fila, la línea la pone ella misma */
+.quiz-container .quiz-card .option-grid:has(> .option-btn.selected:first-child) {
+  border-top: none;
+}
+
+/* El segmento (sexo) no lleva acento lateral ni filetes extra */
+.quiz-container .quiz-card .option-grid.segment .option-btn.selected {
+  border-top: 1.5px solid var(--tinta);
+  border-bottom: 1.5px solid var(--tinta);
+  box-shadow: none;
+}
+
+/* ── Paso 6: condiciones de salud en cuadrícula de tarjetas ── */
+.quiz-container .quiz-card .health-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  border: 1.5px solid var(--neutro-500);
+  border-top: 1.5px solid var(--neutro-500);
+  margin-bottom: 36px;
+  max-width: none;
+}
+
+.quiz-container .quiz-card .health-grid .checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: none;
+  border-right: 1.5px solid var(--neutro-500);
+  border-bottom: 1.5px solid var(--neutro-500);
+  background: var(--papel);
+  padding: 20px 18px;
+  cursor: pointer;
+}
+
+.quiz-container .quiz-card .health-grid .checkbox-item:nth-child(3n) { border-right: none; }
+.quiz-container .quiz-card .health-grid .checkbox-item:nth-last-child(-n+3) { border-bottom: none; }
+
+/* Checkbox cuadrado del mockup */
+.quiz-container .quiz-card .health-grid .checkbox-custom {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid var(--filete-suave);
+  background: var(--papel);
+  position: relative;
+}
+
+/* Check marcado con check blanco */
+.quiz-container .quiz-card .health-grid .checkbox-custom::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 10px;
+  height: 10px;
+  background: transparent;
+  clip-path: polygon(41% 100%, 0 58%, 9% 48%, 40% 78%, 92% 8%, 100% 17%);
+}
+
+.quiz-container .quiz-card .health-grid .checkbox-item .check-icon {
+  display: none;
+}
+
+/* Celda seleccionada: fondo verde, borde verde, checkbox relleno */
+.quiz-container .quiz-card .health-grid .checkbox-item.checked {
+  background: var(--savia-100);
+  border-color: var(--savia-500);
+}
+
+.quiz-container .quiz-card .health-grid .checkbox-item.checked .checkbox-custom {
+  background: var(--savia-500);
+  border-color: var(--savia-500);
+}
+
+.quiz-container .quiz-card .health-grid .checkbox-item.checked .checkbox-custom::after {
+  background: var(--papel);
+}
+
+.quiz-container .quiz-card .health-grid .checkbox-label {
+  font-size: 14px;
+  color: var(--texto);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.quiz-container .quiz-card .health-grid .checkbox-label .nv-icon {
+  color: var(--neutro-500);
+  flex-shrink: 0;
+}
+
+.quiz-container .quiz-card .health-grid .checkbox-item.checked .checkbox-label .nv-icon {
+  color: var(--savia-500);
+}
+
+.quiz-container .quiz-card .health-grid .checkbox-item.checked .checkbox-label {
+  color: var(--savia-700);
+  font-weight: 700;
+}
+
+/* Aviso final: "Esta información no sustituye un diagnóstico" */
+.quiz-container .quiz-card .health-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  border: 1.5px solid var(--neutro-500);
+  background: var(--papel-alt);
+  padding: 16px 18px;
+  font-size: 13.5px;
+  color: var(--texto-cuerpo);
+  max-width: none;
+}
+
+.quiz-container .quiz-card .health-note .health-note-icon {
+  color: var(--neutro-500);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* ════════════════════════════════════════════════════════════
+   24. PASO 8 — Pantalla de éxito (fondo verde a toda la página)
+   ════════════════════════════════════════════════════════════ */
+
+body.success-mode { background: var(--savia-700); }
+
+body.success-mode .page-wrapper--quiz { background: transparent; }
+
+body.success-mode .quiz-header {
+  color: #F2EFE8;
+  padding: 18px 28px 14px;
+}
+
+body.success-mode .quiz-header .progress-text { color: #F2EFE8; }
+
+body.success-mode .quiz-header .progress-bar-container { background: rgba(242, 239, 232, 0.35); }
+
+body.success-mode .quiz-header .progress-bar { background: #F2EFE8; }
+
+body.success-mode .quiz-logo,
+body.success-mode .quiz-logo span { color: #F2EFE8; }
+
+body.success-mode .quiz-logo-mark { filter: brightness(0) invert(1); opacity: 0.9; }
+
+/* Contenido del éxito en fondo verde — selectores cualificados para ganar a
+   `.quiz-container .quiz-card` (que limita a 660px) y a `.quiz-container .quiz-card h2`. */
+body.success-mode .quiz-container { max-width: 1120px; }
+
+.quiz-container .quiz-card.quiz-success {
+  max-width: 1120px;
+  padding: 40px 24px 30px;
+  width: 100%;
+}
+
+.quiz-container .quiz-card.quiz-success .success-screen {
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: #F2EFE8;
+}
+
+.quiz-container .quiz-card.quiz-success .success-icon {
+  display: inline-flex;
+  color: #F2EFE8;
+  margin-bottom: 26px;
+  align-self: flex-start;
+}
+
+.quiz-container .quiz-card.quiz-success .success-icon svg {
+  width: 42px;
+  height: 42px;
+}
+
+.quiz-container .quiz-card.quiz-success h2 {
+  font-family: var(--font-serif);
+  font-size: clamp(44px, 6vw, 64px);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: #FFFFFF;
+  margin: 0 0 20px;
+  text-align: left;
+}
+
+.quiz-container .quiz-card.quiz-success #successText {
+  font-size: 17px;
+  line-height: 1.6;
+  color: #E4DCC8;
+  max-width: 600px;
+  margin-bottom: 44px;
+  text-align: left;
+}
+
+.quiz-container .quiz-card.quiz-success #successText strong { color: #F2EFE8; }
+
+/* Tarjetas de resumen (objetivo / menú / entreno) */
+.quiz-container .quiz-card.quiz-success .success-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  max-width: 860px;
+  margin-bottom: 44px;
+}
+
+.quiz-container .quiz-card.quiz-success .ss-stat {
+  border: none;
+  padding: 24px 22px 20px;
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.quiz-container .quiz-card.quiz-success .ss-label {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #D7CEBB;
+  margin-bottom: 16px;
+}
+
+.quiz-container .quiz-card.quiz-success .ss-num {
+  display: block;
+  font-size: 30px;
+  font-weight: 800;
+  color: #F2EFE8;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.quiz-container .quiz-card.quiz-success .ss-sub {
+  font-size: 13px;
+  color: #D7CEBB;
+}
+
+/* Botón crema "Ir a mi panel" */
+.btn-cream {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  background: #F2EFE8;
+  color: var(--tinta);
+  padding: 15px 30px;
+  border: none;
+  border-radius: 0;
+  font-weight: 800;
+  font-size: 15px;
+  cursor: pointer;
+  text-decoration: none;
+  letter-spacing: 0.01em;
+}
+
+.btn-cream:hover { background: #E8E4DA; }
+
+/* ── Paso 7: dos columnas (pago | plan Pro) ── */
+.quiz-container .quiz-card .pay-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border: 1.5px solid var(--neutro-500);
+  max-width: none;
+}
+
+.quiz-container .quiz-card .pay-col { padding: 40px 40px 36px; }
+
+.quiz-container .quiz-card .pay-col--form { background: var(--papel); }
+
+/* Panel del plan Pro en verde suave */
+.quiz-container .quiz-card .pay-col--plan {
+  background: var(--savia-100);
+  border-left: 1.5px solid var(--neutro-500);
+}
+
+.quiz-container .quiz-card .pay-col--plan .pricing-box {
+  border: none;
+  background: transparent;
+  padding: 0;
+}
+
+.quiz-container .quiz-card .pay-col--plan .pricing-label {
+  font-size: 11.5px;
+  letter-spacing: 0.14em;
+  font-weight: 800;
+  color: var(--savia-700);
+  margin-bottom: 18px;
+}
+
+.quiz-container .quiz-card .pay-col--plan .pricing-price {
+  font-size: 44px;
+  font-weight: 800;
+  color: var(--texto);
+  margin-bottom: 18px;
+  line-height: 1;
+}
+
+.quiz-container .quiz-card .pay-col--plan .pricing-price span {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--texto-cuerpo);
+}
+
+.quiz-container .quiz-card .pay-col--plan .pricing-items {
+  border-top: 2px solid var(--tinta);
+}
+
+.quiz-container .quiz-card .pay-col--plan .pricing-item .check-icon {
+  color: var(--savia-700);
+  flex-shrink: 0;
+}
+
+.quiz-container .quiz-card .pay-col--plan .pricing-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 0;
+  border-bottom: 1.5px solid var(--neutro-500);
+  font-size: 14px;
+  color: var(--texto-cuerpo);
+}
+
+.quiz-container .quiz-card .pay-col--plan .pricing-item:last-child { border-bottom: none; }
+
+.quiz-container .quiz-card .pay-col--plan .pricing-trial {
+  margin-top: 20px;
+  border: none;
+  border-top: 2px solid var(--tinta);
+  background: transparent;
+  padding-top: 20px;
+  font-size: 14px;
+  color: var(--texto-cuerpo);
+  letter-spacing: normal;
+  text-transform: none;
+  font-weight: 400;
+  border-radius: 0;
+}
+
+.quiz-container .quiz-card .pay-col--plan .pricing-trial .nv-icon { color: var(--savia-700); }
+
+/* Skip: continuar gratis, enlazado bajo el nav */
+.quiz-container .quiz-card .btn-skip {
+  display: block;
+  width: 100%;
+  margin-top: 16px;
+  padding: 13px;
+  background: transparent;
+  border: 1.5px solid var(--neutro-500);
+  color: var(--texto-cuerpo);
+  font-weight: 700;
+  font-size: 13.5px;
+  cursor: pointer;
+  text-align: center;
+  border-radius: 0;
+}
+
+.quiz-container .quiz-card .btn-skip:hover { background: var(--hueso); color: var(--tinta); }
+
+/* El título del paso usa la columna ancha (ya en quiz-card--wide) */
+@media (max-width: 640px) {
+  .quiz-container .quiz-card .pay-cols { grid-template-columns: 1fr; }
+  .quiz-container .quiz-card .pay-col { padding: 28px 20px; }
+  .quiz-container .quiz-card .pay-col--plan { border-left: none; border-top: 1.5px solid var(--neutro-500); }
+  .quiz-container .quiz-card .health-grid { grid-template-columns: 1fr; }
+  .quiz-container .quiz-card .health-grid .checkbox-item:nth-child(3n) { border-right: 1.5px solid var(--neutro-500); }
+  .quiz-container .quiz-card .health-grid .checkbox-item:nth-last-child(-n+3) { border-bottom: 1.5px solid var(--neutro-500); }
+  .quiz-container .quiz-card .health-grid .checkbox-item:last-child { border-bottom: none; }
+}
+
+/* Nota bajo el campo (ej. "Mínimo 8 caracteres") */
+.form-hint-inline {
+  display: block;
+  margin-top: 7px;
+  font-size: 12.5px;
+  color: var(--texto-suave);
+}
+
+/* ── Paso 2: fila de métricas en 3 columnas ── */
+.quiz-container .quiz-card .form-input-group.cols-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.quiz-container .quiz-card .form-group--third { max-width: calc((100% - 40px) / 3); }
+
+/* Input con sufijo de unidad dentro (años / cm / kg) — el marco envuelve TODO: input + unidad */
+.input-suffix {
+  display: flex;
+  align-items: stretch;
+  border: 1.5px solid var(--tinta);
+  background: var(--papel-alt);
+}
+
+.input-suffix .form-input {
+  border: none;
+  background: transparent;
+  flex: 1;
+  min-width: 0;
+}
+
+.input-suffix .form-input:focus {
+  outline: none;
+}
+
+.input-suffix:focus-within {
+  outline: 2px solid var(--arcilla-500);
+  outline-offset: 2px;
+}
+
+.input-suffix .input-unit {
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  border-left: 1.5px solid var(--tinta);
+  font-size: 13px;
+  color: var(--texto-suave);
+  background: var(--papel-alt);
+  white-space: nowrap;
+}
+
+/* Peso objetivo con fondo tintado (verde suave) */
+.input-suffix.tint {
+  background: var(--savia-100);
+}
+
+.input-suffix.tint .input-unit { background: var(--savia-100); }
+
+/* ── Sexo como segmento: dos mitades pegadas, la activa en tinta ── */
+.quiz-container .quiz-card .option-grid.segment {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border-top: none;
+  max-width: 420px;
+}
+
+.quiz-container .quiz-card .option-grid.segment .option-btn {
+  display: flex;
+  justify-content: flex-start;
+  border: 1.5px solid var(--tinta);
+  border-bottom-width: 1.5px;
+  background: var(--papel-alt);
+  padding: 15px 18px;
+  margin-right: -1.5px; /* colapsa el borde compartido */
+}
+
+.quiz-container .quiz-card .option-grid.segment .option-btn:last-child { margin-right: 0; }
+
+.quiz-container .quiz-card .option-grid.segment .option-btn::before,
+.quiz-container .quiz-card .option-grid.segment .option-btn::after { display: none; }
+
+.quiz-container .quiz-card .option-grid.segment .option-btn .option-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--texto);
+}
+
+.quiz-container .quiz-card .option-grid.segment .option-btn.selected {
+  background: var(--tinta);
+}
+
+.quiz-container .quiz-card .option-grid.segment .option-btn.selected .option-title {
+  color: var(--papel);
+}
+
+/* Los steps de métricas necesitan más ancho que el paso 1 */
+.quiz-container .quiz-card.quiz-card--wide {
+  max-width: 980px;
+}
+
+/* Nav del paso: Atrás a la izquierda, Continuar a la derecha */
+.quiz-container .quiz-card .quiz-nav .btn-prev { margin-right: auto; }
+
+/* Filete final más marcado sobre los botones */
+.quiz-container .quiz-card .quiz-nav {
+  border-top: 2px solid var(--tinta);
+  padding-top: 22px;
+}
+
+/* Continuar más largo */
+.quiz-container .quiz-card .quiz-nav .btn-next {
+  padding: 14px 40px;
+  white-space: nowrap;
+}
+
+.quiz-container .quiz-card .quiz-nav .btn-prev {
+  white-space: nowrap;
+}
+
+/* Separar el aviso de pago seguro del campo de tarjeta */
+.quiz-container .quiz-card .pay-col--form .form-hint {
+  margin-top: 14px;
+}
+
+@media (max-width: 640px) {
+  .quiz-container .quiz-card .form-input-group.cols-3 { grid-template-columns: 1fr; gap: 0; }
+  .quiz-container .quiz-card .form-group--third { max-width: none; }
+  .quiz-container .quiz-card .option-grid.segment { max-width: none; }
+  .quiz-container .quiz-card.quiz-card--wide { max-width: none; }
+}
+
+/* En móvil respira menos y los campos ocupan todo el ancho */
+@media (max-width: 640px) {
+  .page-wrapper--quiz > .quiz-header { padding: 14px 16px 12px; }
+  .quiz-container .quiz-card { padding: 28px 18px 30px; }
+  .quiz-container .quiz-card.quiz-success { padding: 24px 16px; }
+  .quiz-container .quiz-card.quiz-success h2 { font-size: 34px; }
+  .quiz-container .quiz-card.quiz-success .success-stats { grid-template-columns: 1fr; max-width: none; }
+  .quiz-container .quiz-card.quiz-success .ss-stat { padding: 18px; }
 }
