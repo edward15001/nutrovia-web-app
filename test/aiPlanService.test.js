@@ -1,5 +1,5 @@
 /**
- * NutroVia — Tests del servicio de IA de planes
+ * Vytal — Tests del servicio de IA de planes
  * - Sin OPENAI_API_KEY → isConfigured() false y genera null (fallback al motor)
  * - Con clave y respuesta HTTP de error → null
  * - Con respuesta JSON válida → plan normalizado

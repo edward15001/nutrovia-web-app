@@ -1,4 +1,4 @@
-// ─── NutroVia — questionnaire.js ────────────────────────────
+// ─── Vytal — questionnaire.js ────────────────────────────
 
 // ═══ Estado del formulario ═══════════════════════════════════
 const formData = {
@@ -19,7 +19,7 @@ let currentStep = 1;
 const urlParams = new URLSearchParams(window.location.search);
 const updateMode = urlParams.get('update') === '1';
 const resubMode = urlParams.get('subscribe') === '1';
-const loggedIn = !!localStorage.getItem('nutrovia_token');
+const loggedIn = !!localStorage.getItem('vytal_token');
 const isEditFlow = updateMode || resubMode;
 const TOTAL_STEPS = updateMode ? 6 : (resubMode ? 7 : 8);
 let authToken = null;
@@ -327,7 +327,7 @@ async function registerUser() {
         // Ya estamos registrados: solo actualizar el cuestionario
         showLoading(updateMode ? 'Actualizando tu plan...' : 'Guardando tus datos...');
         try {
-            authToken = localStorage.getItem('nutrovia_token');
+            authToken = localStorage.getItem('vytal_token');
             await submitQuestionnaire();
             if (updateMode) {
                 lastAccess = null;
@@ -397,8 +397,8 @@ async function registerUser() {
             return;
         }
         authToken = data.token;
-        localStorage.setItem('nutrovia_token', data.token);
-        localStorage.setItem('nutrovia_user', JSON.stringify(data.user));
+        localStorage.setItem('vytal_token', data.token);
+        localStorage.setItem('vytal_user', JSON.stringify(data.user));
 
         // Guardar cuestionario y obtener el plan. El usuario queda en FREE por
         // defecto; ahora se le lleva al paso 7 (pago) donde puede activar Pro
@@ -626,8 +626,8 @@ if (loggedIn) {
         window.location.href = 'dashboard.html';
     } else {
         // Modo edición: saltar el registro y rellenar con los datos actuales
-        authToken = localStorage.getItem('nutrovia_token');
-        const storedUser = JSON.parse(localStorage.getItem('nutrovia_user') || '{}');
+        authToken = localStorage.getItem('vytal_token');
+        const storedUser = JSON.parse(localStorage.getItem('vytal_user') || '{}');
         formData.name = storedUser.name || '';
         formData.email = storedUser.email || '';
 

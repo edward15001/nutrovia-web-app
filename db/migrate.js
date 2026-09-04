@@ -1,5 +1,5 @@
 /**
- * NutroVia — Migraciones ligeras (idempotentes)
+ * Vytal — Migraciones ligeras (idempotentes)
  * Se ejecutan al arrancar el servidor para que bases de datos existentes
  * reciban las nuevas columnas sin necesidad de recrear el schema.
  */

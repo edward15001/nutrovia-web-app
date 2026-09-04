@@ -1,5 +1,5 @@
 /**
- * NutroVia — Motor de Planes Personalizados
+ * Vytal — Motor de Planes Personalizados
  * Calcula el plan de nutrición y entrenamiento basado en el cuestionario.
  *
  * Principios de diseño:

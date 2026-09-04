@@ -1,5 +1,5 @@
 -- ============================================================
--- NutroVia — Schema de Base de Datos
+-- Vytal — Schema de Base de Datos
 -- ============================================================
 
 -- Extensión para UUIDs

@@ -1,5 +1,5 @@
 /**
- * NutroVia — Tests del servicio de email en modo mock
+ * Vytal — Tests del servicio de email en modo mock
  * Verifica que sin credenciales SMTP reales el servicio usa el mock
  * y que cada email devuelve true (éxito simulado).
  */
@@ -15,7 +15,7 @@ describe('emailService (modo mock)', () => {
     process.env.SMTP_PORT = '587';
     process.env.SMTP_USER = 'tu_email@gmail.com';
     process.env.SMTP_PASS = 'placeholder';
-    process.env.EMAIL_FROM = 'NutroVia <tu_email@gmail.com>';
+    process.env.EMAIL_FROM = 'Vytal <tu_email@gmail.com>';
     process.env.ADMIN_EMAIL = '';
     process.env.APP_URL = 'http://localhost:3000';
     delete process.env.STRIPE_SECRET_KEY;

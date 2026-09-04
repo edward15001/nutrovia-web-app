@@ -1,4 +1,4 @@
-// ─── NutroVia — services/accessService.js ────────────────────
+// ─── Vytal — services/accessService.js ────────────────────
 // Controla el acceso según el nivel del usuario: FREE (de por vida,
 // con funciones restringidas) o PRO (plan completo por 14 €/mes).
 // El tier PRO se deriva del estado de la suscripción en Stripe:

@@ -1,11 +1,11 @@
 /* =========================================================
-   NutroVia — Design System & Global Styles
+   Vytal — Design System & Global Styles
    Inspired by Future.co: Layered Physical Scenes & Dark Luxury
    ========================================================= */
 
 /* ─── 1. VARIABLES & TOKENS ──────────────────────────────── */
 :root {
-  /* ── NutroVia · identidad visual v1.0 ─────────────────────
+  /* ── Vytal · identidad visual v1.0 ─────────────────────
      Papel cálido, tinta casi negra, cuatro roles de color.
      El color clasifica, no decora. Sin degradados de marca.
      ───────────────────────────────────────────────────────── */
@@ -42,7 +42,7 @@
   --font:       'Archivo', system-ui, -apple-system, sans-serif;
   --font-sans:  'Archivo', system-ui, -apple-system, sans-serif;
   --font-serif: 'Newsreader', Georgia, serif;  /* solo titulares ≥22px */
-  --font-brand: 'Keratus', 'Archivo', sans-serif;
+  --font-brand: 'Tahoe Display', 'Archivo', sans-serif;
   --font-mono:  ui-monospace, Menlo, monospace;
 
   /* Geometría — esquinas rectas, sin excepción */
@@ -933,7 +933,7 @@ ul {
   overflow-y: auto;
 }
 
-/* Vista Splash / Bienvenida con Logo de Nutrovia */
+/* Vista Splash / Bienvenida con Logo de Vytal */
 .nv-app-view--splash {
   align-items: center;
   justify-content: center;
@@ -6010,17 +6010,18 @@ html[data-theme='light'] .db-ring-box circle[stroke="rgba(27, 26, 23,0.06)"] {
 
 
 /* ═════════════════════════════════════════════════════════════
-   19. NUTROVIA — CAPA DE IDENTIDAD v1.0
+   19. VYTAL — CAPA DE IDENTIDAD v1.0
    Se aplica al final para ganar la cascada sin reescribir las
    reglas anteriores. Solo estilo: ningún cambio de estructura,
    de marcado ni de comportamiento.
    ═════════════════════════════════════════════════════════════ */
 
 @font-face {
-  font-family: 'Keratus';
-  src: url('../fonts/keratus-bold.otf') format('opentype'),
-       url('../fonts/keratus-bold.ttf') format('truetype');
+  font-family: 'Tahoe Display';
+  src: url('../fonts/tahoe/tahoe-display.otf') format('opentype'),
+       url('../fonts/tahoe/tahoe-display.ttf') format('truetype');
   font-weight: 700 900;
+  font-style: normal;
   font-display: swap;
 }
 
@@ -6044,9 +6045,10 @@ a:hover { color: var(--ambar-700); }
 .logo-text, .nav-logo-text, .back-logo, .splash-brand-title,
 .quiz-logo, .footer-big-watermark {
   font-family: var(--font-brand);
-  font-weight: 800;
+  font-weight: 900;
   letter-spacing: 0.18em;
   text-transform: uppercase;
+  -webkit-text-stroke: 0.4px currentColor;
 }
 .logo-dot, .splash-pulse { color: var(--savia-500); background: var(--savia-500); }
 .logo-dot { background: none; }

@@ -3,12 +3,12 @@ const db = require('../db/db');
 const emailService = require('../services/emailService');
 
 /**
- * Cron Jobs de NutroVia
+ * Cron Jobs de Vytal
  * Se ejecutan diariamente a las 08:00 para gestionar el ciclo de vida
  * de las suscripciones y enviar notificaciones.
  */
 function initCronJobs() {
-    console.log('⏰ Iniciando cron jobs de NutroVia...');
+    console.log('⏰ Iniciando cron jobs de Vytal...');
 
     // ─── Cron semanal (lunes 09:00): check-in de progreso ─────
     // (Ya no hay cron de trial: el cobro de Pro es inmediato y Stripe

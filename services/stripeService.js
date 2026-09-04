@@ -93,7 +93,7 @@ async function getOrCreatePrice() {
         unit_amount: PLAN_PRICE_CENTS,    // Precio del plan en céntimos
     // Nota: al cambiar el precio se busca/crea un Price nuevo (no reusa el antiguo).
         recurring: { interval: 'month' },
-        product_data: { name: 'NutroVia Plan Personalizado' },
+        product_data: { name: 'Vytal Plan Personalizado' },
     });
     cachedPriceId = price.id;
     return price.id;

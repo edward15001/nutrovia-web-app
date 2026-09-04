@@ -1,7 +1,7 @@
 {
-  "name": "nutrovia",
+  "name": "vytal",
   "version": "1.0.0",
-  "description": "Plataforma de nutrición y entrenamiento personalizado NutroVia",
+  "description": "Plataforma de nutrición y entrenamiento personalizado Vytal",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

@@ -1,4 +1,4 @@
-// ─── NutroVia — services/planGenerationService.js ─────────────
+// ─── Vytal — services/planGenerationService.js ─────────────
 // Genera, mejora (IA opcional) y persiste el plan personalizado de un
 // usuario. Se reutiliza tanto en /api/questionnaire (creación/actualización)
 // como tras el upgrade a Pro, para que el plan guardado cuando el usuario era

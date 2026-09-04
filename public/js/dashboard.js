@@ -1,10 +1,10 @@
-// ─── NutroVia — dashboard.js ─────────────────────────────────
+// ─── Vytal — dashboard.js ─────────────────────────────────
 
 // Helper de iconos SVG (definido en js/icons.js)
 const ICON = (n, s) => (window.NV && NV.icon) ? `<span class="nv-icon">${NV.icon(n, s || 14)}</span>` : '';
 
-const token = localStorage.getItem('nutrovia_token');
-const user = JSON.parse(localStorage.getItem('nutrovia_user') || '{}');
+const token = localStorage.getItem('vytal_token');
+const user = JSON.parse(localStorage.getItem('vytal_user') || '{}');
 
 // Redirigir si no hay sesión
 if (!token) window.location.href = 'login.html';
@@ -1042,8 +1042,8 @@ function showNoPlanMessage() {
 }
 
 function logout() {
-  localStorage.removeItem('nutrovia_token');
-  localStorage.removeItem('nutrovia_user');
+  localStorage.removeItem('vytal_token');
+  localStorage.removeItem('vytal_user');
   window.location.href = 'index.html';
 }
 

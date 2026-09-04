@@ -1,5 +1,5 @@
 /**
- * NutroVia — Tests del intercambio de comidas del calendario (node:test)
+ * Vytal — Tests del intercambio de comidas del calendario (node:test)
  * Ejecutar: npm test
  */
 const { test, describe } = require('node:test');

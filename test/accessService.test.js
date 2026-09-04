@@ -1,5 +1,5 @@
 /**
- * NutroVia — Tests del servicio de acceso (tier free/pro)
+ * Vytal — Tests del servicio de acceso (tier free/pro)
  * Verifica la derivación del nivel a partir del estado de la suscripción
  * y el contador de regeneraciones, y los flags de funcionalidades.
  * Se mockea el módulo db para no depender de una base de datos real.

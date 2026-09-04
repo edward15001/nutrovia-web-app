@@ -1,5 +1,5 @@
 /**
- * NutroVia — Tests del flujo de actualización del cuestionario.
+ * Vytal — Tests del flujo de actualización del cuestionario.
  * Prueba el límite de regeneraciones sin depender de PostgreSQL ni servicios externos.
  */
 const { test, describe, beforeEach, afterEach } = require('node:test');

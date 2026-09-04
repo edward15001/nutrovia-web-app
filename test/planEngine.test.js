@@ -1,5 +1,5 @@
 /**
- * NutroVia — Tests del motor de planes (node:test)
+ * Vytal — Tests del motor de planes (node:test)
  * Ejecutar: npm test
  */
 const { test, describe } = require('node:test');

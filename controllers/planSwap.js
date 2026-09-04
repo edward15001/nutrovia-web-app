@@ -1,5 +1,5 @@
 /**
- * NutroVia — Lógica de intercambio de comidas del menú semanal.
+ * Vytal — Lógica de intercambio de comidas del menú semanal.
  * Función pura (testeable sin BD): valida y produce el menú actualizado.
  */
 const VALID_DAYS = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];

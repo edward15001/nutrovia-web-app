@@ -1,4 +1,4 @@
-# NutroVia — Plataforma de Nutrición & Entrenamiento
+# Vytal — Plataforma de Nutrición & Entrenamiento
 
 ![Node.js](https://img.shields.io/badge/Node.js-18+-green) ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue) ![Stripe](https://img.shields.io/badge/Stripe-Integrado-purple)
 

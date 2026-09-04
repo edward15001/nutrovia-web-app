@@ -61,7 +61,7 @@ async function startServer() {
 
     app.listen(PORT, () => {
         console.log(`\n🌿 =========================================`);
-        console.log(`   NutroVia — Servidor iniciado`);
+        console.log(`   Vytal — Servidor iniciado`);
         console.log(`   http://localhost:${PORT}`);
         console.log(`   Entorno: ${process.env.NODE_ENV || 'development'}`);
         console.log(`🌿 =========================================\n`);

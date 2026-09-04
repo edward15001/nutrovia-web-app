@@ -1,4 +1,4 @@
-// ─── NutroVia — icons.js ────────────────────────────────────
+// ─── Vytal — icons.js ────────────────────────────────────
 // Librería de iconos SVG planos (stroke, 24×24, currentColor).
 // Sustituyen a los emojis en toda la web. El color se hereda
 // con `currentColor` → usar dentro de elementos con color corporativo.

@@ -1,4 +1,4 @@
-// ─── NutroVia — services/aiVisionService.js ──────────────────
+// ─── Vytal — services/aiVisionService.js ──────────────────
 // Analiza una foto de comida con un modelo de visión (Groq) y extrae lo que
 // hay en el plato: alimentos, kcal y macros aproximados. Devuelve un array
 // JSON normalizado y validado. Si no hay key configurada, la llamada falla
@@ -73,7 +73,7 @@ async function fetchWithRetry(url, options) {
   }
 }
 
-const SYSTEM_PROMPT = `Eres el nutricionista de NutroVia, una app española de nutrición. Analizas una foto de comida y extraes lo que hay en el plato.
+const SYSTEM_PROMPT = `Eres el nutricionista de Vytal, una app española de nutrición. Analizas una foto de comida y extraes lo que hay en el plato.
 
 REGLAS:
 1. Responde SIEMPRE en español.

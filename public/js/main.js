@@ -1,4 +1,4 @@
-// ─── NutroVia — main.js (Landing Page Engine) ────────────
+// ─── Vytal — main.js (Landing Page Engine) ────────────
 
 document.addEventListener('DOMContentLoaded', () => {
   // ─── 1. Navbar Flotante Glassmorphism con Auto-Hide al Scroll ──

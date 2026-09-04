@@ -1,4 +1,4 @@
-// ─── NutroVia — routes/foodLog.js ─────────────────────────────
+// ─── Vytal — routes/foodLog.js ─────────────────────────────
 // Diario alimentario de la app móvil: analizar una foto con IA de visión,
 // registrar comidas y consultar el resumen del día (restante + streak).
 

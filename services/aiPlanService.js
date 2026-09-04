@@ -1,5 +1,5 @@
 /**
- * NutroVia — Servicio de generación de planes con IA
+ * Vytal — Servicio de generación de planes con IA
  *
  * Genera el contenido personalizado del plan (menú semanal, entrenamiento,
  * suplementos y consejos) con un LLM compatible con la API de OpenAI.
@@ -118,7 +118,7 @@ async function fetchWithRetry(url, options) {
 }
 
 // ─── Prompt del sistema: reglas de seguridad innegociables ──
-const SYSTEM_PROMPT = `Eres el nutricionista y entrenador personal de NutroVia, una app española de nutrición y entrenamiento. Generas un plan personalizado en español para un usuario concreto.
+const SYSTEM_PROMPT = `Eres el nutricionista y entrenador personal de Vytal, una app española de nutrición y entrenamiento. Generas un plan personalizado en español para un usuario concreto.
 
 REGLAS OBLIGATORIAS:
 1. Responde SIEMPRE en español.

@@ -1,7 +1,7 @@
-// ─── NutroVia — login.js ─────────────────────────────────
+// ─── Vytal — login.js ─────────────────────────────────
 
 // Redirigir si ya tiene sesión
-const existingToken = localStorage.getItem('nutrovia_token');
+const existingToken = localStorage.getItem('vytal_token');
 if (existingToken) window.location.href = 'dashboard.html';
 
 const loginForm = document.getElementById('loginForm');
@@ -34,8 +34,8 @@ loginForm.addEventListener('submit', async (e) => {
             return;
         }
 
-        localStorage.setItem('nutrovia_token', data.token);
-        localStorage.setItem('nutrovia_user', JSON.stringify(data.user));
+        localStorage.setItem('vytal_token', data.token);
+        localStorage.setItem('vytal_user', JSON.stringify(data.user));
         window.location.href = 'dashboard.html';
 
     } catch (err) {

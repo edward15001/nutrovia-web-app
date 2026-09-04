@@ -1,5 +1,5 @@
 /**
- * NutroVia — Tests del servicio de visión (aiVisionService)
+ * Vytal — Tests del servicio de visión (aiVisionService)
  * Se centra en compareWithPlan (lógica pura de comparar kcal con el plan),
  * que decide si una comida registrada "encaja" con el objetivo diario.
  * (El análisis de imagen requiere red a Groq y no se testea aquí.)
