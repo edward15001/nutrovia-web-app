@@ -3315,6 +3315,12 @@ ul {
   border-bottom: 2px solid var(--tinta);
 }
 
+.sidebar-logo-full {
+  width: 140px;
+  height: auto;
+  display: block;
+}
+
 .sidebar-nav {
   padding: 0;
   flex: 1;
