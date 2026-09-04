@@ -47,8 +47,14 @@
     .nv-cta-papel:hover { background: #E8E4DA !important; }
     .nv-navlink:hover { color: #27503A; }
     .nv-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.06); opacity: .9; }
+    .nv-mobile-toggle { display: none; }
+    .nv-mobile-panel { display: none; }
+    .nv-mobile-panel.open { display: flex !important; }
+    .nv-mobile-link:hover { color: #27503A; }
     @media (max-width: 900px) {
       .nv-nav-mid { display: none !important; }
+      .nv-nav-end { display: none !important; }
+      .nv-mobile-toggle { display: flex !important; }
       .nv-h1 { font-size: 54px !important; }
       .nv-h2 { font-size: 36px !important; }
       .nv-h2-serif { font-size: 40px !important; }
@@ -64,7 +70,7 @@
   <!-- NAV -->
   <nav style="position:sticky;top:0;z-index:20;background:#F2EFE8;border-bottom:2px solid #1B1A17">
     <div
-      style="max-width:1440px;margin:0 auto;padding:18px 40px;display:flex;align-items:center;justify-content:space-between;gap:32px;flex-wrap:wrap">
+      style="position:relative;max-width:1440px;margin:0 auto;padding:18px 40px;display:flex;align-items:center;justify-content:space-between;gap:32px;flex-wrap:wrap">
       <a href="#hero" style="display:flex;align-items:center;gap:14px;text-decoration:none;color:#1B1A17;min-width:0">
         <img src="img/logo_negro.png" alt="NutroVia" style="width:30px;height:auto">
         <span style="font-size:14px;font-family:'Keratus','Archivo',sans-serif;font-weight:800;letter-spacing:.22em">NUTROVIA</span>
@@ -74,9 +80,24 @@
         <a class="nv-navlink nv-nav-mid" href="#proceso" style="font-size:14px;font-weight:600;text-decoration:none;color:#1B1A17">Cómo funciona</a>
         <a class="nv-navlink nv-nav-mid" href="#proposito" style="font-size:14px;font-weight:600;text-decoration:none;color:#1B1A17">El propósito</a>
         <a class="nv-navlink nv-nav-mid" href="#precio" style="font-size:14px;font-weight:600;text-decoration:none;color:#1B1A17">Precio</a>
-        <a class="nv-navlink" href="login.html" style="font-size:14px;font-weight:600;text-decoration:none;color:#1B1A17">Entrar</a>
+        <div class="nv-nav-end" style="display:flex;align-items:center;gap:28px">
+          <a class="nv-navlink" href="login.html" style="font-size:14px;font-weight:600;text-decoration:none;color:#1B1A17">Entrar</a>
+          <a class="nv-cta" href="questionnaire.html"
+            style="font-size:14px;font-weight:800;text-decoration:none;background:#3A6B4F;color:#F2EFE8;padding:12px 18px">Comenzar</a>
+        </div>
+      </div>
+      <button type="button" id="nvMobileToggle" class="nv-mobile-toggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="nvMobilePanel" onclick="nvToggleMobileMenu()"
+        style="align-items:center;justify-content:center;width:40px;height:40px;border:2px solid #1B1A17;background:transparent;cursor:pointer;flex-shrink:0;padding:0">
+        <i data-lucide="menu" id="nvMobileToggleIcon" style="width:20px;height:20px"></i>
+      </button>
+      <div id="nvMobilePanel" class="nv-mobile-panel" style="position:absolute;top:100%;left:0;right:0;background:#F2EFE8;border-bottom:2px solid #1B1A17;padding:20px 24px;flex-direction:column;gap:4px;z-index:19">
+        <a class="nv-mobile-link" href="#concepto" onclick="nvCloseMobileMenu()" style="font-size:15px;font-weight:600;text-decoration:none;color:#1B1A17;padding:12px 4px;border-bottom:1px solid #E0DBCE">El concepto</a>
+        <a class="nv-mobile-link" href="#proceso" onclick="nvCloseMobileMenu()" style="font-size:15px;font-weight:600;text-decoration:none;color:#1B1A17;padding:12px 4px;border-bottom:1px solid #E0DBCE">Cómo funciona</a>
+        <a class="nv-mobile-link" href="#proposito" onclick="nvCloseMobileMenu()" style="font-size:15px;font-weight:600;text-decoration:none;color:#1B1A17;padding:12px 4px;border-bottom:1px solid #E0DBCE">El propósito</a>
+        <a class="nv-mobile-link" href="#precio" onclick="nvCloseMobileMenu()" style="font-size:15px;font-weight:600;text-decoration:none;color:#1B1A17;padding:12px 4px;border-bottom:1px solid #E0DBCE">Precio</a>
+        <a class="nv-mobile-link" href="login.html" style="font-size:15px;font-weight:600;text-decoration:none;color:#1B1A17;padding:12px 4px">Entrar</a>
         <a class="nv-cta" href="questionnaire.html"
-          style="font-size:14px;font-weight:800;text-decoration:none;background:#3A6B4F;color:#F2EFE8;padding:12px 18px">Comenzar</a>
+          style="font-size:14px;font-weight:800;text-decoration:none;background:#3A6B4F;color:#F2EFE8;padding:14px 18px;text-align:center;margin-top:8px">Comenzar</a>
       </div>
     </div>
   </nav>
@@ -525,6 +546,26 @@
   <script>
     if (window.lucide) window.lucide.createIcons();
     else window.addEventListener('load', function () { if (window.lucide) window.lucide.createIcons(); });
+
+    function nvCloseMobileMenu() {
+      var panel = document.getElementById('nvMobilePanel');
+      var btn = document.getElementById('nvMobileToggle');
+      var icon = document.getElementById('nvMobileToggleIcon');
+      panel.classList.remove('open');
+      btn.setAttribute('aria-expanded', 'false');
+      icon.setAttribute('data-lucide', 'menu');
+      if (window.lucide) window.lucide.createIcons();
+    }
+    function nvToggleMobileMenu() {
+      var panel = document.getElementById('nvMobilePanel');
+      var isOpen = panel.classList.toggle('open');
+      document.getElementById('nvMobileToggle').setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      document.getElementById('nvMobileToggleIcon').setAttribute('data-lucide', isOpen ? 'x' : 'menu');
+      if (window.lucide) window.lucide.createIcons();
+    }
+    window.addEventListener('resize', function () {
+      if (window.innerWidth > 900) nvCloseMobileMenu();
+    });
   </script>
 </body>
 
